@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Home from './pages/Home'
 import WorksHome from './pages/WorksHome'
@@ -9,10 +9,12 @@ import FlashSeries from './pages/FlashSeries'
 import FlashDetail from './pages/FlashDetail'
 import './styles/global.css'
 
-export default function App() {
+function Layout() {
+  const { pathname } = useLocation()
+  const isHome = pathname === '/'
   return (
-    <BrowserRouter>
-      <Navbar />
+    <>
+      {!isHome && <Navbar />}
       <Routes>
         <Route path="/"                    element={<Home />} />
         <Route path="/works"               element={<WorksHome />} />
@@ -22,6 +24,14 @@ export default function App() {
         <Route path="/flash/:series"       element={<FlashSeries />} />
         <Route path="/flash/:series/:id"   element={<FlashDetail />} />
       </Routes>
+    </>
+  )
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Layout />
     </BrowserRouter>
   )
 }
