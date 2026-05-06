@@ -1,0 +1,70 @@
+:root {
+  /* ── 背景 ── */
+  --bg:          #0c1214;
+  --bg-card:     #141e22;
+  --bg-hover:    #1c2c30;
+  --border:      #22393C;
+  --border-light:#1a2a2e;
+
+  /* ── 文字 ── */
+  --text-primary:   #F4EBE2;
+  --text-secondary: #9EA89C;
+  --text-dim:       #3a5055;
+
+  /* ── 點綴色 ── */
+  --ocean:      #4A8FA0;
+  --gold:       #c4a882;
+  --olive:      #4A4D38;
+  --warm:       #BF8A6C;
+  --warm-hover: #d4a080;
+
+  /* ── 狀態 ── */
+  --avail-bg:     #0e2224;
+  --avail-text:   #4A8FA0;
+  --avail-border: #22393C;
+
+  /* ── 字型 ── */
+  --serif: 'Cormorant Garamond', Georgia, serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: var(--serif);
+  background: var(--bg);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; border: none; background: none; font: inherit; color: inherit; }
+img { display: block; max-width: 100%; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* 通用頁面淡入 */
+.page-fade {
+  animation: fadeUp 0.45s ease forwards;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* RWD — 手機版 detail 頁兩欄改單欄 */
+@media (max-width: 700px) {
+  .detail-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
+  .page-pad { padding: 32px 20px !important; }
+}
