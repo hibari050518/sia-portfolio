@@ -10,7 +10,7 @@ export const WORKS_SHEET = '作品'
 export const FLASH_SHEET = '認領圖'
 
 // LINE 官方帳號 ID（格式：@your-id）
-export const LINE_ID = '@sia_tattooist'  // ← 換成你的 LINE 官方帳號 ID
+export const LINE_ID = '@sia_tat'  // ← 換成你的 LINE 官方帳號 ID
 
 // 主站網址
 export const WIX_URL = 'https://www.sia-tattooist.tw'
