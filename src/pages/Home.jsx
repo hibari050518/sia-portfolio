@@ -138,27 +138,36 @@ export default function Home() {
 
   const cursorContainerRef = useRef(null)
   const lastSpawnRef = useRef(0)
+  const prevPosRef   = useRef({ x: 0, y: 0 })
   const onMouseMove = useCallback((e) => {
     const now = Date.now()
-    if (now - lastSpawnRef.current < 55) return
+    if (now - lastSpawnRef.current < 30) return
     lastSpawnRef.current = now
     const container = cursorContainerRef.current
     if (!container) return
-    const sz  = 3 + Math.random() * 4
-    const dur = 5 + Math.random() * 5
-    const ox  = (Math.random() - 0.5) * 24
-    const oy  = (Math.random() - 0.5) * 24
+    const dx = e.clientX - prevPosRef.current.x
+    const dy = e.clientY - prevPosRef.current.y
+    const speed = Math.sqrt(dx * dx + dy * dy)
+    prevPosRef.current = { x: e.clientX, y: e.clientY }
+    if (speed < 3) return
+    const nx = dx / speed
+    const ny = dy / speed
+    const offset = 10 + Math.random() * 14
+    const spawnX = e.clientX - nx * offset + (Math.random() - 0.5) * 8
+    const spawnY = e.clientY - ny * offset + (Math.random() - 0.5) * 8
+    const sz  = 2 + Math.random() * 3.5
+    const dur = 0.5 + Math.random() * 0.7
     const el  = document.createElement('div')
     el.style.cssText = [
       `position:fixed`,
-      `left:${e.clientX + ox - sz / 2}px`,
-      `top:${e.clientY + oy - sz / 2}px`,
+      `left:${spawnX - sz / 2}px`,
+      `top:${spawnY - sz / 2}px`,
       `width:${sz}px`,
       `height:${sz}px`,
       `border-radius:50%`,
-      `background:radial-gradient(circle,rgba(255,255,255,0.95) 0%,rgba(255,255,255,0.4) 55%,transparent 100%)`,
-      `box-shadow:0 0 ${sz*3}px ${sz*1.5}px rgba(200,235,245,0.35)`,
-      `animation:particleDrift ${dur}s ease-in-out forwards`,
+      `background:radial-gradient(circle,rgba(255,255,255,0.92) 0%,rgba(200,235,245,0.45) 55%,transparent 100%)`,
+      `box-shadow:0 0 ${sz*2.5}px ${sz}px rgba(200,235,245,0.4)`,
+      `animation:trailFade ${dur}s ease-out forwards`,
       `pointer-events:none`,
       `z-index:55`,
     ].join(';')
@@ -208,6 +217,10 @@ export default function Home() {
         @keyframes btnPulse {
           0%,100% { opacity:0.40; border-color:rgba(255,255,255,0.28); box-shadow:0 0 0px rgba(255,255,255,0); background:transparent; }
           50%     { opacity:1.00; border-color:rgba(255,255,255,0.95); box-shadow:0 0 32px rgba(255,255,255,0.22), inset 0 0 14px rgba(255,255,255,0.07); background:rgba(255,255,255,0.05); }
+        }
+        @keyframes trailFade {
+          0%   { opacity: 0.85; transform: scale(1);   }
+          100% { opacity: 0;    transform: scale(0.4); }
         }
         @keyframes textBreathe {
           0%,100% { opacity: 0.40; }
@@ -313,10 +326,8 @@ export default function Home() {
             <p style={{
               fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
               fontSize:'clamp(15px, 1.6vw, 20px)', lineHeight:1.8,
-              color:'rgba(255,255,255,0.85)',
+              color:'rgba(255,255,255,0.72)',
               marginBottom:'12px',
-              animation:'textBreathe 5s ease-in-out infinite',
-              animationDelay:'0s',
             }}>
               A tattoo,<br />composed from the voice of your soul.
             </p>
@@ -325,9 +336,7 @@ export default function Home() {
           <FadeUp delay={1550}>
             <p style={{
               fontSize:'12px', letterSpacing:'2.5px', marginBottom:'44px',
-              color:'rgba(255,255,255,0.75)',
-              animation:'textBreathe 5s ease-in-out infinite',
-              animationDelay:'-1.2s',
+              color:'rgba(255,255,255,0.55)',
             }}>
               以刺青為你譜下靈魂深處的聲音
             </p>
