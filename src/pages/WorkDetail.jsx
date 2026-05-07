@@ -167,6 +167,20 @@ export default function WorkDetail() {
         )}
       </div>
 
+      {/* ── Back link (left image panel, top left) ── */}
+      <div style={{
+        position:'absolute', top:'82px', left:'44px', zIndex:30,
+        opacity: navIn ? 1 : 0, transition:'opacity 0.6s ease 0.12s',
+      }}>
+        <Link to={`/works/${encodeURIComponent(decoded)}`}
+          style={{ fontSize:'9px', letterSpacing:'4px', textTransform:'uppercase',
+            color:'rgba(255,255,255,0.38)', textDecoration:'none', transition:'color 0.2s' }}
+          onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.8)'}
+          onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.38)'}>
+          ← {decoded}
+        </Link>
+      </div>
+
       {/* ── Top nav (spans full width) ── */}
       <nav style={{
         position:'absolute', top:0, left:0, right:0, zIndex:30,
@@ -197,16 +211,6 @@ export default function WorkDetail() {
         opacity: navIn ? 1 : 0, transition:'opacity 0.8s ease 0.3s',
       }}>
         <div style={{ padding:'88px 44px 60px', display:'flex', flexDirection:'column', minHeight:'100%' }}>
-
-          {/* Back link */}
-          <Link to={`/works/${encodeURIComponent(decoded)}`}
-            style={{ fontSize:'9px', letterSpacing:'4px', textTransform:'uppercase',
-              color:'rgba(255,255,255,0.3)', textDecoration:'none', marginBottom:'40px',
-              display:'inline-block', transition:'color 0.2s', alignSelf:'flex-start' }}
-            onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.7)'}
-            onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.3)'}>
-            ← {decoded}
-          </Link>
 
           {/* Theme tag */}
           <p style={{ fontSize:'9px', letterSpacing:'4px', textTransform:'uppercase',

@@ -203,58 +203,56 @@ export default function WorksTheme() {
                     : `linear-gradient(to left,${BG} 0%,transparent 60%)`,
                   pointerEvents:'none' }}/>
               )}
-              {isCenter && (
-                <div style={{ position:'absolute', inset:0, zIndex:3,
-                  display:'flex', flexDirection:'column',
-                  alignItems:'center', justifyContent:'center', gap:'12px',
-                  paddingTop:'12%',
-                  pointerEvents:'none' }}>
-                  {work.body_part && (
-                    <span style={{
-                      fontSize:'9px', letterSpacing:'3px', textTransform:'uppercase',
-                      color:'var(--ocean)', border:'1px solid var(--ocean)',
-                      padding:'3px 10px', opacity:0.85,
-                    }}>{work.body_part}</span>
-                  )}
-                  <p style={{ fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
-                    fontSize:'clamp(14px,1.5vw,22px)', color:'rgba(255,255,255,0.92)',
-                    letterSpacing:'1.5px', textAlign:'center', padding:'0 14px',
-                    lineHeight:1.25 }}>
-                    {work.title}
-                  </p>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      navigate(`/works/${encodeURIComponent(decoded)}/${work.id}`)
-                    }}
-                    style={{
-                      pointerEvents:'auto', background:'none',
-                      border:'1px solid rgba(255,255,255,0.28)',
-                      color:'rgba(255,255,255,0.65)', fontSize:'9px',
-                      letterSpacing:'3px', textTransform:'uppercase',
-                      padding:'8px 20px', cursor:'pointer', marginTop:'4px',
-                      transition:'border-color 0.25s, color 0.25s',
-                    }}
-                    onMouseEnter={e => {
-                      e.currentTarget.style.borderColor = 'rgba(255,255,255,0.72)'
-                      e.currentTarget.style.color = 'rgba(255,255,255,1)'
-                    }}
-                    onMouseLeave={e => {
-                      e.currentTarget.style.borderColor = 'rgba(255,255,255,0.28)'
-                      e.currentTarget.style.color = 'rgba(255,255,255,0.65)'
-                    }}>
-                    閱讀故事 →
-                  </button>
-                </div>
-              )}
+              {/* No overlay text — label/title/button shown below the carousel */}
             </div>
           )
         })}
       </div>
 
+      {/* ── Work label + button (below carousel, no overlap) ── */}
+      {themeWorks[activeIdx] && (
+        <div style={{
+          padding:'14px 0 10px', flexShrink:0, zIndex:10,
+          display:'flex', flexDirection:'column', alignItems:'center', gap:'10px',
+          opacity: navIn ? 1 : 0, transition:'opacity 0.7s ease 0.3s',
+        }}>
+          {themeWorks[activeIdx].body_part && (
+            <span style={{
+              fontSize:'9px', letterSpacing:'3px', textTransform:'uppercase',
+              color:'var(--ocean)', border:'1px solid var(--ocean)',
+              padding:'3px 10px', opacity:0.85,
+            }}>{themeWorks[activeIdx].body_part}</span>
+          )}
+          <p style={{ fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
+            fontSize:'clamp(14px,1.4vw,20px)', color:'rgba(255,255,255,0.88)',
+            letterSpacing:'1.5px', textAlign:'center', margin:0 }}>
+            {themeWorks[activeIdx].title}
+          </p>
+          <button
+            onClick={() => navigate(`/works/${encodeURIComponent(decoded)}/${themeWorks[activeIdx].id}`)}
+            style={{
+              background:'none', border:'1px solid rgba(255,255,255,0.25)',
+              color:'rgba(255,255,255,0.60)', fontSize:'9px',
+              letterSpacing:'3px', textTransform:'uppercase',
+              padding:'7px 20px', cursor:'pointer',
+              transition:'border-color 0.25s, color 0.25s',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.70)'
+              e.currentTarget.style.color = 'rgba(255,255,255,1)'
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.25)'
+              e.currentTarget.style.color = 'rgba(255,255,255,0.60)'
+            }}>
+            閱讀故事 →
+          </button>
+        </div>
+      )}
+
       {/* ── Bottom ── */}
       <div style={{
-        padding:'18px 44px', display:'flex',
+        padding:'12px 44px', display:'flex',
         justifyContent:'space-between', alignItems:'center',
         flexShrink:0, zIndex:10,
         opacity: navIn ? 1 : 0, transition:'opacity 0.8s ease 0.5s',
