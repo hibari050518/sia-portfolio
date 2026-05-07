@@ -26,9 +26,10 @@ function SideImage({ src, side, vertPos = 'center' }) {
     return () => clearTimeout(t)
   }, [side])
 
+  // 左右方向：內側（靠中央）漸隱
   const maskGradient = side === 'left'
-    ? 'linear-gradient(to right, transparent 0%, black 22%, black 100%)'
-    : 'linear-gradient(to left,  transparent 0%, black 22%, black 100%)'
+    ? 'linear-gradient(to right, transparent 0%, black 20%, black 100%)'
+    : 'linear-gradient(to left,  transparent 0%, black 20%, black 100%)'
 
   const vertMap = { top: '15%', center: '50%', bottom: '78%' }
   const objPos  = side === 'left'
@@ -59,9 +60,16 @@ function SideImage({ src, side, vertPos = 'center' }) {
           animationDelay: side === 'left' ? '0ms' : `${BREATH_CYCLE * 0.4}ms`,
         }}
       />
+      {/* 上方漸層：蓋住照片頂部邊界 */}
       <div style={{
-        position: 'absolute', inset: 0,
-        background: 'linear-gradient(to bottom, rgba(17,17,17,0.45) 0%, transparent 28%, transparent 68%, rgba(17,17,17,0.55) 100%)',
+        position: 'absolute', top: 0, left: 0, right: 0, height: '30%',
+        background: 'linear-gradient(to bottom, #111 0%, transparent 100%)',
+        pointerEvents: 'none',
+      }} />
+      {/* 下方漸層：蓋住照片底部邊界 */}
+      <div style={{
+        position: 'absolute', bottom: 0, left: 0, right: 0, height: '30%',
+        background: 'linear-gradient(to top, #111 0%, transparent 100%)',
         pointerEvents: 'none',
       }} />
     </div>
