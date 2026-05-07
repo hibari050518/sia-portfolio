@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useWorks } from '../hooks/useSheets'
 import { WIX_URL } from '../config'
-import { useLang, gl, getThemeName, t } from '../context/LangContext'
+import { useLang, gl, getThemeName, t, formatSize } from '../context/LangContext'
 
 function LangSwitcher() {
   const { lang, setLang } = useLang()
@@ -11,7 +11,7 @@ function LangSwitcher() {
       {[['zh','中'],['en','EN'],['ko','한']].map(([l, label]) => (
         <div key={l} onClick={() => setLang(l)}
           style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:'4px', cursor:'pointer' }}>
-          <span style={{ fontSize:'11px', letterSpacing:'2px',
+          <span style={{ fontSize:'12px', letterSpacing:'2px',
             color: lang===l ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.32)',
             transition:'color 0.2s' }}>{label}</span>
           <div style={{ width:'4px', height:'4px', borderRadius:'50%',
@@ -112,14 +112,14 @@ export default function WorkDetail() {
   if (loading) return (
     <div style={{ position:'fixed', inset:0, background:BG, display:'flex',
       alignItems:'center', justifyContent:'center' }}>
-      <p style={{ color:'rgba(255,255,255,0.25)', fontSize:'11px', letterSpacing:'4px' }}>loading</p>
+      <p style={{ color:'rgba(255,255,255,0.25)', fontSize:'12px', letterSpacing:'4px' }}>loading</p>
     </div>
   )
   if (!work) return (
     <div style={{ position:'fixed', inset:0, background:BG, display:'flex',
       alignItems:'center', justifyContent:'center' }}>
       <Link to={`/works/${encodeURIComponent(decoded)}`}
-        style={{ color:'rgba(255,255,255,0.4)', fontSize:'11px', letterSpacing:'3px' }}>← Back</Link>
+        style={{ color:'rgba(255,255,255,0.4)', fontSize:'12px', letterSpacing:'3px' }}>← Back</Link>
     </div>
   )
 
@@ -194,7 +194,7 @@ export default function WorkDetail() {
         opacity: navIn ? 1 : 0, transition:'opacity 0.6s ease 0.12s',
       }}>
         <Link to={`/works/${encodeURIComponent(decoded)}`}
-          style={{ fontSize:'9px', letterSpacing:'4px', textTransform:'uppercase',
+          style={{ fontSize:'12px', letterSpacing:'4px', textTransform:'uppercase',
             color:'rgba(255,255,255,0.38)', textDecoration:'none', transition:'color 0.2s' }}
           onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.8)'}
           onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.38)'}>
@@ -235,7 +235,7 @@ export default function WorkDetail() {
         <div style={{ padding:'88px 44px 60px', display:'flex', flexDirection:'column', minHeight:'100%' }}>
 
           {/* Theme tag */}
-          <p style={{ fontSize:'9px', letterSpacing:'4px', textTransform:'uppercase',
+          <p style={{ fontSize:'12px', letterSpacing:'4px', textTransform:'uppercase',
             color:'var(--ocean)', marginBottom:'12px', opacity:0.85 }}>
             {getThemeName(works, decoded, lang)}
           </p>
@@ -260,12 +260,12 @@ export default function WorkDetail() {
           <div style={{ display:'flex', flexDirection:'column' }}>
             {[
               { label:'BODY',  value: gl(work, 'body_part', lang) },
-              { label:'SIZE',  value: work.size_cm },
+              { label:'SIZE',  value: formatSize(work.size_cm, lang) },
               { label:'DATE',  value: work.date },
             ].filter(d => d.value).map(d => (
               <div key={d.label} style={{ display:'flex', alignItems:'baseline', gap:'16px',
                 borderBottom:'1px solid rgba(255,255,255,0.06)', padding:'12px 0' }}>
-                <span style={{ fontSize:'9px', letterSpacing:'2.5px',
+                <span style={{ fontSize:'12px', letterSpacing:'2.5px',
                   color:'rgba(255,255,255,0.22)', width:'44px', flexShrink:0 }}>{d.label}</span>
                 <span style={{ fontSize:'12px', color:'rgba(255,255,255,0.58)',
                   letterSpacing:'0.5px' }}>{d.value}</span>
@@ -280,7 +280,7 @@ export default function WorkDetail() {
               borderTop:'1px solid rgba(255,255,255,0.07)' }}>
               {prev
                 ? <Link to={`/works/${encodeURIComponent(decoded)}/${prev.id}`}
-                    style={{ fontSize:'10px', letterSpacing:'2px',
+                    style={{ fontSize:'12px', letterSpacing:'2px',
                       color:'rgba(255,255,255,0.28)', textDecoration:'none', transition:'color 0.2s' }}
                     onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.7)'}
                     onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.28)'}>
@@ -290,7 +290,7 @@ export default function WorkDetail() {
               }
               {next
                 ? <Link to={`/works/${encodeURIComponent(decoded)}/${next.id}`}
-                    style={{ fontSize:'10px', letterSpacing:'2px',
+                    style={{ fontSize:'12px', letterSpacing:'2px',
                       color:'rgba(255,255,255,0.28)', textDecoration:'none', transition:'color 0.2s' }}
                     onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.7)'}
                     onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.28)'}>

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useFlash } from '../hooks/useSheets'
 import { WIX_URL, LINE_ID } from '../config'
-import { useLang, t } from '../context/LangContext'
+import { useLang, t, gl, formatSize } from '../context/LangContext'
 
 const BG    = '#111'
 const PANEL = '#161616'
@@ -14,7 +14,7 @@ function LangSwitcher() {
       {[['zh','中'],['en','EN'],['ko','한']].map(([l, label]) => (
         <div key={l} onClick={() => setLang(l)}
           style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:'4px', cursor:'pointer' }}>
-          <span style={{ fontSize:'11px', letterSpacing:'2px',
+          <span style={{ fontSize:'12px', letterSpacing:'2px',
             color: lang===l ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.32)',
             transition:'color 0.2s' }}>{label}</span>
           <div style={{ width:'4px', height:'4px', borderRadius:'50%',
@@ -78,18 +78,18 @@ export default function FlashDetail() {
   if (loading) return (
     <div style={{ position:'fixed', inset:0, background:BG, display:'flex',
       alignItems:'center', justifyContent:'center' }}>
-      <p style={{ color:'rgba(255,255,255,0.25)', fontSize:'11px', letterSpacing:'4px' }}>loading</p>
+      <p style={{ color:'rgba(255,255,255,0.25)', fontSize:'12px', letterSpacing:'4px' }}>loading</p>
     </div>
   )
   if (!item) return (
     <div style={{ position:'fixed', inset:0, background:BG, display:'flex',
       alignItems:'center', justifyContent:'center' }}>
       <Link to={`/flash/${encodeURIComponent(decoded)}`}
-        style={{ color:'rgba(255,255,255,0.4)', fontSize:'11px', letterSpacing:'3px' }}>← Back</Link>
+        style={{ color:'rgba(255,255,255,0.4)', fontSize:'12px', letterSpacing:'3px' }}>← Back</Link>
     </div>
   )
 
-  const isAvail = item.status === '可認領'
+  const isAvail = item.status?.trim() === '可認領'
 
   // Build inquiry text
   const buildInquiryText = () => {
@@ -161,7 +161,7 @@ export default function FlashDetail() {
         opacity: navIn ? 1 : 0, transition:'opacity 0.6s ease 0.12s',
       }}>
         <Link to={`/flash/${encodeURIComponent(decoded)}`}
-          style={{ fontSize:'9px', letterSpacing:'4px', textTransform:'uppercase',
+          style={{ fontSize:'12px', letterSpacing:'4px', textTransform:'uppercase',
             color:'rgba(255,255,255,0.38)', textDecoration:'none', transition:'color 0.2s' }}
           onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.8)'}
           onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.38)'}>
@@ -202,7 +202,7 @@ export default function FlashDetail() {
         <div style={{ padding:'88px 44px 60px', display:'flex', flexDirection:'column', minHeight:'100%' }}>
 
           {/* Series tag */}
-          <p style={{ fontSize:'9px', letterSpacing:'4px', textTransform:'uppercase',
+          <p style={{ fontSize:'12px', letterSpacing:'4px', textTransform:'uppercase',
             color:'var(--ocean)', marginBottom:'10px', opacity:0.85 }}>
             {decoded}
           </p>
@@ -210,7 +210,7 @@ export default function FlashDetail() {
           {/* Status */}
           <div style={{ marginBottom:'16px' }}>
             <span style={{
-              fontSize:'9px', letterSpacing:'3px', textTransform:'uppercase',
+              fontSize:'12px', letterSpacing:'3px', textTransform:'uppercase',
               padding:'3px 10px',
               color: isAvail ? 'var(--ocean)' : 'rgba(255,255,255,0.3)',
               border: `1px solid ${isAvail ? 'var(--ocean)' : 'rgba(255,255,255,0.18)'}`,
@@ -239,12 +239,12 @@ export default function FlashDetail() {
           <div style={{ display:'flex', flexDirection:'column', marginBottom:'36px' }}>
             {[
               { label:'BODY',  value: item.body_part },
-              { label:'SIZE',  value: item.size_suggestion },
+              { label:'SIZE',  value: formatSize(item.size_suggestion, lang) },
               { label:'PRICE', value: item.price_range },
             ].filter(d => d.value).map(d => (
               <div key={d.label} style={{ display:'flex', alignItems:'baseline', gap:'16px',
                 borderBottom:'1px solid rgba(255,255,255,0.06)', padding:'12px 0' }}>
-                <span style={{ fontSize:'9px', letterSpacing:'2.5px',
+                <span style={{ fontSize:'12px', letterSpacing:'2.5px',
                   color:'rgba(255,255,255,0.22)', width:'44px', flexShrink:0 }}>{d.label}</span>
                 <span style={{ fontSize:'12px', color: d.label === 'PRICE' ? 'var(--gold)' : 'rgba(255,255,255,0.58)',
                   letterSpacing:'0.5px', fontStyle: d.label === 'PRICE' ? 'italic' : 'normal' }}>{d.value}</span>
@@ -262,7 +262,7 @@ export default function FlashDetail() {
                   background: copied ? 'rgba(74,143,160,0.15)' : 'none',
                   border: `1px solid ${copied ? 'var(--ocean)' : 'rgba(255,255,255,0.28)'}`,
                   color: copied ? 'var(--ocean)' : 'rgba(255,255,255,0.75)',
-                  fontSize:'10px', letterSpacing:'2.5px', textTransform:'uppercase',
+                  fontSize:'12px', letterSpacing:'2.5px', textTransform:'uppercase',
                   padding:'12px 20px', cursor:'pointer',
                   transition:'all 0.25s', textAlign:'center',
                 }}>
@@ -276,7 +276,7 @@ export default function FlashDetail() {
                   background:'rgba(0,185,0,0.12)',
                   border:'1px solid rgba(0,185,0,0.4)',
                   color:'rgba(100,255,100,0.85)',
-                  fontSize:'10px', letterSpacing:'2.5px', textTransform:'uppercase',
+                  fontSize:'12px', letterSpacing:'2.5px', textTransform:'uppercase',
                   padding:'12px 20px', textDecoration:'none',
                   transition:'all 0.25s',
                 }}
@@ -305,7 +305,7 @@ export default function FlashDetail() {
               borderTop:'1px solid rgba(255,255,255,0.07)' }}>
               {prev
                 ? <Link to={`/flash/${encodeURIComponent(decoded)}/${prev.id}`}
-                    style={{ fontSize:'10px', letterSpacing:'2px',
+                    style={{ fontSize:'12px', letterSpacing:'2px',
                       color:'rgba(255,255,255,0.28)', textDecoration:'none', transition:'color 0.2s' }}
                     onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.7)'}
                     onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.28)'}>
@@ -315,7 +315,7 @@ export default function FlashDetail() {
               }
               {next
                 ? <Link to={`/flash/${encodeURIComponent(decoded)}/${next.id}`}
-                    style={{ fontSize:'10px', letterSpacing:'2px',
+                    style={{ fontSize:'12px', letterSpacing:'2px',
                       color:'rgba(255,255,255,0.28)', textDecoration:'none', transition:'color 0.2s' }}
                     onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.7)'}
                     onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.28)'}>

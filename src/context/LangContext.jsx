@@ -68,6 +68,13 @@ const UI = {
   exploreFlash: { zh:'探索系列', en:'Explore Series', ko:'시리즈 탐색' },
 }
 
+/** 尺寸字串格式化：把「約」在非中文時換成「~」 */
+export function formatSize(value, lang) {
+  if (!value) return value
+  if (lang === 'zh') return value
+  return value.replace(/約\s*/g, '~ ')
+}
+
 /** 取得靜態 UI 翻譯字串 */
 export function t(key, lang) {
   const entry = UI[key]

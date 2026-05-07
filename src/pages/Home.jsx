@@ -11,7 +11,7 @@ function LangSwitcher() {
       {[['zh','中'],['en','EN'],['ko','한']].map(([l, label]) => (
         <div key={l} onClick={() => setLang(l)}
           style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:'4px', cursor:'pointer' }}>
-          <span style={{ fontSize:'11px', letterSpacing:'2px',
+          <span style={{ fontSize:'12px', letterSpacing:'2px',
             color: lang===l ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.32)',
             transition:'color 0.2s' }}>{label}</span>
           <div style={{ width:'4px', height:'4px', borderRadius:'50%',
@@ -368,7 +368,7 @@ export default function Home() {
             <Link to="/works" style={{
               display:'inline-block', padding:'13px 40px',
               border:'1px solid rgba(255,255,255,0.28)',
-              fontSize:'11px', letterSpacing:'5px', textTransform:'uppercase',
+              fontSize:'12px', letterSpacing:'5px', textTransform:'uppercase',
               color:'rgba(255,255,255,0.8)', transition:'background 0.3s ease, color 0.3s ease',
               animation: 'btnPulse 3.5s ease-in-out infinite',
               animationDelay: '-2.5s',
@@ -397,7 +397,7 @@ export default function Home() {
           padding:'24px 44px', display:'flex', justifyContent:'flex-end',
           opacity: navIn ? 1 : 0, transition:'opacity 0.8s ease 1.2s',
         }}>
-          <span style={{ fontSize:'11px', letterSpacing:'3px', color:'rgba(255,255,255,0.2)' }}>
+          <span style={{ fontSize:'12px', letterSpacing:'3px', color:'rgba(255,255,255,0.2)' }}>
             © SIA TATTOOIST
           </span>
         </div>

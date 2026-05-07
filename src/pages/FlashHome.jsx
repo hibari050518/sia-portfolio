@@ -14,7 +14,7 @@ function LangSwitcher() {
       {[['zh','中'],['en','EN'],['ko','한']].map(([l, label]) => (
         <div key={l} onClick={() => setLang(l)}
           style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:'4px', cursor:'pointer' }}>
-          <span style={{ fontSize:'11px', letterSpacing:'2px',
+          <span style={{ fontSize:'12px', letterSpacing:'2px',
             color: lang===l ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.32)',
             transition:'color 0.2s' }}>{label}</span>
           <div style={{ width:'4px', height:'4px', borderRadius:'50%',
@@ -103,7 +103,7 @@ export default function FlashHome() {
   if (loading) return (
     <div style={{ position:'fixed', inset:0, background:BG, display:'flex',
       alignItems:'center', justifyContent:'center' }}>
-      <p style={{ color:'rgba(255,255,255,0.25)', fontSize:'11px', letterSpacing:'4px' }}>loading</p>
+      <p style={{ color:'rgba(255,255,255,0.25)', fontSize:'12px', letterSpacing:'4px' }}>loading</p>
     </div>
   )
 
@@ -164,14 +164,14 @@ export default function FlashHome() {
           opacity: navIn ? 1 : 0, transition:'opacity 0.9s ease 0.25s',
         }}>
           <p style={{
-            fontSize:'9px', letterSpacing:'5px', textTransform:'uppercase',
+            fontSize:'12px', letterSpacing:'5px', textTransform:'uppercase',
             color:'rgba(255,255,255,0.38)', marginBottom:'10px',
           }}>
             {series.count} {t('flashCount',lang)}
           </p>
           {series.availCount > 0 && (
             <p style={{
-              fontSize:'9px', letterSpacing:'3px', textTransform:'uppercase',
+              fontSize:'12px', letterSpacing:'3px', textTransform:'uppercase',
               color:'var(--ocean)', marginBottom:'16px', opacity:0.9,
             }}>
               {series.availCount} {t('available',lang)}
@@ -189,7 +189,7 @@ export default function FlashHome() {
             style={{
               pointerEvents:'auto', background:'none',
               border:'1px solid rgba(255,255,255,0.28)',
-              color:'rgba(255,255,255,0.65)', fontSize:'10px',
+              color:'rgba(255,255,255,0.65)', fontSize:'12px',
               letterSpacing:'3.5px', textTransform:'uppercase',
               padding:'10px 26px', cursor:'pointer',
               transition:'border-color 0.25s, color 0.25s',
@@ -218,7 +218,7 @@ export default function FlashHome() {
         padding:'0 44px 28px',
         opacity: navIn ? 1 : 0, transition:'opacity 0.8s ease 0.45s',
       }}>
-        <span style={{ fontSize:'10px', letterSpacing:'2px', color:'rgba(255,255,255,0.32)', marginBottom:'16px' }}>
+        <span style={{ fontSize:'12px', letterSpacing:'2px', color:'rgba(255,255,255,0.32)', marginBottom:'16px' }}>
           {total > 0 ? `${String(activeIdx + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}` : ''}
         </span>
 
@@ -250,7 +250,7 @@ export default function FlashHome() {
           </div>
         )}
 
-        <span style={{ fontSize:'10px', letterSpacing:'2px', color:'rgba(255,255,255,0.14)' }}>
+        <span style={{ fontSize:'12px', letterSpacing:'2px', color:'rgba(255,255,255,0.14)' }}>
           © SIA TATTOOIST
         </span>
       </div>

@@ -13,7 +13,7 @@ function LangSwitcher() {
       {[['zh','中'],['en','EN'],['ko','한']].map(([l, label]) => (
         <div key={l} onClick={() => setLang(l)}
           style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:'4px', cursor:'pointer' }}>
-          <span style={{ fontSize:'11px', letterSpacing:'2px',
+          <span style={{ fontSize:'12px', letterSpacing:'2px',
             color: lang===l ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.32)',
             transition:'color 0.2s' }}>{label}</span>
           <div style={{ width:'4px', height:'4px', borderRadius:'50%',
@@ -104,12 +104,12 @@ export default function FlashSeries() {
   if (loading) return (
     <div style={{ position:'fixed', inset:0, background:BG, display:'flex',
       alignItems:'center', justifyContent:'center' }}>
-      <p style={{ color:'rgba(255,255,255,0.25)', fontSize:'11px', letterSpacing:'4px' }}>loading</p>
+      <p style={{ color:'rgba(255,255,255,0.25)', fontSize:'12px', letterSpacing:'4px' }}>loading</p>
     </div>
   )
 
   const activeItem = seriesItems[activeIdx]
-  const isAvail    = activeItem?.status === '可認領'
+  const isAvail    = activeItem?.status?.trim() === '可認領'
 
   return (
     <div style={{ position:'fixed', inset:0, background:BG,
@@ -143,14 +143,14 @@ export default function FlashSeries() {
         opacity: navIn ? 1 : 0, transition:'opacity 0.6s ease 0.12s',
       }}>
         <Link to="/flash"
-          style={{ fontSize:'9px', letterSpacing:'4px', textTransform:'uppercase',
+          style={{ fontSize:'12px', letterSpacing:'4px', textTransform:'uppercase',
             color:'rgba(255,255,255,0.3)', textDecoration:'none', transition:'color 0.2s' }}
           onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.7)'}
           onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.3)'}>
           ← {t('backFlash',lang)}
         </Link>
-        <span style={{ fontSize:'9px', letterSpacing:'3px', color:'rgba(255,255,255,0.22)' }}>／</span>
-        <span style={{ fontSize:'9px', letterSpacing:'4px', textTransform:'uppercase',
+        <span style={{ fontSize:'12px', letterSpacing:'3px', color:'rgba(255,255,255,0.22)' }}>／</span>
+        <span style={{ fontSize:'12px', letterSpacing:'4px', textTransform:'uppercase',
           color:'rgba(255,255,255,0.55)' }}>{decoded}</span>
       </div>
 
@@ -184,7 +184,7 @@ export default function FlashSeries() {
           const heightPct  = isCenter ? 84 : absOff === 1 ? 62 : 50
           const brightness = isCenter ? 0.78 : absOff === 1 ? 0.38 : 0.22
           // dim claimed designs slightly
-          const claimedDim = isCenter && item.status !== '可認領' ? 0.55 : 1
+          const claimedDim = isCenter && item.status?.trim() !== '可認領' ? 0.55 : 1
 
           return (
             <div key={item.id}
@@ -245,7 +245,7 @@ export default function FlashSeries() {
         }}>
           {/* Status badge */}
           <span style={{
-            fontSize:'9px', letterSpacing:'3px', textTransform:'uppercase',
+            fontSize:'12px', letterSpacing:'3px', textTransform:'uppercase',
             padding:'3px 10px', opacity:0.85,
             color: isAvail ? 'var(--ocean)' : 'rgba(255,255,255,0.3)',
             border: `1px solid ${isAvail ? 'var(--ocean)' : 'rgba(255,255,255,0.2)'}`,
@@ -255,7 +255,7 @@ export default function FlashSeries() {
 
           {activeItem.body_part && (
             <span style={{
-              fontSize:'9px', letterSpacing:'2px',
+              fontSize:'12px', letterSpacing:'2px',
               color:'rgba(255,255,255,0.38)',
             }}>{activeItem.body_part}</span>
           )}
@@ -270,7 +270,7 @@ export default function FlashSeries() {
             onClick={() => navigate(`/flash/${encodeURIComponent(decoded)}/${activeItem.id}`)}
             style={{
               background:'none', border:'1px solid rgba(255,255,255,0.25)',
-              color:'rgba(255,255,255,0.60)', fontSize:'9px',
+              color:'rgba(255,255,255,0.60)', fontSize:'12px',
               letterSpacing:'3px', textTransform:'uppercase',
               padding:'7px 20px', cursor:'pointer',
               transition:'border-color 0.25s, color 0.25s',
@@ -295,7 +295,7 @@ export default function FlashSeries() {
         flexShrink:0, zIndex:10,
         opacity: navIn ? 1 : 0, transition:'opacity 0.8s ease 0.5s',
       }}>
-        <span style={{ fontSize:'10px', letterSpacing:'2px', color:'rgba(255,255,255,0.35)' }}>
+        <span style={{ fontSize:'12px', letterSpacing:'2px', color:'rgba(255,255,255,0.35)' }}>
           {total > 0 ? `${String(activeIdx+1).padStart(2,'0')} / ${String(total).padStart(2,'0')}` : '—'}
         </span>
         {total > 1 && (
@@ -310,7 +310,7 @@ export default function FlashSeries() {
             ))}
           </div>
         )}
-        <span style={{ fontSize:'10px', letterSpacing:'2px', color:'rgba(255,255,255,0.18)' }}>
+        <span style={{ fontSize:'12px', letterSpacing:'2px', color:'rgba(255,255,255,0.18)' }}>
           © SIA TATTOOIST
         </span>
       </div>

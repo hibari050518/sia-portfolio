@@ -11,7 +11,7 @@ function LangSwitcher() {
       {[['zh','中'],['en','EN'],['ko','한']].map(([l, label]) => (
         <div key={l} onClick={() => setLang(l)}
           style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:'4px', cursor:'pointer' }}>
-          <span style={{ fontSize:'11px', letterSpacing:'2px',
+          <span style={{ fontSize:'12px', letterSpacing:'2px',
             color: lang===l ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.32)',
             transition:'color 0.2s' }}>{label}</span>
           <div style={{ width:'4px', height:'4px', borderRadius:'50%',
@@ -107,7 +107,7 @@ export default function WorksTheme() {
   if (loading) return (
     <div style={{ position:'fixed', inset:0, background:BG, display:'flex',
       alignItems:'center', justifyContent:'center' }}>
-      <p style={{ color:'rgba(255,255,255,0.25)', fontSize:'11px', letterSpacing:'4px' }}>loading</p>
+      <p style={{ color:'rgba(255,255,255,0.25)', fontSize:'12px', letterSpacing:'4px' }}>loading</p>
     </div>
   )
 
@@ -143,14 +143,14 @@ export default function WorksTheme() {
         opacity: navIn ? 1 : 0, transition:'opacity 0.6s ease 0.12s',
       }}>
         <Link to="/works"
-          style={{ fontSize:'9px', letterSpacing:'4px', textTransform:'uppercase',
+          style={{ fontSize:'12px', letterSpacing:'4px', textTransform:'uppercase',
             color:'rgba(255,255,255,0.3)', textDecoration:'none', transition:'color 0.2s' }}
           onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.7)'}
           onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.3)'}>
           ← {t('backWorks',lang)}
         </Link>
-        <span style={{ fontSize:'9px', letterSpacing:'3px', color:'rgba(255,255,255,0.22)' }}>／</span>
-        <span style={{ fontSize:'9px', letterSpacing:'4px', textTransform:'uppercase',
+        <span style={{ fontSize:'12px', letterSpacing:'3px', color:'rgba(255,255,255,0.22)' }}>／</span>
+        <span style={{ fontSize:'12px', letterSpacing:'4px', textTransform:'uppercase',
           color:'rgba(255,255,255,0.55)' }}>{getThemeName(works, decoded, lang)}</span>
       </div>
 
@@ -244,7 +244,7 @@ export default function WorksTheme() {
         }}>
           {gl(themeWorks[activeIdx], 'body_part', lang) && (
             <span style={{
-              fontSize:'9px', letterSpacing:'3px', textTransform:'uppercase',
+              fontSize:'12px', letterSpacing:'3px', textTransform:'uppercase',
               color:'var(--ocean)', border:'1px solid var(--ocean)',
               padding:'3px 10px', opacity:0.85,
             }}>{gl(themeWorks[activeIdx], 'body_part', lang)}</span>
@@ -258,7 +258,7 @@ export default function WorksTheme() {
             onClick={() => navigate(`/works/${encodeURIComponent(decoded)}/${themeWorks[activeIdx].id}`)}
             style={{
               background:'none', border:'1px solid rgba(255,255,255,0.25)',
-              color:'rgba(255,255,255,0.60)', fontSize:'9px',
+              color:'rgba(255,255,255,0.60)', fontSize:'12px',
               letterSpacing:'3px', textTransform:'uppercase',
               padding:'7px 20px', cursor:'pointer',
               transition:'border-color 0.25s, color 0.25s',
@@ -283,7 +283,7 @@ export default function WorksTheme() {
         flexShrink:0, zIndex:10,
         opacity: navIn ? 1 : 0, transition:'opacity 0.8s ease 0.5s',
       }}>
-        <span style={{ fontSize:'10px', letterSpacing:'2px', color:'rgba(255,255,255,0.35)' }}>
+        <span style={{ fontSize:'12px', letterSpacing:'2px', color:'rgba(255,255,255,0.35)' }}>
           {total > 0 ? `${String(activeIdx+1).padStart(2,'0')} / ${String(total).padStart(2,'0')}` : '—'}
         </span>
         {total > 1 && (
@@ -298,7 +298,7 @@ export default function WorksTheme() {
             ))}
           </div>
         )}
-        <span style={{ fontSize:'10px', letterSpacing:'2px', color:'rgba(255,255,255,0.18)' }}>
+        <span style={{ fontSize:'12px', letterSpacing:'2px', color:'rgba(255,255,255,0.18)' }}>
           © SIA TATTOOIST
         </span>
       </div>

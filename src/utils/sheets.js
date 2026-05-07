@@ -5,9 +5,8 @@ import { SHEET_ID, WORKS_SHEET, FLASH_SHEET } from '../config'
 const cache = {}
 
 async function fetchSheet(sheetName) {
-  if (cache[sheetName]) return cache[sheetName]
-
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`
+  const bust = Math.floor(Date.now() / 60000) // 每分鐘更新一次
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}&_=${bust}`
   const res = await fetch(url)
   if (!res.ok) throw new Error(`無法讀取工作表：${sheetName}`)
   const text = await res.text()
@@ -19,7 +18,6 @@ async function fetchSheet(sheetName) {
   })
   if (errors.length) console.warn('CSV parse warnings:', errors)
 
-  cache[sheetName] = data
   return data
 }
 
