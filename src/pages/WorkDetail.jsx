@@ -232,7 +232,7 @@ export default function WorkDetail() {
         overflowY:'auto', zIndex:20,
         opacity: navIn ? 1 : 0, transition:'opacity 0.8s ease 0.3s',
       }}>
-        <div style={{ padding:'112px 44px 60px', display:'flex', flexDirection:'column', minHeight:'100%' }}>
+        <div style={{ padding:'88px 44px 60px', display:'flex', flexDirection:'column', minHeight:'100%' }}>
 
           {/* Theme tag */}
           <p style={{ fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
@@ -243,7 +243,7 @@ export default function WorkDetail() {
           {/* Title */}
           <h1 style={{ fontFamily:'var(--serif)', fontWeight:300, fontStyle:'italic',
             fontSize:'clamp(22px, 2.2vw, 38px)', color:'rgba(255,255,255,0.92)',
-            lineHeight:1.2, marginBottom:'28px' }}>
+            lineHeight:1.2, marginTop:'20px', marginBottom:'28px' }}>
             {gl(work, 'title', lang)}
           </h1>
 
