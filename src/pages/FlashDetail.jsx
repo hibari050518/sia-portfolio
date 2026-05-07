@@ -261,19 +261,21 @@ export default function FlashDetail() {
       }}>
         <div style={{ padding:'92px 48px 64px', display:'flex', flexDirection:'column', minHeight:'100%' }}>
 
-          {/* Series tag */}
-          <p style={{ fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
-            color:'var(--ocean)', marginBottom:'14px', opacity:0.85 }}>
-            {decoded}
-          </p>
-
-          {/* Status badge */}
-          <div style={{ marginBottom:'32px' }}>
+          {/* Series tag + Status — 同一行 */}
+          <div style={{
+            display:'flex', justifyContent:'space-between', alignItems:'center',
+            marginBottom:'36px',
+          }}>
+            <p style={{ fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
+              color:'var(--ocean)', opacity:0.85, margin:0 }}>
+              {decoded}
+            </p>
             <span style={{
               fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
               padding:'4px 12px',
               color: isAvail ? 'var(--ocean)' : 'rgba(255,255,255,0.3)',
               border: `1px solid ${isAvail ? 'var(--ocean)' : 'rgba(255,255,255,0.18)'}`,
+              flexShrink: 0, marginLeft:'16px',
             }}>
               {isAvail ? t('available',lang) : t('taken',lang)}
             </span>
