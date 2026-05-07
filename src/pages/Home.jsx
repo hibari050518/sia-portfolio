@@ -140,12 +140,12 @@ export default function Home() {
   const lastSpawnRef = useRef(0)
   const onMouseMove = useCallback((e) => {
     const now = Date.now()
-    if (now - lastSpawnRef.current < 90) return
+    if (now - lastSpawnRef.current < 55) return
     lastSpawnRef.current = now
     const container = cursorContainerRef.current
     if (!container) return
-    const sz  = 2 + Math.random() * 3.5
-    const dur = 9 + Math.random() * 7
+    const sz  = 3 + Math.random() * 4
+    const dur = 5 + Math.random() * 5
     const ox  = (Math.random() - 0.5) * 24
     const oy  = (Math.random() - 0.5) * 24
     const el  = document.createElement('div')
@@ -156,10 +156,11 @@ export default function Home() {
       `width:${sz}px`,
       `height:${sz}px`,
       `border-radius:50%`,
-      `background:radial-gradient(circle,rgba(255,255,255,0.92) 0%,rgba(255,255,255,0.28) 60%,transparent 100%)`,
-      `box-shadow:0 0 ${sz*2}px ${sz}px rgba(255,255,255,0.15)`,
+      `background:radial-gradient(circle,rgba(255,255,255,0.95) 0%,rgba(255,255,255,0.4) 55%,transparent 100%)`,
+      `box-shadow:0 0 ${sz*3}px ${sz*1.5}px rgba(200,235,245,0.35)`,
       `animation:particleDrift ${dur}s ease-in-out forwards`,
       `pointer-events:none`,
+      `z-index:55`,
     ].join(';')
     container.appendChild(el)
     setTimeout(() => el.remove(), dur * 1000)
@@ -338,7 +339,7 @@ export default function Home() {
               border:'1px solid rgba(255,255,255,0.28)',
               fontSize:'11px', letterSpacing:'5px', textTransform:'uppercase',
               color:'rgba(255,255,255,0.8)', transition:'background 0.3s ease, color 0.3s ease',
-              animation: 'btnPulse 5s ease-in-out infinite',
+              animation: 'btnPulse 3.5s ease-in-out infinite',
               animationDelay: '-2.5s',
             }}
               onMouseEnter={e => {
@@ -348,7 +349,7 @@ export default function Home() {
                 e.currentTarget.style.color='#fff'
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.animation = 'btnPulse 5s ease-in-out infinite'
+                e.currentTarget.style.animation = 'btnPulse 3.5s ease-in-out infinite'
                 e.currentTarget.style.background='transparent'
                 e.currentTarget.style.borderColor='rgba(255,255,255,0.28)'
                 e.currentTarget.style.color='rgba(255,255,255,0.8)'
