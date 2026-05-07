@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useWorks } from '../hooks/useSheets'
 import { getThemes } from '../utils/sheets'
@@ -11,7 +11,8 @@ function NavLink({ to, zh, en }) {
   return (
     <Link to={to}
       style={{ fontSize:'12px', letterSpacing:'3px', textTransform:'uppercase',
-        color: hov ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.5)', transition:'color 0.25s' }}
+        color: hov ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.5)',
+        transition:'color 0.25s', textDecoration:'none' }}
       onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}>
       {hov ? en : zh}
     </Link>
@@ -22,20 +23,20 @@ function ArrowBtn({ dir, onClick, disabled }) {
   const [hov, setHov] = useState(false)
   return (
     <button onClick={onClick} disabled={disabled}
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
+      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
       style={{
         position:'absolute', top:'50%', transform:'translateY(-50%)',
-        [dir === 'left' ? 'left' : 'right']: '20px',
-        zIndex:20, background:'none', border:'none', cursor: disabled ? 'default' : 'pointer',
+        [dir === 'left' ? 'left' : 'right']: '24px',
+        zIndex:20, background:'none', border:'none',
+        cursor: disabled ? 'default' : 'pointer',
         padding:'16px 12px',
-        opacity: disabled ? 0.1 : hov ? 0.9 : 0.45,
+        opacity: disabled ? 0.08 : hov ? 0.9 : 0.38,
         transition:'opacity 0.25s',
       }}>
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
         {dir === 'left'
-          ? <path d="M18 4 L8 14 L18 24" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          : <path d="M10 4 L20 14 L10 24" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          ? <path d="M20 4 L8 16 L20 28" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          : <path d="M12 4 L24 16 L12 28" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
         }
       </svg>
     </button>
@@ -43,26 +44,39 @@ function ArrowBtn({ dir, onClick, disabled }) {
 }
 
 export default function WorksHome() {
-  const { works, loading }        = useWorks()
-  const navigate                  = useNavigate()
+  const { works, loading } = useWorks()
+  const navigate           = useNavigate()
   const [activeIdx, setActiveIdx] = useState(0)
-  const [navIn, setNavIn]         = useState(false)
-  const hoverTimer                = useRef(null)
+  const [navIn,     setNavIn]     = useState(false)
+  const [imgLoaded, setImgLoaded] = useState(false)
 
   useEffect(() => {
     const t = setTimeout(() => setNavIn(true), 300)
     return () => clearTimeout(t)
   }, [])
 
-  // 鍵盤
+  const themeNames  = getThemes(works)
+  const themeData   = themeNames.map(name => {
+    const tw = works.filter(w => w.theme === name)
+    return { name, count: tw.length, image: tw.find(w => w.image_url)?.image_url }
+  })
+  const total  = themeData.length
+  const theme  = themeData[activeIdx]
+
+  const go = (delta) => {
+    setImgLoaded(false)
+    setActiveIdx(i => Math.max(0, Math.min(total - 1, i + delta)))
+  }
+
   useEffect(() => {
     const handler = (e) => {
       if (e.key === 'ArrowRight') go(1)
       if (e.key === 'ArrowLeft')  go(-1)
+      if (e.key === 'Enter' && theme) navigate(`/works/${encodeURIComponent(theme.name)}`)
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [activeIdx, works])
+  }, [activeIdx, theme])
 
   if (loading) return (
     <div style={{ position:'fixed', inset:0, background:BG, display:'flex',
@@ -71,26 +85,37 @@ export default function WorksHome() {
     </div>
   )
 
-  // 以主題為單位
-  const themes = getThemes(works)
-  const total  = themes.length
-
-  const go = (delta) => setActiveIdx(i => Math.max(0, Math.min(total - 1, i + delta)))
-
-  const handleHover = (i) => {
-    if (i === activeIdx) return
-    clearTimeout(hoverTimer.current)
-    hoverTimer.current = setTimeout(() => setActiveIdx(i), 80)
-  }
-
   return (
-    <div style={{ position:'fixed', inset:0, background:BG,
-      display:'flex', flexDirection:'column', overflow:'hidden' }}>
+    <div style={{ position:'fixed', inset:0, background:BG, overflow:'hidden' }}>
 
-      {/* Nav */}
+      {/* ── Full-bleed background image ── */}
+      {theme?.image && (
+        <img
+          key={theme.name}
+          src={theme.image}
+          alt={theme.name}
+          onLoad={() => setImgLoaded(true)}
+          style={{
+            position:'absolute', inset:0, width:'100%', height:'100%',
+            objectFit:'cover', objectPosition:'center top',
+            filter:'brightness(0.55)',
+            opacity: imgLoaded ? 1 : 0,
+            transition:'opacity 0.75s ease',
+          }}
+        />
+      )}
+
+      {/* ── Gradient vignette ── */}
+      <div style={{
+        position:'absolute', inset:0, pointerEvents:'none', zIndex:5,
+        background:'linear-gradient(to bottom, rgba(17,17,17,0.65) 0%, rgba(17,17,17,0) 22%, rgba(17,17,17,0) 48%, rgba(17,17,17,0.72) 80%, rgba(17,17,17,0.94) 100%)',
+      }} />
+
+      {/* ── Top nav ── */}
       <nav style={{
+        position:'absolute', top:0, left:0, right:0, zIndex:30,
         display:'flex', justifyContent:'space-between', alignItems:'center',
-        padding:'28px 44px', flexShrink:0, zIndex:10,
+        padding:'28px 44px',
         opacity: navIn ? 1 : 0, transition:'opacity 0.6s ease',
       }}>
         <Link to="/" style={{ fontSize:'13px', letterSpacing:'4px',
@@ -101,145 +126,105 @@ export default function WorksHome() {
           <NavLink to="/works" zh="作品" en="Works" />
           <NavLink to="/flash" zh="認領圖" en="Flash" />
           <a href={WIX_URL} target="_blank" rel="noreferrer"
-            style={{ fontSize:'12px', letterSpacing:'2px', color:'var(--warm)' }}>
+            style={{ fontSize:'12px', letterSpacing:'2px', color:'var(--warm)', textDecoration:'none' }}>
             Appointments ↗
           </a>
         </div>
       </nav>
 
-      {/* Carousel */}
+      {/* ── Center content ── */}
+      {theme && (
+        <div style={{
+          position:'absolute', inset:0, zIndex:15,
+          display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
+          textAlign:'center', pointerEvents:'none',
+          opacity: navIn ? 1 : 0, transition:'opacity 0.9s ease 0.25s',
+        }}>
+          <p style={{
+            fontSize:'9px', letterSpacing:'5px', textTransform:'uppercase',
+            color:'rgba(255,255,255,0.38)', marginBottom:'18px',
+          }}>
+            {theme.count} 件作品
+          </p>
+          <h1 style={{
+            fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
+            fontSize:'clamp(30px, 4.5vw, 70px)', color:'rgba(255,255,255,0.92)',
+            lineHeight:1.1, marginBottom:'32px',
+          }}>
+            {theme.name}
+          </h1>
+          <button
+            onClick={() => navigate(`/works/${encodeURIComponent(theme.name)}`)}
+            style={{
+              pointerEvents:'auto', background:'none',
+              border:'1px solid rgba(255,255,255,0.28)',
+              color:'rgba(255,255,255,0.65)', fontSize:'10px',
+              letterSpacing:'3.5px', textTransform:'uppercase',
+              padding:'10px 26px', cursor:'pointer',
+              transition:'border-color 0.25s, color 0.25s',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.72)'
+              e.currentTarget.style.color = 'rgba(255,255,255,1)'
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.28)'
+              e.currentTarget.style.color = 'rgba(255,255,255,0.65)'
+            }}>
+            查看作品 →
+          </button>
+        </div>
+      )}
+
+      {/* ── Left / Right arrows ── */}
+      <ArrowBtn dir="left"  onClick={() => go(-1)} disabled={activeIdx === 0} />
+      <ArrowBtn dir="right" onClick={() => go(1)}  disabled={activeIdx === total - 1} />
+
+      {/* ── Bottom: counter + thumbnails + copyright ── */}
       <div style={{
-        flex:1, position:'relative', overflow:'hidden',
-        opacity: navIn ? 1 : 0, transition:'opacity 0.8s ease 0.2s',
+        position:'absolute', bottom:0, left:0, right:0, zIndex:30,
+        display:'flex', flexDirection:'column', alignItems:'center',
+        padding:'0 44px 28px',
+        opacity: navIn ? 1 : 0, transition:'opacity 0.8s ease 0.45s',
       }}>
-
-        {/* Arrow buttons */}
-        <ArrowBtn dir="left"  onClick={() => go(-1)} disabled={activeIdx === 0} />
-        <ArrowBtn dir="right" onClick={() => go(1)}  disabled={activeIdx === total - 1} />
-
-        {themes.map((theme, i) => {
-          const offset    = i - activeIdx
-          if (Math.abs(offset) > 3) return null
-          const isCenter  = offset === 0
-          const absOff    = Math.abs(offset)
-          const themeWorks = works.filter(w => w.theme === theme)
-          const img       = themeWorks.find(w => w.image_url)?.image_url
-
-          // position: each slot = 20vw, center at 40vw
-          const leftPct   = 40 + offset * 20
-          const heightPct = isCenter ? 84 : absOff === 1 ? 62 : 50
-          const brightness= isCenter ? 0.78 : absOff === 1 ? 0.38 : 0.22
-
-          return (
-            <div key={theme}
-              style={{
-                position:'absolute',
-                left:`${leftPct}%`,
-                width:'20%',
-                height:`${heightPct}%`,
-                top:'50%',
-                transform:'translateY(-50%)',
-                overflow:'hidden',
-                cursor: isCenter ? 'pointer' : 'ew-resize',
-                opacity: Math.abs(offset) > 2 ? 0 : 1,
-                transition:[
-                  'left 0.52s cubic-bezier(0.22,1,0.36,1)',
-                  'height 0.52s cubic-bezier(0.22,1,0.36,1)',
-                  'opacity 0.35s ease',
-                ].join(', '),
-                zIndex: isCenter ? 2 : 1,
-              }}
-              onMouseEnter={() => handleHover(i)}
-              onClick={() => {
-                if (isCenter) navigate(`/works/${encodeURIComponent(theme)}`)
-                else setActiveIdx(i)
-              }}
-            >
-              {/* Center dark bg panel */}
-              {isCenter && (
-                <div style={{ position:'absolute', inset:'-10% 0',
-                  background:'rgba(28,28,28,0.6)', zIndex:0, pointerEvents:'none' }}/>
-              )}
-
-              {img && (
-                <img src={img} alt={theme}
-                  style={{
-                    position:'relative', zIndex:1,
-                    width:'100%', height:'100%',
-                    objectFit:'cover', objectPosition:'center top',
-                    filter:`brightness(${brightness})`,
-                    transform: isCenter ? 'scale(1.0)' : 'scale(1.0)',
-                    transition:'filter 0.45s ease',
-                  }}
-                />
-              )}
-
-              {/* Top/bottom gradient */}
-              <div style={{ position:'absolute', top:0, left:0, right:0, height:'30%', zIndex:2,
-                background:`linear-gradient(to bottom,${BG},transparent)`, pointerEvents:'none' }}/>
-              <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'30%', zIndex:2,
-                background:`linear-gradient(to top,${BG},transparent)`, pointerEvents:'none' }}/>
-
-              {/* Side fade */}
-              {!isCenter && (
-                <div style={{ position:'absolute', inset:0, zIndex:2,
-                  background: offset < 0
-                    ? `linear-gradient(to right,${BG} 0%,transparent 60%)`
-                    : `linear-gradient(to left,${BG} 0%,transparent 60%)`,
-                  pointerEvents:'none' }}/>
-              )}
-
-              {/* Center label */}
-              {isCenter && (
-                <div style={{
-                  position:'absolute', inset:0, zIndex:3,
-                  display:'flex', flexDirection:'column',
-                  alignItems:'center', justifyContent:'center', gap:'10px',
-                  pointerEvents:'none',
-                }}>
-                  <p style={{
-                    fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
-                    fontSize:'clamp(15px,1.5vw,22px)', color:'rgba(255,255,255,0.92)',
-                    letterSpacing:'2px', textAlign:'center', padding:'0 16px',
-                  }}>
-                    {theme}
-                  </p>
-                  <span style={{ fontSize:'9px', letterSpacing:'4px', textTransform:'uppercase',
-                    color:'rgba(255,255,255,0.35)' }}>
-                    {themeWorks.length} 件作品
-                  </span>
-                </div>
-              )}
-            </div>
-          )
-        })}
-      </div>
-
-      {/* Bottom */}
-      <div style={{
-        padding:'18px 44px', display:'flex',
-        justifyContent:'space-between', alignItems:'center',
-        flexShrink:0, zIndex:10,
-        opacity: navIn ? 1 : 0, transition:'opacity 0.8s ease 0.5s',
-      }}>
-        <span style={{ fontSize:'10px', letterSpacing:'2px', color:'rgba(255,255,255,0.35)' }}>
-          {total > 0 ? `${String(activeIdx+1).padStart(2,'0')} / ${String(total).padStart(2,'0')}` : '—'}
+        <span style={{
+          fontSize:'10px', letterSpacing:'2px', color:'rgba(255,255,255,0.32)',
+          marginBottom:'16px',
+        }}>
+          {total > 0 ? `${String(activeIdx + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}` : ''}
         </span>
 
-        {total > 0 && (
-          <div style={{ display:'flex', gap:'3px', alignItems:'center' }}>
-            {themes.map((_, i) => (
-              <div key={i} onClick={() => setActiveIdx(i)} style={{
-                width: i === activeIdx ? '18px' : '4px',
-                height:'2px', borderRadius:'1px', cursor:'pointer',
-                background: i === activeIdx ? 'rgba(255,255,255,0.65)' : 'rgba(255,255,255,0.18)',
-                transition:'all 0.35s ease',
-              }}/>
-            ))}
+        {/* Theme thumbnail strip */}
+        {total > 1 && (
+          <div style={{ display:'flex', gap:'6px', alignItems:'flex-end', marginBottom:'16px' }}>
+            {themeData.map((t, i) => {
+              const isActive = i === activeIdx
+              return (
+                <div
+                  key={t.name}
+                  onClick={() => { setImgLoaded(false); setActiveIdx(i) }}
+                  style={{
+                    width:  isActive ? '54px' : '38px',
+                    height: isActive ? '54px' : '38px',
+                    overflow:'hidden', flexShrink:0, cursor:'pointer',
+                    border: isActive
+                      ? '1.5px solid rgba(255,255,255,0.70)'
+                      : '1px solid rgba(255,255,255,0.18)',
+                    opacity: isActive ? 1 : 0.45,
+                    transition:'all 0.38s cubic-bezier(0.22,1,0.36,1)',
+                  }}>
+                  {t.image
+                    ? <img src={t.image} alt={t.name}
+                        style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'center top' }} />
+                    : <div style={{ width:'100%', height:'100%', background:'rgba(255,255,255,0.06)' }} />
+                  }
+                </div>
+              )
+            })}
           </div>
         )}
 
-        <span style={{ fontSize:'10px', letterSpacing:'2px', color:'rgba(255,255,255,0.18)' }}>
+        <span style={{ fontSize:'10px', letterSpacing:'2px', color:'rgba(255,255,255,0.14)' }}>
           © SIA TATTOOIST
         </span>
       </div>
