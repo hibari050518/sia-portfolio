@@ -141,7 +141,7 @@ export default function Home() {
   const prevPosRef   = useRef({ x: 0, y: 0 })
   const onMouseMove = useCallback((e) => {
     const now = Date.now()
-    if (now - lastSpawnRef.current < 22) return
+    if (now - lastSpawnRef.current < 65) return
     lastSpawnRef.current = now
     const container = cursorContainerRef.current
     if (!container) return
@@ -165,8 +165,8 @@ export default function Home() {
       `width:${sz}px`,
       `height:${sz}px`,
       `border-radius:50%`,
-      `background:radial-gradient(circle,rgba(255,255,255,0.92) 0%,rgba(200,235,245,0.45) 55%,transparent 100%)`,
-      `box-shadow:0 0 ${sz*2.5}px ${sz}px rgba(200,235,245,0.4)`,
+      `background:radial-gradient(circle,rgba(255,255,255,0.60) 0%,rgba(200,235,245,0.20) 55%,transparent 100%)`,
+      `box-shadow:0 0 ${sz*2}px ${sz*0.8}px rgba(200,235,245,0.18)`,
       `animation:trailDrift ${dur}s ease-out forwards`,
       `pointer-events:none`,
       `z-index:55`,
@@ -219,7 +219,7 @@ export default function Home() {
           50%     { opacity:1.00; border-color:rgba(255,255,255,0.95); box-shadow:0 0 32px rgba(255,255,255,0.22), inset 0 0 14px rgba(255,255,255,0.07); background:rgba(255,255,255,0.05); }
         }
         @keyframes trailDrift {
-          0%   { opacity: 0.72; transform: translate(0,    0)     scale(1);    }
+          0%   { opacity: 0.50; transform: translate(0,    0)     scale(1);    }
           15%  { opacity: 0.60; }
           50%  { opacity: 0.35; transform: translate(0,   -8px)   scale(0.82); }
           85%  { opacity: 0.10; transform: translate(0,  -16px)   scale(0.65); }
