@@ -14,7 +14,7 @@ function Layout() {
   const isHome = pathname === '/'
   return (
     <>
-      {!isHome && !/^\/works\/[^/]+\/[^/]+/.test(pathname) && !/^\/flash\/[^/]+\/[^/]+/.test(pathname) && <Navbar />}
+      {!isHome && pathname !== '/works' && pathname !== '/flash' && !/^\/works\//.test(pathname) && !/^\/flash\//.test(pathname) && <Navbar />}
       <Routes>
         <Route path="/"                    element={<Home />} />
         <Route path="/works"               element={<WorksHome />} />

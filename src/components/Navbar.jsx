@@ -1,50 +1,40 @@
+import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { WIX_URL } from '../config'
 
-const nav = { fontSize: '10px', letterSpacing: '2.5px', textTransform: 'uppercase', transition: 'color 0.2s' }
+function NavLink({ to, zh, en, active }) {
+  const [hov, setHov] = useState(false)
+  return (
+    <Link to={to}
+      style={{ fontSize:'12px', letterSpacing:'3px', textTransform:'uppercase',
+        color: active ? 'rgba(255,255,255,0.9)' : hov ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.5)',
+        transition:'color 0.25s' }}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}>
+      {hov ? en : zh}
+    </Link>
+  )
+}
 
 export default function Navbar() {
   const { pathname } = useLocation()
-
-  const links = [
-    { to: '/works', label: '作品' },
-    { to: '/flash', label: '認領圖' },
-  ]
-
   return (
     <nav style={{
-      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-      padding: '14px 36px',
-      borderBottom: '1px solid var(--border-light)',
-      background: 'rgba(12,18,20,0.93)',
-      backdropFilter: 'blur(10px)',
-      WebkitBackdropFilter: 'blur(10px)',
+      position:'fixed', top:0, left:0, right:0, zIndex:100,
+      display:'flex', justifyContent:'space-between', alignItems:'center',
+      padding:'28px 44px',
+      background:'transparent',
     }}>
-      <Link to="/" style={{
-        fontFamily: 'var(--serif)', fontSize: '18px', fontWeight: 300,
-        letterSpacing: '5px', textTransform: 'uppercase', color: 'var(--text-primary)',
-      }}>
-        Sia
+      <Link to="/" style={{ fontSize:'13px', letterSpacing:'4px',
+        color:'rgba(255,255,255,0.85)', fontFamily:'var(--serif)', textDecoration:'none' }}>
+        SIA TATTOOIST
       </Link>
-
-      <div style={{ display: 'flex', gap: '28px', alignItems: 'center' }}>
-        {links.map(({ to, label }) => {
-          const active = pathname.startsWith(to)
-          return (
-            <Link key={to} to={to} style={{
-              ...nav,
-              color: active ? 'var(--ocean)' : 'var(--text-secondary)',
-              borderBottom: active ? '1px solid var(--ocean)' : '1px solid transparent',
-              paddingBottom: '2px',
-            }}>
-              {label}
-            </Link>
-          )
-        })}
-        <a href={WIX_URL} target="_blank" rel="noopener noreferrer"
-          style={{ ...nav, color: 'var(--text-dim)' }}>
-          ↗ 主站
+      <div style={{ display:'flex', gap:'36px', alignItems:'center' }}>
+        <NavLink to="/works"  zh="作品"  en="Works" active={pathname.startsWith('/works')} />
+        <NavLink to="/flash"  zh="認領圖" en="Flash" active={pathname.startsWith('/flash')} />
+        <a href={WIX_URL} target="_blank" rel="noreferrer"
+          style={{ fontSize:'12px', letterSpacing:'2px', color:'var(--warm)' }}>
+          Appointments ↗
         </a>
       </div>
     </nav>
