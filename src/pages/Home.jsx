@@ -50,7 +50,7 @@ function SideImage({ src, side, vertPos = 'center' }) {
         style={{
           width: '100%', height: '100%',
           objectFit: 'cover', objectPosition: objPos,
-          filter: 'brightness(0.55) contrast(1.05)',
+          filter: 'brightness(0.68)',
           animation: `breatheImg ${BREATH_CYCLE}ms ease-in-out infinite`,
           animationDelay: side === 'left' ? '0ms' : `${BREATH_CYCLE * 0.45}ms`,
         }}
