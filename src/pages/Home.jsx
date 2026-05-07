@@ -141,7 +141,7 @@ export default function Home() {
   const prevPosRef   = useRef({ x: 0, y: 0 })
   const onMouseMove = useCallback((e) => {
     const now = Date.now()
-    if (now - lastSpawnRef.current < 30) return
+    if (now - lastSpawnRef.current < 22) return
     lastSpawnRef.current = now
     const container = cursorContainerRef.current
     if (!container) return
@@ -152,11 +152,11 @@ export default function Home() {
     if (speed < 3) return
     const nx = dx / speed
     const ny = dy / speed
-    const offset = 10 + Math.random() * 14
-    const spawnX = e.clientX - nx * offset + (Math.random() - 0.5) * 8
-    const spawnY = e.clientY - ny * offset + (Math.random() - 0.5) * 8
-    const sz  = 2 + Math.random() * 3.5
-    const dur = 0.5 + Math.random() * 0.7
+    const offset = 18 + Math.random() * 28
+    const spawnX = e.clientX - nx * offset + (Math.random() - 0.5) * 18
+    const spawnY = e.clientY - ny * offset + (Math.random() - 0.5) * 18
+    const sz  = 2.5 + Math.random() * 4
+    const dur = 3.5 + Math.random() * 3
     const el  = document.createElement('div')
     el.style.cssText = [
       `position:fixed`,
@@ -167,7 +167,7 @@ export default function Home() {
       `border-radius:50%`,
       `background:radial-gradient(circle,rgba(255,255,255,0.92) 0%,rgba(200,235,245,0.45) 55%,transparent 100%)`,
       `box-shadow:0 0 ${sz*2.5}px ${sz}px rgba(200,235,245,0.4)`,
-      `animation:trailFade ${dur}s ease-out forwards`,
+      `animation:trailDrift ${dur}s ease-out forwards`,
       `pointer-events:none`,
       `z-index:55`,
     ].join(';')
@@ -218,9 +218,12 @@ export default function Home() {
           0%,100% { opacity:0.40; border-color:rgba(255,255,255,0.28); box-shadow:0 0 0px rgba(255,255,255,0); background:transparent; }
           50%     { opacity:1.00; border-color:rgba(255,255,255,0.95); box-shadow:0 0 32px rgba(255,255,255,0.22), inset 0 0 14px rgba(255,255,255,0.07); background:rgba(255,255,255,0.05); }
         }
-        @keyframes trailFade {
-          0%   { opacity: 0.85; transform: scale(1);   }
-          100% { opacity: 0;    transform: scale(0.4); }
+        @keyframes trailDrift {
+          0%   { opacity: 0.72; transform: translate(0,    0)     scale(1);    }
+          15%  { opacity: 0.60; }
+          50%  { opacity: 0.35; transform: translate(0,   -8px)   scale(0.82); }
+          85%  { opacity: 0.10; transform: translate(0,  -16px)   scale(0.65); }
+          100% { opacity: 0;    transform: translate(0,  -22px)   scale(0.5);  }
         }
         @keyframes textBreathe {
           0%,100% { opacity: 0.40; }
