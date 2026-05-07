@@ -27,31 +27,32 @@ const SWAP_INTERVAL = 7000
 
 // 海面透視：從文字中心以下鋪開，越往下越寬越密（近大遠小的反向透視）
 // y 從 55vh 往下；x 靠近中心收窄、往下漸寬
+// op 亮度分三層：1.0 亮星 / 0.5 中等 / 0.22 暗淡遠星
 const PARTICLES = [
   // 文字正下方，窄而稀（y:55-63）
-  { x: 46, y: 55, sz: 3, dur: '11.5s', d: '0.0s' },
-  { x: 50, y: 60, sz: 4, dur: '12.0s', d: '3.2s' },
-  { x: 57, y: 63, sz: 3, dur: '11.0s', d: '1.8s' },
+  { x: 46, y: 55, sz: 3, dur: '16.5s', d: '0.0s',  op: 0.5  },
+  { x: 50, y: 60, sz: 4, dur: '18.0s', d: '3.2s',  op: 1.0  },
+  { x: 57, y: 63, sz: 3, dur: '15.5s', d: '1.8s',  op: 0.22 },
   // 中段，漸寬（y:65-75）
-  { x: 36, y: 65, sz: 4, dur: '13.2s', d: '0.8s' },
-  { x: 52, y: 68, sz: 3, dur: '11.8s', d: '4.5s' },
-  { x: 60, y: 67, sz: 4, dur: '12.6s', d: '2.0s' },
-  { x: 40, y: 72, sz: 3, dur: '13.8s', d: '1.2s' },
-  { x: 56, y: 74, sz: 4, dur: '11.4s', d: '5.0s' },
-  { x: 68, y: 72, sz: 3, dur: '12.2s', d: '0.4s' },
+  { x: 36, y: 65, sz: 4, dur: '19.2s', d: '0.8s',  op: 0.22 },
+  { x: 52, y: 68, sz: 3, dur: '16.8s', d: '4.5s',  op: 1.0  },
+  { x: 60, y: 67, sz: 4, dur: '17.6s', d: '2.0s',  op: 0.5  },
+  { x: 40, y: 72, sz: 3, dur: '20.0s', d: '1.2s',  op: 0.22 },
+  { x: 56, y: 74, sz: 4, dur: '15.8s', d: '5.0s',  op: 0.5  },
+  { x: 68, y: 72, sz: 3, dur: '18.4s', d: '0.4s',  op: 1.0  },
   // 下段，更寬（y:76-85）
-  { x: 24, y: 77, sz: 4, dur: '12.8s', d: '3.6s' },
-  { x: 42, y: 79, sz: 5, dur: '13.5s', d: '1.5s' },
-  { x: 58, y: 78, sz: 4, dur: '11.2s', d: '0.6s' },
-  { x: 74, y: 77, sz: 3, dur: '12.4s', d: '2.8s' },
-  { x: 34, y: 84, sz: 3, dur: '13.0s', d: '4.2s' },
-  { x: 62, y: 83, sz: 4, dur: '11.6s', d: '1.0s' },
+  { x: 24, y: 77, sz: 4, dur: '17.2s', d: '3.6s',  op: 0.22 },
+  { x: 42, y: 79, sz: 5, dur: '19.5s', d: '1.5s',  op: 0.5  },
+  { x: 58, y: 78, sz: 4, dur: '16.2s', d: '0.6s',  op: 1.0  },
+  { x: 74, y: 77, sz: 3, dur: '18.8s', d: '2.8s',  op: 0.22 },
+  { x: 34, y: 84, sz: 3, dur: '17.8s', d: '4.2s',  op: 0.5  },
+  { x: 62, y: 83, sz: 4, dur: '16.6s', d: '1.0s',  op: 0.22 },
   // 最底，最寬（y:87-93）
-  { x: 18, y: 88, sz: 3, dur: '12.5s', d: '2.2s' },
-  { x: 44, y: 91, sz: 3, dur: '13.8s', d: '0.3s' },
-  { x: 56, y: 90, sz: 4, dur: '11.8s', d: '3.8s' },
-  { x: 72, y: 89, sz: 3, dur: '12.0s', d: '5.2s' },
-  { x: 80, y: 89, sz: 3, dur: '13.2s', d: '1.4s' },
+  { x: 18, y: 88, sz: 3, dur: '19.0s', d: '2.2s',  op: 0.22 },
+  { x: 44, y: 91, sz: 3, dur: '17.4s', d: '0.3s',  op: 1.0  },
+  { x: 56, y: 90, sz: 4, dur: '15.8s', d: '3.8s',  op: 0.5  },
+  { x: 72, y: 89, sz: 3, dur: '20.4s', d: '5.2s',  op: 0.22 },
+  { x: 80, y: 89, sz: 3, dur: '18.2s', d: '1.4s',  op: 0.5  },
 ]
 
 // stagger 動態
@@ -277,8 +278,8 @@ export default function Home() {
           width:  `${p.sz}px`,
           height: `${p.sz}px`,
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.3) 60%, transparent 100%)',
-          boxShadow: `0 0 ${p.sz * 2}px ${p.sz}px rgba(255,255,255,0.2)`,
+          background: `radial-gradient(circle, rgba(255,255,255,${(0.95 * p.op).toFixed(2)}) 0%, rgba(255,255,255,${(0.3 * p.op).toFixed(2)}) 60%, transparent 100%)`,
+          boxShadow: `0 0 ${p.sz * 2}px ${p.sz}px rgba(255,255,255,${(0.18 * p.op).toFixed(2)})`,
           animation: `particleDrift ${p.dur} ease-in-out infinite`,
           animationDelay: p.d,
           pointerEvents: 'none',
