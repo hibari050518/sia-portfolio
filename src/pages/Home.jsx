@@ -257,7 +257,7 @@ export default function Home() {
         }}>
           <FadeUp delay={800}>
             <img src={LOGO_URL} alt="SIA TATTOOIST"
-              style={{ width:'100%', maxWidth:'240px', marginBottom:'28px',
+              style={{ width:'100%', maxWidth:'260px', marginBottom:'28px',
                 filter:'drop-shadow(0 2px 24px rgba(0,0,0,0.5))' }}
               onError={e => { e.currentTarget.style.display='none' }}
             />
@@ -265,7 +265,7 @@ export default function Home() {
 
           <FadeUp delay={1100}>
             <p style={{
-              fontSize:'13px', letterSpacing:'5px', textTransform:'uppercase',
+              fontSize:'14px', letterSpacing:'5px', textTransform:'uppercase',
               color:'var(--ocean)', marginBottom:'20px', opacity:0.95,
               animation:'textGlow 3.5s ease-in-out infinite',
               animationDelay:'2.5s',
@@ -277,7 +277,7 @@ export default function Home() {
           <FadeUp delay={1350}>
             <p style={{
               fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
-              fontSize:'clamp(13px, 1.4vw, 18px)', lineHeight:1.8,
+              fontSize:'clamp(15px, 1.6vw, 20px)', lineHeight:1.8,
               color:'rgba(255,255,255,0.72)', marginBottom:'12px',
             }}>
               A tattoo,<br />composed from the voice of your soul.
@@ -286,7 +286,7 @@ export default function Home() {
 
           <FadeUp delay={1550}>
             <p style={{
-              fontSize:'11px', letterSpacing:'2.5px',
+              fontSize:'12px', letterSpacing:'2.5px',
               color:'rgba(255,255,255,0.5)', marginBottom:'44px',
             }}>
               以刺青為你譜下靈魂深處的聲音
