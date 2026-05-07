@@ -232,25 +232,25 @@ export default function WorkDetail() {
         overflowY:'auto', zIndex:20,
         opacity: navIn ? 1 : 0, transition:'opacity 0.8s ease 0.3s',
       }}>
-        <div style={{ padding:'88px 44px 60px', display:'flex', flexDirection:'column', minHeight:'100%' }}>
+        <div style={{ padding:'92px 48px 64px', display:'flex', flexDirection:'column', minHeight:'100%' }}>
 
           {/* Theme tag */}
           <p style={{ fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
-            color:'var(--ocean)', marginBottom:'12px', opacity:0.85 }}>
+            color:'var(--ocean)', marginBottom:'32px', opacity:0.85 }}>
             {getThemeName(works, decoded, lang)}
           </p>
 
           {/* Title */}
           <h1 style={{ fontFamily:'var(--serif)', fontWeight:300, fontStyle:'italic',
-            fontSize:'clamp(22px, 2.2vw, 38px)', color:'rgba(255,255,255,0.92)',
-            lineHeight:1.2, marginTop:'20px', marginBottom:'28px' }}>
+            fontSize:'clamp(24px, 2.4vw, 42px)', color:'rgba(255,255,255,0.92)',
+            lineHeight:1.2, marginBottom:'36px' }}>
             {gl(work, 'title', lang)}
           </h1>
 
           {/* Story */}
           {gl(work, 'story', lang) && (
-            <p style={{ fontSize:'14px', lineHeight:2.0, color:'rgba(255,255,255,0.52)',
-              fontStyle:'italic', marginBottom:'40px',
+            <p style={{ fontSize:'14px', lineHeight:2.1, color:'rgba(255,255,255,0.52)',
+              fontStyle:'italic', marginBottom:'48px',
               borderLeft:'1px solid rgba(255,255,255,0.10)', paddingLeft:'20px' }}>
               {gl(work, 'story', lang)}
             </p>
@@ -264,10 +264,10 @@ export default function WorkDetail() {
               { label:'DATE',  value: work.date },
             ].filter(d => d.value).map(d => (
               <div key={d.label} style={{ display:'flex', alignItems:'baseline', gap:'16px',
-                borderBottom:'1px solid rgba(255,255,255,0.06)', padding:'12px 0' }}>
+                borderBottom:'1px solid rgba(255,255,255,0.06)', padding:'16px 0' }}>
                 <span style={{ fontSize:'12px', letterSpacing:'1.5px',
                   color:'rgba(255,255,255,0.22)', width:'60px', flexShrink:0 }}>{d.label}</span>
-                <span style={{ fontSize:'12px', color:'rgba(255,255,255,0.58)',
+                <span style={{ fontSize:'13px', color:'rgba(255,255,255,0.62)',
                   letterSpacing:'0.5px' }}>{d.value}</span>
               </div>
             ))}

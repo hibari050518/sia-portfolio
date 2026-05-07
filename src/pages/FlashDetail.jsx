@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useFlash } from '../hooks/useSheets'
 import { WIX_URL, LINE_ID } from '../config'
-import { useLang, t, gl, formatSize } from '../context/LangContext'
+import { useLang, t, formatSize } from '../context/LangContext'
 
 const BG    = '#111'
 const PANEL = '#161616'
@@ -39,6 +39,29 @@ function NavLink({ to, label }) {
   )
 }
 
+function ImgArrow({ dir, onClick, disabled }) {
+  const [hov, setHov] = useState(false)
+  return (
+    <button onClick={onClick} disabled={disabled}
+      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+      style={{
+        position:'absolute', top:'50%', transform:'translateY(-50%)',
+        [dir === 'left' ? 'left' : 'right']: '16px',
+        zIndex:10, background:'none', border:'none',
+        cursor: disabled ? 'default' : 'pointer', padding:'14px 10px',
+        opacity: disabled ? 0.08 : hov ? 0.9 : 0.38,
+        transition:'opacity 0.25s',
+      }}>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        {dir === 'left'
+          ? <path d="M15 4 L7 12 L15 20" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          : <path d="M9 4 L17 12 L9 20"  stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        }
+      </svg>
+    </button>
+  )
+}
+
 export default function FlashDetail() {
   const { series, id } = useParams()
   const decoded        = decodeURIComponent(series)
@@ -46,9 +69,10 @@ export default function FlashDetail() {
   const { flash, loading } = useFlash()
   const { lang }       = useLang()
 
-  const [navIn,     setNavIn]     = useState(false)
-  const [imgLoaded, setImgLoaded] = useState(false)
-  const [copied,    setCopied]    = useState(false)
+  const [navIn,        setNavIn]        = useState(false)
+  const [imgLoaded,    setImgLoaded]    = useState(false)
+  const [copied,       setCopied]       = useState(false)
+  const [activeImgIdx, setActiveImgIdx] = useState(0)
 
   useEffect(() => {
     const timer = setTimeout(() => setNavIn(true), 300)
@@ -59,13 +83,24 @@ export default function FlashDetail() {
   const itemIdx     = seriesItems.findIndex(f => f.id === id)
   const item        = seriesItems[itemIdx]
   const total       = seriesItems.length
-  const prev        = itemIdx > 0           ? seriesItems[itemIdx - 1] : null
-  const next        = itemIdx < total - 1   ? seriesItems[itemIdx + 1] : null
+  const prev        = itemIdx > 0         ? seriesItems[itemIdx - 1] : null
+  const next        = itemIdx < total - 1 ? seriesItems[itemIdx + 1] : null
+
+  // 收集多圖
+  const images = item
+    ? [item.image_url, item.image_url_2, item.image_url_3].filter(Boolean)
+    : []
 
   useEffect(() => {
     setImgLoaded(false)
     setCopied(false)
+    setActiveImgIdx(0)
   }, [id])
+
+  const goImg = (delta) => {
+    setImgLoaded(false)
+    setActiveImgIdx(i => Math.max(0, Math.min(images.length - 1, i + delta)))
+  }
 
   useEffect(() => {
     const handler = (e) => {
@@ -89,9 +124,9 @@ export default function FlashDetail() {
     </div>
   )
 
-  const isAvail = item.status?.trim() === '可認領'
+  const isAvail   = item.status?.trim() === '可認領'
+  const activeImg = images[activeImgIdx]
 
-  // Build inquiry text
   const buildInquiryText = () => {
     const lines = {
       zh: `嗨！我想詢問「${item.title}」的預約時間 🌿\n設計尺寸：${item.size_suggestion || '待確認'}\n預計部位：${item.body_part || '待確認'}\n請問目前可以預約什麼時候呢？`,
@@ -107,7 +142,6 @@ export default function FlashDetail() {
       setCopied(true)
       setTimeout(() => setCopied(false), 2500)
     }).catch(() => {
-      // fallback for older browsers
       const el = document.createElement('textarea')
       el.value = text
       document.body.appendChild(el)
@@ -130,10 +164,10 @@ export default function FlashDetail() {
         overflow:'hidden',
         opacity: navIn ? 1 : 0, transition:'opacity 0.8s ease 0.2s',
       }}>
-        {item.image_url && (
+        {activeImg && (
           <img
-            key={`${item.id}`}
-            src={item.image_url}
+            key={`${item.id}-${activeImgIdx}`}
+            src={activeImg}
             alt={item.title}
             onLoad={() => setImgLoaded(true)}
             style={{
@@ -153,9 +187,35 @@ export default function FlashDetail() {
           position:'absolute', top:0, right:0, bottom:0, width:'12%', zIndex:2,
           background:`linear-gradient(to right, transparent, ${PANEL})`, pointerEvents:'none',
         }} />
+
+        {/* 多圖切換箭頭 */}
+        {images.length > 1 && (
+          <>
+            <ImgArrow dir="left"  onClick={() => goImg(-1)} disabled={activeImgIdx === 0} />
+            <ImgArrow dir="right" onClick={() => goImg(1)}  disabled={activeImgIdx === images.length - 1} />
+          </>
+        )}
+
+        {/* 圓點指示器 */}
+        {images.length > 1 && (
+          <div style={{
+            position:'absolute', bottom:'28px', left:'50%', transform:'translateX(-50%)',
+            display:'flex', gap:'5px', zIndex:5,
+          }}>
+            {images.map((_, i) => (
+              <button key={i} onClick={() => { setImgLoaded(false); setActiveImgIdx(i) }}
+                style={{
+                  width: i === activeImgIdx ? '18px' : '5px',
+                  height:'2px', borderRadius:'1px', border:'none', padding:0, cursor:'pointer',
+                  background: i === activeImgIdx ? 'rgba(255,255,255,0.70)' : 'rgba(255,255,255,0.25)',
+                  transition:'all 0.35s ease',
+                }}/>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* ── Back link (left panel, top left) ── */}
+      {/* ── Back link ── */}
       <div style={{
         position:'absolute', top:'82px', left:'44px', zIndex:30,
         opacity: navIn ? 1 : 0, transition:'opacity 0.6s ease 0.12s',
@@ -199,19 +259,19 @@ export default function FlashDetail() {
         overflowY:'auto', zIndex:20,
         opacity: navIn ? 1 : 0, transition:'opacity 0.8s ease 0.3s',
       }}>
-        <div style={{ padding:'88px 44px 60px', display:'flex', flexDirection:'column', minHeight:'100%' }}>
+        <div style={{ padding:'92px 48px 64px', display:'flex', flexDirection:'column', minHeight:'100%' }}>
 
           {/* Series tag */}
           <p style={{ fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
-            color:'var(--ocean)', marginBottom:'10px', opacity:0.85 }}>
+            color:'var(--ocean)', marginBottom:'14px', opacity:0.85 }}>
             {decoded}
           </p>
 
-          {/* Status */}
-          <div style={{ marginBottom:'16px' }}>
+          {/* Status badge */}
+          <div style={{ marginBottom:'32px' }}>
             <span style={{
               fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
-              padding:'3px 10px',
+              padding:'4px 12px',
               color: isAvail ? 'var(--ocean)' : 'rgba(255,255,255,0.3)',
               border: `1px solid ${isAvail ? 'var(--ocean)' : 'rgba(255,255,255,0.18)'}`,
             }}>
@@ -221,41 +281,40 @@ export default function FlashDetail() {
 
           {/* Title */}
           <h1 style={{ fontFamily:'var(--serif)', fontWeight:300, fontStyle:'italic',
-            fontSize:'clamp(22px, 2.2vw, 38px)', color:'rgba(255,255,255,0.92)',
-            lineHeight:1.2, marginTop:'20px', marginBottom:'28px' }}>
+            fontSize:'clamp(24px, 2.4vw, 42px)', color:'rgba(255,255,255,0.92)',
+            lineHeight:1.2, marginBottom:'36px' }}>
             {item.title}
           </h1>
 
-          {/* Description / concept */}
+          {/* Description */}
           {item.description && (
-            <p style={{ fontSize:'14px', lineHeight:2.0, color:'rgba(255,255,255,0.52)',
-              fontStyle:'italic', marginBottom:'32px',
+            <p style={{ fontSize:'14px', lineHeight:2.1, color:'rgba(255,255,255,0.52)',
+              fontStyle:'italic', marginBottom:'48px',
               borderLeft:'1px solid rgba(255,255,255,0.10)', paddingLeft:'20px' }}>
               {item.description}
             </p>
           )}
 
           {/* Details */}
-          <div style={{ display:'flex', flexDirection:'column', marginBottom:'36px' }}>
+          <div style={{ display:'flex', flexDirection:'column', marginBottom:'52px' }}>
             {[
               { label:'BODY',  value: item.body_part },
               { label:'SIZE',  value: formatSize(item.size_suggestion, lang) },
               { label:'PRICE', value: item.price_range },
             ].filter(d => d.value).map(d => (
               <div key={d.label} style={{ display:'flex', alignItems:'baseline', gap:'16px',
-                borderBottom:'1px solid rgba(255,255,255,0.06)', padding:'12px 0' }}>
+                borderBottom:'1px solid rgba(255,255,255,0.06)', padding:'16px 0' }}>
                 <span style={{ fontSize:'12px', letterSpacing:'1.5px',
                   color:'rgba(255,255,255,0.22)', width:'60px', flexShrink:0 }}>{d.label}</span>
-                <span style={{ fontSize:'12px', color: d.label === 'PRICE' ? 'var(--gold)' : 'rgba(255,255,255,0.58)',
+                <span style={{ fontSize:'13px', color: d.label === 'PRICE' ? 'var(--gold)' : 'rgba(255,255,255,0.62)',
                   letterSpacing:'0.5px', fontStyle: d.label === 'PRICE' ? 'italic' : 'normal' }}>{d.value}</span>
               </div>
             ))}
           </div>
 
-          {/* CTA buttons */}
+          {/* CTA */}
           {isAvail ? (
-            <div style={{ display:'flex', flexDirection:'column', gap:'12px' }}>
-              {/* Copy inquiry */}
+            <div style={{ display:'flex', flexDirection:'column', gap:'14px' }}>
               <button
                 onClick={handleCopyAndLine}
                 style={{
@@ -263,21 +322,19 @@ export default function FlashDetail() {
                   border: `1px solid ${copied ? 'var(--ocean)' : 'rgba(255,255,255,0.28)'}`,
                   color: copied ? 'var(--ocean)' : 'rgba(255,255,255,0.75)',
                   fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
-                  padding:'12px 20px', cursor:'pointer',
+                  padding:'15px 20px', cursor:'pointer',
                   transition:'all 0.25s', textAlign:'center',
                 }}>
                 {copied ? t('copied',lang) : `${t('copyInquiry',lang)} ↗`}
               </button>
-
-              {/* LINE link */}
               <a href={lineUrl} target="_blank" rel="noreferrer"
                 style={{
                   display:'block', textAlign:'center',
                   background:'rgba(0,185,0,0.12)',
                   border:'1px solid rgba(0,185,0,0.4)',
                   color:'rgba(100,255,100,0.85)',
-                  fontSize:'12px', letterSpacing:'2.5px', textTransform:'uppercase',
-                  padding:'12px 20px', textDecoration:'none',
+                  fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
+                  padding:'15px 20px', textDecoration:'none',
                   transition:'all 0.25s',
                 }}
                 onMouseEnter={e => {
@@ -292,7 +349,7 @@ export default function FlashDetail() {
               </a>
             </div>
           ) : (
-            <p style={{ fontSize:'13px', lineHeight:1.9, color:'rgba(255,255,255,0.35)',
+            <p style={{ fontSize:'13px', lineHeight:2.0, color:'rgba(255,255,255,0.35)',
               fontStyle:'italic' }}>
               {t('takenNote',lang)}
             </p>
@@ -301,7 +358,7 @@ export default function FlashDetail() {
           {/* Prev / Next */}
           {(prev || next) && (
             <div style={{ display:'flex', justifyContent:'space-between',
-              marginTop:'auto', paddingTop:'40px',
+              marginTop:'auto', paddingTop:'44px',
               borderTop:'1px solid rgba(255,255,255,0.07)' }}>
               {prev
                 ? <Link to={`/flash/${encodeURIComponent(decoded)}/${prev.id}`}
