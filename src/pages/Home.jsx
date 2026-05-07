@@ -25,49 +25,46 @@ const BG = '#111'
 const BREATH_CYCLE  = 4400
 const SWAP_INTERVAL = 7000
 
-// 海面光點：全螢幕分布，delay 根據 x 位置計算讓「浪」由左向右傳遞
-// x/y = vw/vh 位置；sz = 直徑；waveDur = 單個粒子閃爍週期；waveDelay = 浪傳遞 delay
-const WAVE_PERIOD = 4.5  // 每道浪的週期（秒）
-const mkd = (x) => `${(x / 100 * WAVE_PERIOD).toFixed(2)}s`  // 讓浪從左往右傳
-
+// 海面透視：從文字中心以下鋪開，越往下越寬越密（近大遠小的反向透視）
+// y 從 55vh 往下；x 靠近中心收窄、往下漸寬
 const PARTICLES = [
-  // 左區
-  { x:  5, y: 30, sz: 4, waveDur: '4.5s', d: mkd(5)  },
-  { x:  8, y: 55, sz: 3, waveDur: '4.8s', d: mkd(8)  },
-  { x: 12, y: 40, sz: 6, waveDur: '4.2s', d: mkd(12) },
-  { x: 16, y: 68, sz: 3, waveDur: '5.0s', d: mkd(16) },
-  { x: 20, y: 25, sz: 5, waveDur: '4.6s', d: mkd(20) },
-  { x: 22, y: 50, sz: 4, waveDur: '4.3s', d: mkd(22) },
-  { x: 25, y: 75, sz: 3, waveDur: '4.9s', d: mkd(25) },
-  // 中左區
-  { x: 30, y: 35, sz: 7, waveDur: '4.4s', d: mkd(30) },
-  { x: 33, y: 62, sz: 4, waveDur: '5.1s', d: mkd(33) },
-  { x: 36, y: 20, sz: 3, waveDur: '4.7s', d: mkd(36) },
-  { x: 38, y: 72, sz: 5, waveDur: '4.2s', d: mkd(38) },
-  { x: 40, y: 45, sz: 3, waveDur: '4.8s', d: mkd(40) },
-  { x: 42, y: 58, sz: 6, waveDur: '4.5s', d: mkd(42) },
-  // 中央
-  { x: 45, y: 30, sz: 4, waveDur: '4.6s', d: mkd(45) },
-  { x: 48, y: 65, sz: 3, waveDur: '5.2s', d: mkd(48) },
-  { x: 50, y: 40, sz: 8, waveDur: '4.3s', d: mkd(50) },
-  { x: 52, y: 75, sz: 4, waveDur: '4.9s', d: mkd(52) },
-  { x: 55, y: 22, sz: 3, waveDur: '4.4s', d: mkd(55) },
-  { x: 57, y: 55, sz: 5, waveDur: '4.7s', d: mkd(57) },
-  // 中右區
-  { x: 60, y: 38, sz: 4, waveDur: '4.5s', d: mkd(60) },
-  { x: 63, y: 68, sz: 3, waveDur: '4.1s', d: mkd(63) },
-  { x: 65, y: 48, sz: 6, waveDur: '5.0s', d: mkd(65) },
-  { x: 68, y: 28, sz: 3, waveDur: '4.6s', d: mkd(68) },
-  { x: 70, y: 72, sz: 5, waveDur: '4.3s', d: mkd(70) },
-  { x: 73, y: 42, sz: 4, waveDur: '4.8s', d: mkd(73) },
-  // 右區
-  { x: 76, y: 58, sz: 3, waveDur: '5.1s', d: mkd(76) },
-  { x: 80, y: 32, sz: 5, waveDur: '4.4s', d: mkd(80) },
-  { x: 83, y: 65, sz: 4, waveDur: '4.7s', d: mkd(83) },
-  { x: 86, y: 48, sz: 3, waveDur: '4.9s', d: mkd(86) },
-  { x: 90, y: 25, sz: 6, waveDur: '4.2s', d: mkd(90) },
-  { x: 93, y: 70, sz: 3, waveDur: '5.0s', d: mkd(93) },
-  { x: 96, y: 42, sz: 4, waveDur: '4.6s', d: mkd(96) },
+  // 文字正下方，窄而稀（y:55-63）
+  { x: 46, y: 55, sz: 3, dur: '8.0s', d: '0.0s' },
+  { x: 54, y: 57, sz: 3, dur: '8.5s', d: '1.3s' },
+  { x: 50, y: 60, sz: 4, dur: '7.5s', d: '2.8s' },
+  { x: 43, y: 62, sz: 3, dur: '9.0s', d: '0.6s' },
+  { x: 57, y: 63, sz: 3, dur: '8.2s', d: '3.5s' },
+  // 中段，漸寬（y:65-75）
+  { x: 36, y: 65, sz: 4, dur: '7.8s', d: '1.0s' },
+  { x: 44, y: 66, sz: 5, dur: '8.6s', d: '4.1s' },
+  { x: 52, y: 68, sz: 3, dur: '7.2s', d: '0.4s' },
+  { x: 60, y: 67, sz: 4, dur: '9.2s', d: '2.2s' },
+  { x: 64, y: 70, sz: 3, dur: '8.0s', d: '1.7s' },
+  { x: 40, y: 72, sz: 3, dur: '8.8s', d: '3.0s' },
+  { x: 48, y: 73, sz: 5, dur: '7.6s', d: '0.9s' },
+  { x: 56, y: 74, sz: 4, dur: '9.4s', d: '4.6s' },
+  { x: 32, y: 71, sz: 3, dur: '7.9s', d: '2.5s' },
+  { x: 68, y: 72, sz: 3, dur: '8.3s', d: '1.4s' },
+  // 下段，更寬（y:76-85）
+  { x: 24, y: 77, sz: 4, dur: '8.1s', d: '3.8s' },
+  { x: 34, y: 78, sz: 3, dur: '7.4s', d: '0.2s' },
+  { x: 42, y: 79, sz: 6, dur: '9.0s', d: '2.0s' },
+  { x: 50, y: 80, sz: 4, dur: '8.7s', d: '4.9s' },
+  { x: 58, y: 78, sz: 5, dur: '7.3s', d: '1.1s' },
+  { x: 66, y: 80, sz: 3, dur: '8.9s', d: '3.3s' },
+  { x: 74, y: 77, sz: 4, dur: '7.7s', d: '0.7s' },
+  { x: 28, y: 83, sz: 3, dur: '9.3s', d: '2.7s' },
+  { x: 38, y: 84, sz: 4, dur: '8.4s', d: '1.8s' },
+  { x: 50, y: 85, sz: 3, dur: '7.1s', d: '4.4s' },
+  { x: 62, y: 83, sz: 5, dur: '8.6s', d: '0.5s' },
+  { x: 72, y: 85, sz: 3, dur: '9.1s', d: '3.6s' },
+  // 最底，最寬（y:87-93）
+  { x: 18, y: 88, sz: 3, dur: '8.2s', d: '1.5s' },
+  { x: 30, y: 90, sz: 4, dur: '7.8s', d: '4.0s' },
+  { x: 44, y: 91, sz: 3, dur: '9.5s', d: '0.3s' },
+  { x: 56, y: 90, sz: 5, dur: '8.0s', d: '2.9s' },
+  { x: 68, y: 91, sz: 3, dur: '7.5s', d: '1.6s' },
+  { x: 80, y: 89, sz: 4, dur: '9.0s', d: '3.2s' },
 ]
 
 // stagger 動態
@@ -185,14 +182,14 @@ export default function Home() {
           0%,100% { text-shadow: 0 0 0px rgba(90,170,191,0); }
           50%     { text-shadow: 0 0 18px rgba(90,170,191,0.45); }
         }
-        /* 海面光點：在原地做橢圓晃動，浪峰時最亮（模擬海面光反射） */
-        @keyframes oceanSparkle {
-          0%          { transform: translate(0, 0)     scale(0.6); opacity: 0.05; }
-          20%         { transform: translate(5px, -6px) scale(1.1); opacity: 0.9;  }
-          40%         { transform: translate(10px, 0)  scale(0.8); opacity: 0.3;  }
-          60%         { transform: translate(5px,  6px) scale(1.0); opacity: 0.6;  }
-          80%         { transform: translate(0,    3px) scale(0.7); opacity: 0.15; }
-          100%        { transform: translate(0, 0)     scale(0.6); opacity: 0.05; }
+        /* 海面光點：輕柔漂浮帶 S 曲線，像浪讓光點緩緩上移後消散 */
+        @keyframes particleDrift {
+          0%   { transform: translate(0, 0)         scale(1);    opacity: 0;    }
+          8%   { opacity: 0.75; }
+          35%  { transform: translate(9px,  -8vh)   scale(0.92); opacity: 0.65; }
+          65%  { transform: translate(-6px, -18vh)  scale(0.78); opacity: 0.35; }
+          90%  { opacity: 0.08; }
+          100% { transform: translate(4px,  -26vh)  scale(0.6);  opacity: 0;    }
         }
       `}</style>
 
@@ -209,9 +206,9 @@ export default function Home() {
           width:  `${p.sz}px`,
           height: `${p.sz}px`,
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(200,230,255,0.5) 50%, transparent 100%)',
-          boxShadow: `0 0 ${p.sz * 3}px ${p.sz * 1.5}px rgba(180,220,255,0.2)`,
-          animation: `oceanSparkle ${p.waveDur} ease-in-out infinite`,
+          background: 'radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.3) 60%, transparent 100%)',
+          boxShadow: `0 0 ${p.sz * 2}px ${p.sz}px rgba(255,255,255,0.2)`,
+          animation: `particleDrift ${p.dur} ease-in-out infinite`,
           animationDelay: p.d,
           pointerEvents: 'none',
           zIndex: 9,
