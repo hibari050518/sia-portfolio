@@ -259,23 +259,30 @@ export default function FlashDetail() {
         overflowY:'auto', zIndex:20,
         opacity: navIn ? 1 : 0, transition:'opacity 0.8s ease 0.3s',
       }}>
-        <div style={{ padding:'92px 48px 64px', display:'flex', flexDirection:'column', minHeight:'100%' }}>
+        <div style={{ padding:'108px 48px 64px', display:'flex', flexDirection:'column', minHeight:'100%' }}>
 
-          {/* Series tag + Status — 同一行 */}
+          {/* Series tag ─────── Status — 同一行，中間連線 */}
           <div style={{
-            display:'flex', justifyContent:'space-between', alignItems:'center',
-            marginBottom:'36px',
+            display:'flex', alignItems:'center',
+            marginBottom:'40px',
           }}>
-            <p style={{ fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
-              color:'var(--ocean)', opacity:0.85, margin:0 }}>
-              {decoded}
-            </p>
             <span style={{
               fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
-              padding:'4px 12px',
+              color:'var(--ocean)', opacity:0.85, flexShrink:0,
+              padding:'4px 0',
+            }}>
+              {decoded}
+            </span>
+            <div style={{
+              flex:1, height:'1px',
+              background:'rgba(255,255,255,0.12)',
+              margin:'0 16px',
+            }} />
+            <span style={{
+              fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
+              padding:'4px 12px', flexShrink:0,
               color: isAvail ? 'var(--ocean)' : 'rgba(255,255,255,0.3)',
-              border: `1px solid ${isAvail ? 'var(--ocean)' : 'rgba(255,255,255,0.18)'}`,
-              flexShrink: 0, marginLeft:'16px',
+              border: `1px solid ${isAvail ? 'rgba(74,143,160,0.6)' : 'rgba(255,255,255,0.15)'}`,
             }}>
               {isAvail ? t('available',lang) : t('taken',lang)}
             </span>
