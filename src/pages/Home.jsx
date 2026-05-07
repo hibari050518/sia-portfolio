@@ -388,8 +388,9 @@ export default function Home() {
                 e.currentTarget.style.color='rgba(255,255,255,0.8)'
               }}>
               <span style={{ position:'relative', display:'inline-block' }}>
-                <span style={{ opacity: btnHov ? 0 : 1, transition:'opacity 0.5s ease', display:'block' }}>瀏覽作品</span>
-                <span style={{ position:'absolute', inset:0, opacity: btnHov ? 1 : 0, transition:'opacity 0.5s ease', whiteSpace:'nowrap' }}>View Works</span>
+                <span style={{ visibility:'hidden', display:'block' }}>View Works</span>
+                <span style={{ position:'absolute', inset:0, textAlign:'center', opacity: btnHov ? 0 : 1, transition:'opacity 0.5s ease' }}>瀏覽作品</span>
+                <span style={{ position:'absolute', inset:0, textAlign:'center', opacity: btnHov ? 1 : 0, transition:'opacity 0.5s ease' }}>View Works</span>
               </span>
             </Link>
           </FadeUp>
