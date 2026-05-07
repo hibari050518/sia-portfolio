@@ -140,6 +140,23 @@ function HoverNavLink({ to, zh, en }) {
   )
 }
 
+function HoverWarmLink({ href, zh, en }) {
+  const [hov, setHov] = useState(false)
+  return (
+    <a href={href} target="_blank" rel="noreferrer" style={{
+      fontSize:'12px', letterSpacing:'2px',
+      color:'var(--warm)', transition:'color 0.2s',
+    }}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}>
+      <span style={{ position:'relative', display:'inline-block' }}>
+        <span style={{ opacity: hov ? 0 : 1, transition:'opacity 0.4s ease', display:'block' }}>{zh}</span>
+        <span style={{ position:'absolute', inset:0, opacity: hov ? 1 : 0, transition:'opacity 0.4s ease', whiteSpace:'nowrap' }}>{en}</span>
+      </span>
+    </a>
+  )
+}
+
 export default function Home() {
   const { works } = useWorks()
 
@@ -298,14 +315,7 @@ export default function Home() {
             {[{zh:'作品',en:'Works',to:'/works'},{zh:'認領圖',en:'Flash',to:'/flash'}].map(({ zh, en, to }) => (
               <HoverNavLink key={zh} to={to} zh={zh} en={en} />
             ))}
-            <a href={WIX_URL} target="_blank" rel="noreferrer" style={{
-              fontSize:'12px', letterSpacing:'2px',
-              color:'var(--warm)', transition:'color 0.2s',
-            }}
-              onMouseEnter={e => e.currentTarget.style.color='var(--warm-hover)'}
-              onMouseLeave={e => e.currentTarget.style.color='var(--warm)'}>
-              預約請前往主站 ↗
-            </a>
+            <HoverWarmLink href={WIX_URL} zh="預約請前往主站 ↗" en="Appointments ↗" />
           </div>
         </nav>
 
@@ -377,7 +387,10 @@ export default function Home() {
                 e.currentTarget.style.borderColor='rgba(255,255,255,0.28)'
                 e.currentTarget.style.color='rgba(255,255,255,0.8)'
               }}>
-              {btnHov ? 'View Works' : '瀏覽作品'}
+              <span style={{ position:'relative', display:'inline-block' }}>
+                <span style={{ opacity: btnHov ? 0 : 1, transition:'opacity 0.5s ease', display:'block' }}>瀏覽作品</span>
+                <span style={{ position:'absolute', inset:0, opacity: btnHov ? 1 : 0, transition:'opacity 0.5s ease', whiteSpace:'nowrap' }}>View Works</span>
+              </span>
             </Link>
           </FadeUp>
         </div>
