@@ -33,6 +33,13 @@ export function getThemeName(works, themeName, lang) {
   return (first && first[`theme_${lang}`]) || themeName
 }
 
+/** 取得系列名稱（從該系列第一筆 flash 取） */
+export function getSeriesName(flash, seriesName, lang) {
+  if (lang === 'zh') return seriesName
+  const first = flash.find(f => f.series === seriesName)
+  return (first && first[`series_${lang}`]) || seriesName
+}
+
 /** 靜態 UI 字串翻譯表 */
 const UI = {
   works:        { zh:'作品',    en:'Works',       ko:'작품'     },
@@ -43,7 +50,7 @@ const UI = {
   backWorks:    { zh:'作品集',   en:'Works',       ko:'작품집'   },
   pieces:       { zh:'件作品',   en:'works',       ko:'작품'     },
   browseWorks:  { zh:'瀏覽作品', en:'View Works',  ko:'작품 보기' },
-  tagline:      { zh:'以刺青為你譜下靈魂深處的聲音', en:'', ko:'' },
+  tagline:      { zh:'以刺青為你譜下靈魂深處的聲音', en:'', ko:'타투로 영혼 깊은 곳의 목소리를 담아드립니다' },
   prev:         { zh:'← Prev',  en:'← Prev',      ko:'← 이전'   },
   next:         { zh:'Next →',  en:'Next →',      ko:'다음 →'   },
   // Flash

@@ -133,35 +133,18 @@ function SideImage({ src, side, vertPos = 'center' }) {
   )
 }
 
-function HoverNavLink({ to, zh, en }) {
+function NavLink({ to, label }) {
   const [hov, setHov] = useState(false)
   return (
     <Link to={to} style={{
       fontSize:'12px', letterSpacing:'3px', textTransform:'uppercase',
       color: hov ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.5)',
-      transition:'color 0.25s',
+      transition:'color 0.25s', textDecoration:'none',
     }}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}>
-      {hov ? en : zh}
+      {label}
     </Link>
-  )
-}
-
-function HoverWarmLink({ href, zh, en }) {
-  const [hov, setHov] = useState(false)
-  return (
-    <a href={href} target="_blank" rel="noreferrer" style={{
-      fontSize:'12px', letterSpacing:'2px',
-      color:'var(--warm)', transition:'color 0.2s',
-    }}
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}>
-      <span style={{ position:'relative', display:'inline-block' }}>
-        <span style={{ opacity: hov ? 0 : 1, transition:'opacity 0.4s ease', display:'block' }}>{zh}</span>
-        <span style={{ position:'absolute', inset:0, opacity: hov ? 1 : 0, transition:'opacity 0.4s ease', whiteSpace:'nowrap' }}>{en}</span>
-      </span>
-    </a>
   )
 }
 
@@ -321,10 +304,14 @@ export default function Home() {
             SIA TATTOOIST
           </span>
           <div style={{ display:'flex', gap:'36px', alignItems:'center' }}>
-            {[{zh:'作品',en:'Works',to:'/works'},{zh:'認領圖',en:'Flash',to:'/flash'}].map(({ zh, en, to }) => (
-              <HoverNavLink key={zh} to={to} zh={zh} en={en} />
-            ))}
-            <HoverWarmLink href={WIX_URL} zh={t('appointments',lang)} en={t('appointments',lang)} />
+            <NavLink to="/works" label={t('works',lang)} />
+            <NavLink to="/flash" label={t('flash',lang)} />
+            <a href={WIX_URL} target="_blank" rel="noreferrer" style={{
+              fontSize:'12px', letterSpacing:'2px',
+              color:'var(--warm)', textDecoration:'none',
+            }}>
+              {t('appointments',lang)}
+            </a>
             <LangSwitcher />
           </div>
         </nav>
@@ -365,16 +352,17 @@ export default function Home() {
             </p>
           </FadeUp>
 
-          {lang === 'zh' && (
-            <FadeUp delay={1550}>
-              <p style={{
-                fontSize:'12px', letterSpacing:'2.5px', marginBottom:'44px',
-                color:'rgba(255,255,255,0.55)',
-              }}>
-                以刺青為你譜下靈魂深處的聲音
-              </p>
-            </FadeUp>
-          )}
+          <FadeUp delay={1550}>
+            {lang !== 'en'
+              ? <p style={{
+                  fontSize:'12px', letterSpacing: lang === 'ko' ? '1px' : '2.5px',
+                  marginBottom:'44px', color:'rgba(255,255,255,0.55)',
+                }}>
+                  {t('tagline', lang)}
+                </p>
+              : <div style={{ marginBottom:'44px' }} />
+            }
+          </FadeUp>
 
           <FadeUp delay={1800}>
             <Link to="/works" style={{

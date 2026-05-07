@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useFlash } from '../hooks/useSheets'
 import { WIX_URL } from '../config'
-import { useLang, t } from '../context/LangContext'
+import { useLang, t, gl, getSeriesName } from '../context/LangContext'
 
 const BG = '#111'
 
@@ -69,6 +69,7 @@ export default function FlashSeries() {
   const { flash, loading } = useFlash()
   const { lang }    = useLang()
   const [activeIdx, setActiveIdx] = useState(0)
+
   const [navIn,     setNavIn]     = useState(false)
   const hoverTimer  = useRef(null)
 

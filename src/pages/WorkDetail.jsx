@@ -198,7 +198,7 @@ export default function WorkDetail() {
             color:'rgba(255,255,255,0.38)', textDecoration:'none', transition:'color 0.2s' }}
           onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.8)'}
           onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.38)'}>
-          ← {decoded}
+          ← {getThemeName(works, decoded, lang)}
         </Link>
       </div>
 
