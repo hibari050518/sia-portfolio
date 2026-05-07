@@ -273,23 +273,28 @@ export default function Home() {
       <SideImage key={`L${leftKey}`}  src={LEFT_IMGS[leftIdx]}   side="left"  vertPos={leftVert} />
       <SideImage key={`R${rightKey}`} src={RIGHT_IMGS[rightIdx]} side="right" vertPos={rightVert} />
 
-      {/* 海面光點層 */}
-      {PARTICLES.map((p, i) => (
-        <div key={i} style={{
-          position: 'fixed',
-          left: `${p.x}vw`,
-          top:  `${p.y}vh`,
-          width:  `${p.sz}px`,
-          height: `${p.sz}px`,
-          borderRadius: '50%',
-          background: `radial-gradient(circle, rgba(255,255,255,${(0.95 * p.op).toFixed(2)}) 0%, rgba(255,255,255,${(0.3 * p.op).toFixed(2)}) 60%, transparent 100%)`,
-          boxShadow: `0 0 ${p.sz * 2}px ${p.sz}px rgba(255,255,255,${(0.18 * p.op).toFixed(2)})`,
-          animation: `particleDrift ${p.dur} ease-in-out infinite`,
-          animationDelay: p.d,
-          pointerEvents: 'none',
-          zIndex: 9,
-        }} />
-      ))}
+      {/* 海面光點層 — 包在 fade-in 容器裡，延遲漸入避免進場太亮 */}
+      <div style={{
+        position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 9,
+        opacity: navIn ? 1 : 0,
+        transition: 'opacity 3s ease 1.2s',
+      }}>
+        {PARTICLES.map((p, i) => (
+          <div key={i} style={{
+            position: 'fixed',
+            left: `${p.x}vw`,
+            top:  `${p.y}vh`,
+            width:  `${p.sz}px`,
+            height: `${p.sz}px`,
+            borderRadius: '50%',
+            background: `radial-gradient(circle, rgba(255,255,255,${(0.95 * p.op).toFixed(2)}) 0%, rgba(255,255,255,${(0.3 * p.op).toFixed(2)}) 60%, transparent 100%)`,
+            boxShadow: `0 0 ${p.sz * 2}px ${p.sz}px rgba(255,255,255,${(0.18 * p.op).toFixed(2)})`,
+            animation: `particleDrift ${p.dur} ease-in-out infinite`,
+            animationDelay: p.d,
+            pointerEvents: 'none',
+          }} />
+        ))}
+      </div>
 
       {/* UI 層 */}
       <div style={{ position:'absolute', inset:0, zIndex:10, display:'flex', flexDirection:'column' }}>
