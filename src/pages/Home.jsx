@@ -15,7 +15,7 @@ const ALL_IMGS = [
   'https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/IMG_1478.jpg',
   'https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/IMG_1699.JPG',
   'https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/IMG_1727.JPG',
-  'https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/t23051264.jpg',
+  'https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/f23051264.jpg',
 ]
 
 const LEFT_IMGS  = ALL_IMGS.filter((_, i) => i % 2 === 0)
@@ -125,6 +125,21 @@ function SideImage({ src, side, vertPos = 'center' }) {
   )
 }
 
+function HoverNavLink({ to, zh, en }) {
+  const [hov, setHov] = useState(false)
+  return (
+    <Link to={to} style={{
+      fontSize:'12px', letterSpacing:'3px', textTransform:'uppercase',
+      color: hov ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.5)',
+      transition:'color 0.25s',
+    }}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}>
+      {hov ? en : zh}
+    </Link>
+  )
+}
+
 export default function Home() {
   const { works } = useWorks()
 
@@ -135,6 +150,7 @@ export default function Home() {
   const [leftVert,  setLeftVert]  = useState('center')
   const [rightVert, setRightVert] = useState('bottom')
   const [navIn,    setNavIn]    = useState(false)
+  const [btnHov,    setBtnHov]   = useState(false)
 
   const cursorContainerRef = useRef(null)
   const lastSpawnRef = useRef(0)
@@ -279,15 +295,8 @@ export default function Home() {
             SIA TATTOOIST
           </span>
           <div style={{ display:'flex', gap:'36px', alignItems:'center' }}>
-            {[{label:'作品', to:'/works'}, {label:'認領圖', to:'/flash'}].map(({ label, to }) => (
-              <Link key={label} to={to} style={{
-                fontSize:'12px', letterSpacing:'3px', textTransform:'uppercase',
-                color:'rgba(255,255,255,0.5)', transition:'color 0.2s',
-              }}
-                onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.9)'}
-                onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.5)'}>
-                {label}
-              </Link>
+            {[{zh:'作品',en:'Works',to:'/works'},{zh:'認領圖',en:'Flash',to:'/flash'}].map(({ zh, en, to }) => (
+              <HoverNavLink key={zh} to={to} zh={zh} en={en} />
             ))}
             <a href={WIX_URL} target="_blank" rel="noreferrer" style={{
               fontSize:'12px', letterSpacing:'2px',
@@ -355,18 +364,20 @@ export default function Home() {
               animationDelay: '-2.5s',
             }}
               onMouseEnter={e => {
+                setBtnHov(true)
                 e.currentTarget.style.animation = 'none'
                 e.currentTarget.style.background='rgba(255,255,255,0.08)'
                 e.currentTarget.style.borderColor='rgba(255,255,255,0.65)'
                 e.currentTarget.style.color='#fff'
               }}
               onMouseLeave={e => {
+                setBtnHov(false)
                 e.currentTarget.style.animation = 'btnPulse 3.5s ease-in-out infinite'
                 e.currentTarget.style.background='transparent'
                 e.currentTarget.style.borderColor='rgba(255,255,255,0.28)'
                 e.currentTarget.style.color='rgba(255,255,255,0.8)'
               }}>
-              瀏覽作品
+              {btnHov ? 'View Works' : '瀏覽作品'}
             </Link>
           </FadeUp>
         </div>
