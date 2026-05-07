@@ -25,6 +25,22 @@ const BG = '#111'
 const BREATH_CYCLE  = 4400
 const SWAP_INTERVAL = 7000
 
+// 固定星點位置（相對中央區塊），避免每次 render 重新計算
+const STARS = [
+  { x: '-38%', y: '8%',   d: '0s',    dur: '2.6s', sz: '2px' },
+  { x:  '42%', y: '-12%', d: '0.9s',  dur: '3.2s', sz: '1px' },
+  { x: '-50%', y: '52%',  d: '1.5s',  dur: '2.2s', sz: '2px' },
+  { x:  '52%', y: '38%',  d: '0.3s',  dur: '3.8s', sz: '1px' },
+  { x: '-22%', y: '78%',  d: '2.1s',  dur: '2.5s', sz: '2px' },
+  { x:  '28%', y: '72%',  d: '1.1s',  dur: '3.0s', sz: '1px' },
+  { x: '-42%', y: '28%',  d: '0.6s',  dur: '2.8s', sz: '1px' },
+  { x:  '44%', y: '15%',  d: '1.8s',  dur: '2.3s', sz: '2px' },
+  { x:  '-8%', y: '-18%', d: '2.5s',  dur: '3.5s', sz: '1px' },
+  { x:  '18%', y: '90%',  d: '0.4s',  dur: '2.9s', sz: '2px' },
+  { x: '-60%', y: '62%',  d: '1.3s',  dur: '3.3s', sz: '1px' },
+  { x:  '60%', y: '55%',  d: '2.0s',  dur: '2.1s', sz: '2px' },
+]
+
 // stagger 動態：每個元素獨立淡入 + 上移
 function FadeUp({ children, delay = 0, style = {} }) {
   const [visible, setVisible] = useState(false)
@@ -150,7 +166,15 @@ export default function Home() {
         }
         @keyframes btnPulse {
           0%,100% { border-color: rgba(255,255,255,0.28); box-shadow: 0 0 0px rgba(255,255,255,0); }
-          50%     { border-color: rgba(255,255,255,0.75); box-shadow: 0 0 14px rgba(255,255,255,0.1); }
+          50%     { border-color: rgba(255,255,255,0.80); box-shadow: 0 0 18px rgba(255,255,255,0.12); }
+        }
+        @keyframes starTwinkle {
+          0%,100% { opacity: 0;    transform: scale(0.6); }
+          40%,60% { opacity: 0.9;  transform: scale(1.2); }
+        }
+        @keyframes textGlow {
+          0%,100% { text-shadow: 0 0 0px rgba(90,170,191,0); }
+          50%     { text-shadow: 0 0 18px rgba(90,170,191,0.45); }
         }
       `}</style>
 
@@ -196,8 +220,22 @@ export default function Home() {
         <div style={{
           flex:1, display:'flex', flexDirection:'column',
           alignItems:'center', justifyContent:'center', textAlign:'center',
-          padding:'0 36%',
+          padding:'0 36%', position:'relative',
         }}>
+
+          {/* 星光粒子 */}
+          {STARS.map((s, i) => (
+            <div key={i} style={{
+              position:'absolute',
+              left:`calc(50% + ${s.x})`, top:`calc(50% + ${s.y})`,
+              width: s.sz, height: s.sz,
+              borderRadius:'50%',
+              background:'rgba(255,255,255,0.95)',
+              animation:`starTwinkle ${s.dur} ease-in-out infinite`,
+              animationDelay: s.d,
+              pointerEvents:'none',
+            }} />
+          ))}
 
           <FadeUp delay={800}>
             <img src={LOGO_URL} alt="SIA TATTOOIST"
@@ -211,6 +249,8 @@ export default function Home() {
             <p style={{
               fontSize:'13px', letterSpacing:'5px', textTransform:'uppercase',
               color:'var(--ocean)', marginBottom:'20px', opacity:0.95,
+              animation:'textGlow 3.5s ease-in-out infinite',
+              animationDelay:'2.5s',
             }}>
               Spiritual Tattoo Artist
             </p>
