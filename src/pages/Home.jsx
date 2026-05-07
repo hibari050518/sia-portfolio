@@ -175,8 +175,12 @@ export default function Home() {
           50%      { transform:scale(1.045); opacity:0.85; }
         }
         @keyframes btnPulse {
-          0%,100% { border-color: rgba(255,255,255,0.28); box-shadow: 0 0 0px rgba(255,255,255,0); }
-          50%     { border-color: rgba(255,255,255,0.80); box-shadow: 0 0 18px rgba(255,255,255,0.12); }
+          0%,100% { border-color: rgba(255,255,255,0.28); box-shadow: 0 0 0px rgba(255,255,255,0); background: transparent; }
+          50%     { border-color: rgba(255,255,255,0.95); box-shadow: 0 0 32px rgba(255,255,255,0.22), inset 0 0 14px rgba(255,255,255,0.07); background: rgba(255,255,255,0.05); }
+        }
+        @keyframes textShimmer {
+          0%, 25%  { background-position: -200% center; }
+          65%, 100% { background-position: 250% center; }
         }
         @keyframes textGlow {
           0%,100% { text-shadow: 0 0 0px rgba(90,170,191,0); }
@@ -286,8 +290,14 @@ export default function Home() {
 
           <FadeUp delay={1550}>
             <p style={{
-              fontSize:'12px', letterSpacing:'2.5px',
-              color:'rgba(255,255,255,0.5)', marginBottom:'44px',
+              fontSize:'12px', letterSpacing:'2.5px', marginBottom:'44px',
+              background:'linear-gradient(90deg, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0.42) 30%, rgba(255,255,255,0.95) 50%, rgba(255,255,255,0.42) 70%, rgba(255,255,255,0.42) 100%)',
+              backgroundSize:'200% auto',
+              WebkitBackgroundClip:'text',
+              WebkitTextFillColor:'transparent',
+              backgroundClip:'text',
+              animation:'textShimmer 5.5s ease-in-out infinite',
+              animationDelay:'3.2s',
             }}>
               以刺青為你譜下靈魂深處的聲音
             </p>
