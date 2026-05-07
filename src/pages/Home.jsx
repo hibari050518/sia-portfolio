@@ -25,41 +25,41 @@ const BG = '#111'
 const BREATH_CYCLE  = 4400
 const SWAP_INTERVAL = 7000
 
-// 以螢幕中心為原點，用 vw/vh 做放射狀分布的星光
-// x/y 單位 vw/vh，從中心往外散開；sz = font-size；ch = 字元
-const SPARKLES = [
-  // 近距離內圈
-  { x:  -8, y: -18, d: '0s',   dur: '2.4s', sz: 14, ch: '✦' },
-  { x:  12, y: -14, d: '0.6s', dur: '3.0s', sz:  9, ch: '✧' },
-  { x: -14, y:   8, d: '1.2s', dur: '2.7s', sz: 11, ch: '✦' },
-  { x:  10, y:  16, d: '0.3s', dur: '3.4s', sz:  8, ch: '✧' },
-  // 中圈
-  { x: -24, y: -10, d: '0.9s', dur: '2.2s', sz: 16, ch: '✦' },
-  { x:  22, y:  -6, d: '1.5s', dur: '3.1s', sz: 10, ch: '✧' },
-  { x: -18, y:  22, d: '0.4s', dur: '2.8s', sz: 13, ch: '✦' },
-  { x:  20, y:  20, d: '1.8s', dur: '2.5s', sz:  8, ch: '✧' },
-  { x:   2, y: -26, d: '2.1s', dur: '3.6s', sz: 11, ch: '✦' },
-  { x:  -4, y:  28, d: '0.7s', dur: '2.3s', sz:  9, ch: '✧' },
-  // 外圈
-  { x: -36, y:  -4, d: '1.1s', dur: '3.2s', sz: 18, ch: '✦' },
-  { x:  34, y:  10, d: '0.2s', dur: '2.6s', sz: 12, ch: '✧' },
-  { x: -28, y:  32, d: '1.7s', dur: '3.0s', sz:  9, ch: '✦' },
-  { x:  30, y: -18, d: '0.8s', dur: '2.4s', sz: 14, ch: '✧' },
-  { x:  14, y:  36, d: '2.3s', dur: '3.5s', sz: 10, ch: '✦' },
-  { x: -10, y: -34, d: '1.4s', dur: '2.9s', sz:  8, ch: '✧' },
-  // 遠圈
-  { x: -44, y:  16, d: '0.5s', dur: '3.3s', sz: 16, ch: '✦' },
-  { x:  42, y: -12, d: '1.9s', dur: '2.7s', sz: 11, ch: '✧' },
-  { x: -20, y:  44, d: '0.1s', dur: '3.8s', sz:  9, ch: '✦' },
-  { x:  24, y: -40, d: '2.6s', dur: '2.2s', sz: 13, ch: '✧' },
-  { x:  -2, y:  48, d: '1.0s', dur: '3.1s', sz:  8, ch: '✦' },
-  { x:  46, y:  28, d: '2.2s', dur: '2.5s', sz: 12, ch: '✧' },
-  { x: -46, y: -28, d: '0.8s', dur: '3.6s', sz: 10, ch: '✦' },
-  { x:  -6, y: -48, d: '1.6s', dur: '2.8s', sz:  9, ch: '✧' },
+// 粒子系統：bokeh 光點，以中心為核心往外分布
+// x/y = 起始位置（vw/vh，相對螢幕中心）；sz = 直徑 px；dur = 飄升時長；d = delay
+const PARTICLES = [
+  { x: 50,  y: 72,  sz: 5,  dur: '7s',  d: '0s'   },
+  { x: 44,  y: 68,  sz: 3,  dur: '8.5s',d: '1.2s' },
+  { x: 56,  y: 74,  sz: 7,  dur: '6.5s',d: '0.5s' },
+  { x: 38,  y: 65,  sz: 4,  dur: '9s',  d: '2.1s' },
+  { x: 62,  y: 70,  sz: 3,  dur: '7.8s',d: '3.0s' },
+  { x: 48,  y: 60,  sz: 6,  dur: '8s',  d: '1.7s' },
+  { x: 54,  y: 62,  sz: 4,  dur: '7.2s',d: '0.8s' },
+  { x: 40,  y: 75,  sz: 5,  dur: '9.5s',d: '2.5s' },
+  { x: 60,  y: 58,  sz: 3,  dur: '6.8s',d: '1.4s' },
+  { x: 52,  y: 78,  sz: 8,  dur: '8.2s',d: '3.5s' },
+  { x: 34,  y: 60,  sz: 4,  dur: '7.5s',d: '0.3s' },
+  { x: 66,  y: 65,  sz: 5,  dur: '8.8s',d: '2.8s' },
+  { x: 46,  y: 55,  sz: 3,  dur: '7s',  d: '4.1s' },
+  { x: 58,  y: 80,  sz: 6,  dur: '9.2s',d: '1.0s' },
+  { x: 42,  y: 58,  sz: 4,  dur: '6.6s',d: '3.8s' },
+  { x: 64,  y: 72,  sz: 3,  dur: '8.0s',d: '0.6s' },
+  { x: 36,  y: 70,  sz: 5,  dur: '7.4s',d: '2.0s' },
+  { x: 50,  y: 55,  sz: 7,  dur: '9.0s',d: '4.5s' },
+  { x: 70,  y: 60,  sz: 3,  dur: '7.6s',d: '1.5s' },
+  { x: 30,  y: 65,  sz: 4,  dur: '8.4s',d: '3.2s' },
+  { x: 55,  y: 82,  sz: 5,  dur: '6.9s',d: '0.9s' },
+  { x: 45,  y: 52,  sz: 3,  dur: '8.6s',d: '2.3s' },
+  { x: 68,  y: 55,  sz: 6,  dur: '7.1s',d: '4.8s' },
+  { x: 32,  y: 55,  sz: 4,  dur: '9.4s',d: '1.8s' },
+  { x: 57,  y: 67,  sz: 3,  dur: '7.9s',d: '3.6s' },
+  { x: 43,  y: 80,  sz: 5,  dur: '8.1s',d: '0.4s' },
+  { x: 72,  y: 70,  sz: 4,  dur: '6.7s',d: '2.7s' },
+  { x: 28,  y: 72,  sz: 3,  dur: '8.9s',d: '1.1s' },
 ]
 
-// stagger 動態：每個元素獨立淡入 + 上移
-function FadeUp({ children, delay = 0, style = {} }) {
+// stagger 動態
+function FadeUp({ children, delay = 0 }) {
   const [visible, setVisible] = useState(false)
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), delay)
@@ -70,7 +70,6 @@ function FadeUp({ children, delay = 0, style = {} }) {
       opacity: visible ? 1 : 0,
       transform: visible ? 'translateY(0)' : 'translateY(16px)',
       transition: `opacity 0.9s ease, transform 0.9s ease`,
-      ...style,
     }}>
       {children}
     </div>
@@ -79,7 +78,6 @@ function FadeUp({ children, delay = 0, style = {} }) {
 
 function SideImage({ src, side, vertPos = 'center' }) {
   const [visible, setVisible] = useState(false)
-
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), side === 'left' ? 500 : 1800)
     return () => clearTimeout(t)
@@ -104,28 +102,15 @@ function SideImage({ src, side, vertPos = 'center' }) {
           animationDelay: side === 'left' ? '0ms' : `${BREATH_CYCLE * 0.5}ms`,
         }}
       />
-
-      {/* 上 */}
       <div style={{ position:'absolute', top:0, left:0, right:0, height:'38%',
-        background:`linear-gradient(to bottom, ${BG} 0%, transparent 100%)`,
-        pointerEvents:'none' }} />
-      {/* 下 */}
+        background:`linear-gradient(to bottom, ${BG} 0%, transparent 100%)`, pointerEvents:'none' }} />
       <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'38%',
-        background:`linear-gradient(to top, ${BG} 0%, transparent 100%)`,
+        background:`linear-gradient(to top, ${BG} 0%, transparent 100%)`, pointerEvents:'none' }} />
+      <div style={{ position:'absolute', top:0, bottom:0, [side]:0, width:'20%',
+        background: side==='left' ? `linear-gradient(to right, ${BG}, transparent)` : `linear-gradient(to left, ${BG}, transparent)`,
         pointerEvents:'none' }} />
-      {/* 外側 */}
-      <div style={{ position:'absolute', top:0, bottom:0,
-        [side]:0, width:'20%',
-        background: side==='left'
-          ? `linear-gradient(to right, ${BG}, transparent)`
-          : `linear-gradient(to left,  ${BG}, transparent)`,
-        pointerEvents:'none' }} />
-      {/* 內側 */}
-      <div style={{ position:'absolute', top:0, bottom:0,
-        [side==='left'?'right':'left']:0, width:'35%',
-        background: side==='left'
-          ? `linear-gradient(to left,  ${BG}, transparent)`
-          : `linear-gradient(to right, ${BG}, transparent)`,
+      <div style={{ position:'absolute', top:0, bottom:0, [side==='left'?'right':'left']:0, width:'35%',
+        background: side==='left' ? `linear-gradient(to left, ${BG}, transparent)` : `linear-gradient(to right, ${BG}, transparent)`,
         pointerEvents:'none' }} />
     </div>
   )
@@ -161,7 +146,6 @@ export default function Home() {
 
   useEffect(() => {
     if (RIGHT_IMGS.length < 2) return
-    // 右邊跟左邊一樣間隔，只是錯開半個周期開始
     const delay = setTimeout(() => {
       const t = setInterval(() => {
         setRightIdx(i  => (i + 1) % RIGHT_IMGS.length)
@@ -185,20 +169,43 @@ export default function Home() {
           0%,100% { border-color: rgba(255,255,255,0.28); box-shadow: 0 0 0px rgba(255,255,255,0); }
           50%     { border-color: rgba(255,255,255,0.80); box-shadow: 0 0 18px rgba(255,255,255,0.12); }
         }
-        @keyframes starTwinkle {
-          0%,100% { opacity: 0;   transform: scale(0.4) rotate(0deg);   }
-          20%,80% { opacity: 0.15; }
-          50%     { opacity: 1;   transform: scale(1.1) rotate(15deg);  }
-        }
         @keyframes textGlow {
           0%,100% { text-shadow: 0 0 0px rgba(90,170,191,0); }
           50%     { text-shadow: 0 0 18px rgba(90,170,191,0.45); }
+        }
+        /* 粒子：從起點飄升，走 S 曲線像浪 */
+        @keyframes particleDrift {
+          0%   { transform: translate(0,   0vh)  scale(1);    opacity: 0;   }
+          8%   { opacity: 0.85; }
+          30%  { transform: translate(12px, -12vh) scale(0.92); opacity: 0.7; }
+          55%  { transform: translate(-8px, -25vh) scale(0.80); opacity: 0.5; }
+          80%  { transform: translate(6px,  -38vh) scale(0.65); opacity: 0.2; }
+          100% { transform: translate(-4px, -50vh) scale(0.5);  opacity: 0;   }
         }
       `}</style>
 
       {/* 側邊圖片 */}
       <SideImage key={`L${leftKey}`}  src={LEFT_IMGS[leftIdx]}   side="left"  vertPos={leftVert} />
       <SideImage key={`R${rightKey}`} src={RIGHT_IMGS[rightIdx]} side="right" vertPos={rightVert} />
+
+      {/* 粒子層 — 在圖片和 UI 之間 */}
+      {PARTICLES.map((p, i) => (
+        <div key={i} style={{
+          position: 'fixed',
+          left: `${p.x}vw`,
+          top:  `${p.y}vh`,
+          width:  `${p.sz}px`,
+          height: `${p.sz}px`,
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.3) 60%, transparent 100%)',
+          boxShadow: `0 0 ${p.sz * 2}px ${p.sz}px rgba(255,255,255,0.25)`,
+          animation: `particleDrift ${p.dur} ease-in-out infinite`,
+          animationDelay: p.d,
+          pointerEvents: 'none',
+          zIndex: 9,
+          filter: 'blur(0.5px)',
+        }} />
+      ))}
 
       {/* UI 層 */}
       <div style={{ position:'absolute', inset:0, zIndex:10, display:'flex', flexDirection:'column' }}>
@@ -234,33 +241,12 @@ export default function Home() {
           </div>
         </nav>
 
-        {/* 中央文字 — 每個元素獨立 stagger */}
+        {/* 中央文字 */}
         <div style={{
           flex:1, display:'flex', flexDirection:'column',
           alignItems:'center', justifyContent:'center', textAlign:'center',
-          padding:'0 36%', position:'relative',
+          padding:'0 36%',
         }}>
-
-          {/* 星光粒子 — 以中心為原點放射分布 */}
-          {SPARKLES.map((s, i) => (
-            <div key={i} style={{
-              position:'fixed',
-              left:`calc(50vw + ${s.x}vw)`,
-              top:`calc(50vh + ${s.y}vh)`,
-              fontSize:`${s.sz}px`,
-              color:'rgba(255,255,255,0.95)',
-              filter:'drop-shadow(0 0 3px rgba(255,255,255,0.8))',
-              animation:`starTwinkle ${s.dur} ease-in-out infinite`,
-              animationDelay: s.d,
-              pointerEvents:'none',
-              zIndex: 9,
-              transform:'translate(-50%,-50%)',
-              lineHeight:1,
-            }}>
-              {s.ch}
-            </div>
-          ))}
-
           <FadeUp delay={800}>
             <img src={LOGO_URL} alt="SIA TATTOOIST"
               style={{ width:'100%', maxWidth:'240px', marginBottom:'28px',
