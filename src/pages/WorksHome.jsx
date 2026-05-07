@@ -1,41 +1,50 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useWorks } from '../hooks/useSheets'
 import { WIX_URL } from '../config'
 
 const BG = '#111'
 
+// slot 配置：offset -2,-1,0,+1,+2 對應的 left%, width%, height%
+const SLOTS = [
+  { l: 0,    w: 9,  h: 52, br: 0.28 },
+  { l: 9.3,  w: 16, h: 66, br: 0.42 },
+  { l: 25.6, w: 48, h: 86, br: 0.78 },
+  { l: 73.9, w: 16, h: 66, br: 0.42 },
+  { l: 90.2, w: 9,  h: 52, br: 0.28 },
+]
+
+function getSlot(offset) {
+  const i = offset + 2
+  if (i < 0) return { l: -13, w: 9, h: 52, br: 0.1, vis: false }
+  if (i > 4) return { l: 103, w: 9, h: 52, br: 0.1, vis: false }
+  return { ...SLOTS[i], vis: true }
+}
+
 function NavLink({ to, zh, en }) {
   const [hov, setHov] = useState(false)
   return (
     <Link to={to}
       style={{ fontSize:'12px', letterSpacing:'3px', textTransform:'uppercase',
-        color: hov ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.5)',
-        transition:'color 0.25s' }}
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}>
+        color: hov ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.5)', transition:'color 0.25s' }}
+      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}>
       {hov ? en : zh}
     </Link>
   )
 }
 
-// 五格寬度比例
-const WIDTHS  = [9, 16, 48, 16, 9]   // %
-const HEIGHTS = [52, 66, 86, 66, 52] // % of container
-
 export default function WorksHome() {
   const { works, loading } = useWorks()
-  const navigate = useNavigate()
+  const navigate           = useNavigate()
   const [activeIdx, setActiveIdx] = useState(0)
-  const [navIn, setNavIn]         = useState(false)
   const [hovCenter, setHovCenter] = useState(false)
+  const [navIn, setNavIn]         = useState(false)
 
   useEffect(() => {
     const t = setTimeout(() => setNavIn(true), 300)
     return () => clearTimeout(t)
   }, [])
 
-  // 鍵盤導覽
   useEffect(() => {
     const handler = (e) => {
       if (e.key === 'ArrowRight') setActiveIdx(i => Math.min(i + 1, works.length - 1))
@@ -59,13 +68,13 @@ export default function WorksHome() {
   const total = works.length
 
   return (
-    <div style={{ position:'fixed', inset:0, background:BG,
-      display:'flex', flexDirection:'column', overflow:'hidden' }}>
+    <div style={{ position:'fixed', inset:0, background:BG, display:'flex',
+      flexDirection:'column', overflow:'hidden' }}>
 
       {/* ── Nav ── */}
       <nav style={{
         display:'flex', justifyContent:'space-between', alignItems:'center',
-        padding:'28px 44px', flexShrink:0, position:'relative', zIndex:10,
+        padding:'28px 44px', flexShrink:0, zIndex:10,
         opacity: navIn ? 1 : 0, transition:'opacity 0.6s ease',
       }}>
         <Link to="/" style={{ fontSize:'13px', letterSpacing:'4px',
@@ -84,116 +93,106 @@ export default function WorksHome() {
 
       {/* ── Carousel ── */}
       <div style={{
-        flex:1, display:'flex', alignItems:'center',
-        padding:'0 0', gap:'3px',
-        opacity: navIn ? 1 : 0,
-        transition:'opacity 0.8s ease 0.2s',
+        flex:1, position:'relative', overflow:'hidden',
+        opacity: navIn ? 1 : 0, transition:'opacity 0.8s ease 0.2s',
       }}>
-        {[-2, -1, 0, 1, 2].map((offset, slotIdx) => {
-          const idx = activeIdx + offset
-          const isCenter  = offset === 0
-          const absOffset = Math.abs(offset)
-          const work      = (idx >= 0 && idx < total) ? works[idx] : null
+        {works.map((work, i) => {
+          const offset   = i - activeIdx
+          if (Math.abs(offset) > 3) return null
+          const slot     = getSlot(offset)
+          const isCenter = offset === 0
 
           return (
-            <div key={slotIdx} style={{
-              flex: `0 0 ${WIDTHS[slotIdx]}%`,
-              height: `${HEIGHTS[slotIdx]}%`,
-              position: 'relative',
+            <div key={work.id} style={{
+              position: 'absolute',
+              left:   `${slot.l}%`,
+              width:  `${slot.w}%`,
+              top:    '50%',
+              height: `${slot.h}%`,
+              transform: 'translateY(-50%)',
               overflow: 'hidden',
-              background: 'rgba(255,255,255,0.03)',
-              cursor: work ? (isCenter ? 'pointer' : 'pointer') : 'default',
-              transition: 'all 0.55s cubic-bezier(0.22,1,0.36,1)',
-              flexShrink: 0,
+              opacity: slot.vis ? 1 : 0,
+              cursor: 'pointer',
+              transition: [
+                'left 0.55s cubic-bezier(0.22,1,0.36,1)',
+                'width 0.55s cubic-bezier(0.22,1,0.36,1)',
+                'height 0.55s cubic-bezier(0.22,1,0.36,1)',
+                'opacity 0.4s ease',
+              ].join(', '),
             }}
-              onClick={() => {
-                if (!work) return
-                if (isCenter) navigate(`/works/${encodeURIComponent(work.theme)}/${work.id}`)
-                else setActiveIdx(idx)
-              }}
+              onClick={() => isCenter
+                ? navigate(`/works/${encodeURIComponent(work.theme)}/${work.id}`)
+                : setActiveIdx(i)
+              }
               onMouseEnter={() => isCenter && setHovCenter(true)}
               onMouseLeave={() => isCenter && setHovCenter(false)}
             >
-              {work?.image_url && (
+              {work.image_url && (
                 <img src={work.image_url} alt={work.title}
                   style={{
                     width:'100%', height:'100%', objectFit:'cover',
                     objectPosition:'center top',
-                    filter: `brightness(${isCenter ? (hovCenter ? 0.55 : 0.78) : absOffset === 1 ? 0.42 : 0.28})`,
-                    transition: 'filter 0.5s ease, transform 0.6s ease',
+                    filter: `brightness(${isCenter && hovCenter ? 0.55 : slot.br})`,
                     transform: isCenter && hovCenter ? 'scale(1.03)' : 'scale(1)',
+                    transition: 'filter 0.5s ease, transform 0.6s ease',
                   }}
                 />
               )}
 
-              {/* Center item: gradients */}
+              {/* 中間 gradients */}
               {isCenter && <>
-                <div style={{ position:'absolute', top:0, left:0, right:0, height:'32%',
-                  background:`linear-gradient(to bottom, ${BG}, transparent)`, pointerEvents:'none' }} />
-                <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'32%',
-                  background:`linear-gradient(to top, ${BG}, transparent)`, pointerEvents:'none' }} />
+                <div style={{ position:'absolute', top:0, left:0, right:0, height:'30%',
+                  background:`linear-gradient(to bottom,${BG},transparent)`, pointerEvents:'none' }}/>
+                <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'30%',
+                  background:`linear-gradient(to top,${BG},transparent)`, pointerEvents:'none' }}/>
               </>}
 
-              {/* Center item: hover title */}
+              {/* 側邊 fade */}
+              {!isCenter && <>
+                <div style={{ position:'absolute', top:0, left:0, right:0, height:'30%',
+                  background:`linear-gradient(to bottom,${BG},transparent)`, pointerEvents:'none' }}/>
+                <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'30%',
+                  background:`linear-gradient(to top,${BG},transparent)`, pointerEvents:'none' }}/>
+                <div style={{ position:'absolute', inset:0,
+                  background: offset < 0
+                    ? `linear-gradient(to right,${BG} 0%,transparent 60%)`
+                    : `linear-gradient(to left,${BG} 0%,transparent 60%)`,
+                  pointerEvents:'none' }}/>
+              </>}
+
+              {/* Hover title (center only) */}
               {isCenter && (
                 <div style={{
                   position:'absolute', inset:0, display:'flex',
                   alignItems:'center', justifyContent:'center',
+                  opacity: hovCenter ? 1 : 0, transition:'opacity 0.4s ease',
                   pointerEvents:'none',
-                  opacity: hovCenter ? 1 : 0,
-                  transition:'opacity 0.4s ease',
                 }}>
                   <p style={{
                     fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
-                    fontSize:'clamp(14px, 1.4vw, 20px)',
-                    color:'rgba(255,255,255,0.95)', letterSpacing:'2px',
-                    textAlign:'center', padding:'0 16px',
+                    fontSize:'clamp(14px,1.4vw,20px)', color:'rgba(255,255,255,0.95)',
+                    letterSpacing:'2px', textAlign:'center', padding:'0 20px',
                     transform: hovCenter ? 'translateY(0)' : 'translateY(6px)',
                     transition:'transform 0.4s ease',
                   }}>
-                    {work?.title}
+                    {work.title}
                   </p>
                 </div>
-              )}
-
-              {/* Non-center: side fade */}
-              {!isCenter && (
-                <>
-                  <div style={{
-                    position:'absolute', top:0, bottom:0,
-                    [offset < 0 ? 'left' : 'right']: 0,
-                    width:'40%',
-                    background: offset < 0
-                      ? `linear-gradient(to right, ${BG}, transparent)`
-                      : `linear-gradient(to left, ${BG}, transparent)`,
-                    pointerEvents:'none',
-                  }} />
-                  <div style={{
-                    position:'absolute', top:0, left:0, right:0, height:'28%',
-                    background:`linear-gradient(to bottom, ${BG}, transparent)`, pointerEvents:'none',
-                  }} />
-                  <div style={{
-                    position:'absolute', bottom:0, left:0, right:0, height:'28%',
-                    background:`linear-gradient(to top, ${BG}, transparent)`, pointerEvents:'none',
-                  }} />
-                </>
               )}
             </div>
           )
         })}
       </div>
 
-      {/* ── Bottom bar ── */}
+      {/* ── Bottom ── */}
       <div style={{
         padding:'18px 44px', display:'flex',
         justifyContent:'space-between', alignItems:'center',
         flexShrink:0, zIndex:10,
         opacity: navIn ? 1 : 0, transition:'opacity 0.8s ease 0.5s',
       }}>
-        {/* Counter + theme */}
         <div style={{ display:'flex', gap:'20px', alignItems:'baseline' }}>
-          <span style={{ fontSize:'10px', letterSpacing:'2px',
-            color:'rgba(255,255,255,0.35)', fontVariantNumeric:'tabular-nums' }}>
+          <span style={{ fontSize:'10px', letterSpacing:'2px', color:'rgba(255,255,255,0.35)' }}>
             {total > 0 ? `${String(activeIdx+1).padStart(2,'0')} / ${String(total).padStart(2,'0')}` : '—'}
           </span>
           {works[activeIdx]?.theme && (
@@ -204,20 +203,15 @@ export default function WorksHome() {
           )}
         </div>
 
-        {/* Scrubber */}
         {total > 0 && (
           <div style={{ display:'flex', gap:'3px', alignItems:'center' }}>
             {works.map((_, i) => (
               <div key={i} onClick={() => setActiveIdx(i)} style={{
                 width:  i === activeIdx ? '18px' : '4px',
-                height: '2px',
-                background: i === activeIdx
-                  ? 'rgba(255,255,255,0.65)'
-                  : 'rgba(255,255,255,0.18)',
-                transition: 'all 0.35s ease',
-                cursor: 'pointer',
-                borderRadius: '1px',
-              }} />
+                height: '2px', borderRadius:'1px', cursor:'pointer',
+                background: i === activeIdx ? 'rgba(255,255,255,0.65)' : 'rgba(255,255,255,0.18)',
+                transition:'all 0.35s ease',
+              }}/>
             ))}
           </div>
         )}
