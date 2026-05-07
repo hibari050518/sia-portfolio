@@ -136,12 +136,33 @@ export default function Home() {
   const [rightVert, setRightVert] = useState('bottom')
   const [navIn,    setNavIn]    = useState(false)
 
-  const cursorRef = useRef(null)
+  const cursorContainerRef = useRef(null)
+  const lastSpawnRef = useRef(0)
   const onMouseMove = useCallback((e) => {
-    if (cursorRef.current) {
-      cursorRef.current.style.left = `${e.clientX - 45}px`
-      cursorRef.current.style.top  = `${e.clientY - 45}px`
-    }
+    const now = Date.now()
+    if (now - lastSpawnRef.current < 90) return
+    lastSpawnRef.current = now
+    const container = cursorContainerRef.current
+    if (!container) return
+    const sz  = 2 + Math.random() * 3.5
+    const dur = 9 + Math.random() * 7
+    const ox  = (Math.random() - 0.5) * 24
+    const oy  = (Math.random() - 0.5) * 24
+    const el  = document.createElement('div')
+    el.style.cssText = [
+      `position:fixed`,
+      `left:${e.clientX + ox - sz / 2}px`,
+      `top:${e.clientY + oy - sz / 2}px`,
+      `width:${sz}px`,
+      `height:${sz}px`,
+      `border-radius:50%`,
+      `background:radial-gradient(circle,rgba(255,255,255,0.92) 0%,rgba(255,255,255,0.28) 60%,transparent 100%)`,
+      `box-shadow:0 0 ${sz*2}px ${sz}px rgba(255,255,255,0.15)`,
+      `animation:particleDrift ${dur}s ease-in-out forwards`,
+      `pointer-events:none`,
+    ].join(';')
+    container.appendChild(el)
+    setTimeout(() => el.remove(), dur * 1000)
   }, [])
 
   const VERT = ['top', 'center', 'bottom']
@@ -184,12 +205,12 @@ export default function Home() {
           50%      { transform:scale(1.045); opacity:0.85; }
         }
         @keyframes btnPulse {
-          0%,100% { border-color: rgba(255,255,255,0.28); box-shadow: 0 0 0px rgba(255,255,255,0); background: transparent; }
-          50%     { border-color: rgba(255,255,255,0.95); box-shadow: 0 0 32px rgba(255,255,255,0.22), inset 0 0 14px rgba(255,255,255,0.07); background: rgba(255,255,255,0.05); }
+          0%,100% { opacity:0.40; border-color:rgba(255,255,255,0.28); box-shadow:0 0 0px rgba(255,255,255,0); background:transparent; }
+          50%     { opacity:1.00; border-color:rgba(255,255,255,0.95); box-shadow:0 0 32px rgba(255,255,255,0.22), inset 0 0 14px rgba(255,255,255,0.07); background:rgba(255,255,255,0.05); }
         }
         @keyframes textBreathe {
-          0%   { background-position: -80% center; }
-          100% { background-position: 280% center; }
+          0%,100% { opacity: 0.40; }
+          50%     { opacity: 1.00; }
         }
         @keyframes textGlow {
           0%,100% { text-shadow: 0 0 0px rgba(90,170,191,0); }
@@ -291,13 +312,10 @@ export default function Home() {
             <p style={{
               fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
               fontSize:'clamp(15px, 1.6vw, 20px)', lineHeight:1.8,
+              color:'rgba(255,255,255,0.85)',
               marginBottom:'12px',
-              background:'linear-gradient(90deg, rgba(255,255,255,0.60) 0%, rgba(255,255,255,0.60) 25%, rgba(255,255,255,0.96) 50%, rgba(255,255,255,0.60) 75%, rgba(255,255,255,0.60) 100%)',
-              backgroundSize:'300% auto',
-              WebkitBackgroundClip:'text',
-              WebkitTextFillColor:'transparent',
-              backgroundClip:'text',
-              animation:'textBreathe 11s linear infinite',
+              animation:'textBreathe 5s ease-in-out infinite',
+              animationDelay:'0s',
             }}>
               A tattoo,<br />composed from the voice of your soul.
             </p>
@@ -306,13 +324,9 @@ export default function Home() {
           <FadeUp delay={1550}>
             <p style={{
               fontSize:'12px', letterSpacing:'2.5px', marginBottom:'44px',
-              background:'linear-gradient(90deg, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0.42) 30%, rgba(255,255,255,0.95) 50%, rgba(255,255,255,0.42) 70%, rgba(255,255,255,0.42) 100%)',
-              backgroundSize:'200% auto',
-              WebkitBackgroundClip:'text',
-              WebkitTextFillColor:'transparent',
-              backgroundClip:'text',
-              animation:'textBreathe 11s linear infinite',
-              animationDelay:'-5s',
+              color:'rgba(255,255,255,0.75)',
+              animation:'textBreathe 5s ease-in-out infinite',
+              animationDelay:'-1.2s',
             }}>
               以刺青為你譜下靈魂深處的聲音
             </p>
@@ -324,8 +338,8 @@ export default function Home() {
               border:'1px solid rgba(255,255,255,0.28)',
               fontSize:'11px', letterSpacing:'5px', textTransform:'uppercase',
               color:'rgba(255,255,255,0.8)', transition:'background 0.3s ease, color 0.3s ease',
-              animation: 'btnPulse 2.8s ease-in-out infinite',
-              animationDelay: '2.2s',
+              animation: 'btnPulse 5s ease-in-out infinite',
+              animationDelay: '-2.5s',
             }}
               onMouseEnter={e => {
                 e.currentTarget.style.animation = 'none'
@@ -334,7 +348,7 @@ export default function Home() {
                 e.currentTarget.style.color='#fff'
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.animation = 'btnPulse 2.8s ease-in-out infinite'
+                e.currentTarget.style.animation = 'btnPulse 5s ease-in-out infinite'
                 e.currentTarget.style.background='transparent'
                 e.currentTarget.style.borderColor='rgba(255,255,255,0.28)'
                 e.currentTarget.style.color='rgba(255,255,255,0.8)'
@@ -355,18 +369,8 @@ export default function Home() {
         </div>
       </div>
 
-      {/* 游標光 */}
-      <div ref={cursorRef} style={{
-        position: 'fixed',
-        left: '-90px', top: '-90px',
-        width: '90px', height: '90px',
-        borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(140,205,220,0.28) 0%, rgba(140,205,220,0.08) 55%, transparent 75%)',
-        pointerEvents: 'none',
-        zIndex: 50,
-        mixBlendMode: 'screen',
-        transition: 'left 0.18s cubic-bezier(0.22,1,0.36,1), top 0.18s cubic-bezier(0.22,1,0.36,1)',
-      }} />
+      {/* 游標漂浮粒子容器 */}
+      <div ref={cursorContainerRef} style={{ position:'fixed', inset:0, pointerEvents:'none', zIndex:50 }} />
     </div>
   )
 }
