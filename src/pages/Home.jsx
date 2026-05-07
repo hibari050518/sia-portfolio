@@ -25,20 +25,37 @@ const BG = '#111'
 const BREATH_CYCLE  = 4400
 const SWAP_INTERVAL = 7000
 
-// 固定星點位置（相對中央區塊），避免每次 render 重新計算
-const STARS = [
-  { x: '-38%', y: '8%',   d: '0s',    dur: '2.6s', sz: '2px' },
-  { x:  '42%', y: '-12%', d: '0.9s',  dur: '3.2s', sz: '1px' },
-  { x: '-50%', y: '52%',  d: '1.5s',  dur: '2.2s', sz: '2px' },
-  { x:  '52%', y: '38%',  d: '0.3s',  dur: '3.8s', sz: '1px' },
-  { x: '-22%', y: '78%',  d: '2.1s',  dur: '2.5s', sz: '2px' },
-  { x:  '28%', y: '72%',  d: '1.1s',  dur: '3.0s', sz: '1px' },
-  { x: '-42%', y: '28%',  d: '0.6s',  dur: '2.8s', sz: '1px' },
-  { x:  '44%', y: '15%',  d: '1.8s',  dur: '2.3s', sz: '2px' },
-  { x:  '-8%', y: '-18%', d: '2.5s',  dur: '3.5s', sz: '1px' },
-  { x:  '18%', y: '90%',  d: '0.4s',  dur: '2.9s', sz: '2px' },
-  { x: '-60%', y: '62%',  d: '1.3s',  dur: '3.3s', sz: '1px' },
-  { x:  '60%', y: '55%',  d: '2.0s',  dur: '2.1s', sz: '2px' },
+// 以螢幕中心為原點，用 vw/vh 做放射狀分布的星光
+// x/y 單位 vw/vh，從中心往外散開；sz = font-size；ch = 字元
+const SPARKLES = [
+  // 近距離內圈
+  { x:  -8, y: -18, d: '0s',   dur: '2.4s', sz: 14, ch: '✦' },
+  { x:  12, y: -14, d: '0.6s', dur: '3.0s', sz:  9, ch: '✧' },
+  { x: -14, y:   8, d: '1.2s', dur: '2.7s', sz: 11, ch: '✦' },
+  { x:  10, y:  16, d: '0.3s', dur: '3.4s', sz:  8, ch: '✧' },
+  // 中圈
+  { x: -24, y: -10, d: '0.9s', dur: '2.2s', sz: 16, ch: '✦' },
+  { x:  22, y:  -6, d: '1.5s', dur: '3.1s', sz: 10, ch: '✧' },
+  { x: -18, y:  22, d: '0.4s', dur: '2.8s', sz: 13, ch: '✦' },
+  { x:  20, y:  20, d: '1.8s', dur: '2.5s', sz:  8, ch: '✧' },
+  { x:   2, y: -26, d: '2.1s', dur: '3.6s', sz: 11, ch: '✦' },
+  { x:  -4, y:  28, d: '0.7s', dur: '2.3s', sz:  9, ch: '✧' },
+  // 外圈
+  { x: -36, y:  -4, d: '1.1s', dur: '3.2s', sz: 18, ch: '✦' },
+  { x:  34, y:  10, d: '0.2s', dur: '2.6s', sz: 12, ch: '✧' },
+  { x: -28, y:  32, d: '1.7s', dur: '3.0s', sz:  9, ch: '✦' },
+  { x:  30, y: -18, d: '0.8s', dur: '2.4s', sz: 14, ch: '✧' },
+  { x:  14, y:  36, d: '2.3s', dur: '3.5s', sz: 10, ch: '✦' },
+  { x: -10, y: -34, d: '1.4s', dur: '2.9s', sz:  8, ch: '✧' },
+  // 遠圈
+  { x: -44, y:  16, d: '0.5s', dur: '3.3s', sz: 16, ch: '✦' },
+  { x:  42, y: -12, d: '1.9s', dur: '2.7s', sz: 11, ch: '✧' },
+  { x: -20, y:  44, d: '0.1s', dur: '3.8s', sz:  9, ch: '✦' },
+  { x:  24, y: -40, d: '2.6s', dur: '2.2s', sz: 13, ch: '✧' },
+  { x:  -2, y:  48, d: '1.0s', dur: '3.1s', sz:  8, ch: '✦' },
+  { x:  46, y:  28, d: '2.2s', dur: '2.5s', sz: 12, ch: '✧' },
+  { x: -46, y: -28, d: '0.8s', dur: '3.6s', sz: 10, ch: '✦' },
+  { x:  -6, y: -48, d: '1.6s', dur: '2.8s', sz:  9, ch: '✧' },
 ]
 
 // stagger 動態：每個元素獨立淡入 + 上移
@@ -169,8 +186,9 @@ export default function Home() {
           50%     { border-color: rgba(255,255,255,0.80); box-shadow: 0 0 18px rgba(255,255,255,0.12); }
         }
         @keyframes starTwinkle {
-          0%,100% { opacity: 0;    transform: scale(0.6); }
-          40%,60% { opacity: 0.9;  transform: scale(1.2); }
+          0%,100% { opacity: 0;   transform: scale(0.4) rotate(0deg);   }
+          20%,80% { opacity: 0.15; }
+          50%     { opacity: 1;   transform: scale(1.1) rotate(15deg);  }
         }
         @keyframes textGlow {
           0%,100% { text-shadow: 0 0 0px rgba(90,170,191,0); }
@@ -223,18 +241,24 @@ export default function Home() {
           padding:'0 36%', position:'relative',
         }}>
 
-          {/* 星光粒子 */}
-          {STARS.map((s, i) => (
+          {/* 星光粒子 — 以中心為原點放射分布 */}
+          {SPARKLES.map((s, i) => (
             <div key={i} style={{
-              position:'absolute',
-              left:`calc(50% + ${s.x})`, top:`calc(50% + ${s.y})`,
-              width: s.sz, height: s.sz,
-              borderRadius:'50%',
-              background:'rgba(255,255,255,0.95)',
+              position:'fixed',
+              left:`calc(50vw + ${s.x}vw)`,
+              top:`calc(50vh + ${s.y}vh)`,
+              fontSize:`${s.sz}px`,
+              color:'rgba(255,255,255,0.95)',
+              filter:'drop-shadow(0 0 3px rgba(255,255,255,0.8))',
               animation:`starTwinkle ${s.dur} ease-in-out infinite`,
               animationDelay: s.d,
               pointerEvents:'none',
-            }} />
+              zIndex: 9,
+              transform:'translate(-50%,-50%)',
+              lineHeight:1,
+            }}>
+              {s.ch}
+            </div>
           ))}
 
           <FadeUp delay={800}>
