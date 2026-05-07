@@ -56,8 +56,9 @@ export default function WorksTheme() {
     return () => clearTimeout(t)
   }, [])
 
-  const themeWorks = works.filter(w => w.theme === decoded)
-  const total      = themeWorks.length
+  const themeWorks        = works.filter(w => w.theme === decoded)
+  const total             = themeWorks.length
+  const themeDescription  = themeWorks[0]?.theme_description || ''
 
   const go = (delta) => setActiveIdx(i => Math.max(0, Math.min(total - 1, i + delta)))
 
@@ -127,6 +128,19 @@ export default function WorksTheme() {
           color:'rgba(255,255,255,0.55)' }}>{decoded}</span>
       </div>
 
+      {/* ── Theme description ── */}
+      {themeDescription && (
+        <div style={{
+          padding:'0 44px 16px', flexShrink:0, zIndex:10,
+          opacity: navIn ? 1 : 0, transition:'opacity 0.6s ease 0.18s',
+        }}>
+          <p style={{ fontSize:'12px', lineHeight:1.8, color:'rgba(255,255,255,0.36)',
+            fontStyle:'italic', maxWidth:'480px', letterSpacing:'0.3px' }}>
+            {themeDescription}
+          </p>
+        </div>
+      )}
+
       {/* ── Carousel ── */}
       <div style={{
         flex:1, position:'relative', overflow:'hidden',
@@ -172,7 +186,7 @@ export default function WorksTheme() {
               {work.image_url
                 ? <img src={work.image_url} alt={work.title}
                     style={{ position:'relative', zIndex:1, width:'100%', height:'100%',
-                      objectFit:'cover', objectPosition:'center top',
+                      objectFit:'cover', objectPosition:'center center',
                       filter:`brightness(${brightness})`, transition:'filter 0.45s ease' }}
                   />
                 : <div style={{ position:'relative', zIndex:1, width:'100%', height:'100%',
@@ -193,6 +207,7 @@ export default function WorksTheme() {
                 <div style={{ position:'absolute', inset:0, zIndex:3,
                   display:'flex', flexDirection:'column',
                   alignItems:'center', justifyContent:'center', gap:'12px',
+                  paddingTop:'12%',
                   pointerEvents:'none' }}>
                   {work.body_part && (
                     <span style={{

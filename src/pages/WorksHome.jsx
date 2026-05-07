@@ -97,8 +97,8 @@ export default function WorksHome() {
           onLoad={() => setImgLoaded(true)}
           style={{
             position:'absolute', inset:0, width:'100%', height:'100%',
-            objectFit:'cover', objectPosition:'center top',
-            filter:'brightness(0.55)',
+            objectFit:'cover', objectPosition:'center center',
+            filter:'brightness(0.58)',
             opacity: imgLoaded ? 1 : 0,
             transition:'opacity 0.75s ease',
           }}
