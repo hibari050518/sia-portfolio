@@ -15,6 +15,8 @@ async function fetchSheet(sheetName) {
     header: true,
     skipEmptyLines: true,
     dynamicTyping: false,
+    transformHeader: h => h.trim(),
+    transform: v => (typeof v === 'string' ? v.trim() : v),
   })
   if (errors.length) console.warn('CSV parse warnings:', errors)
 

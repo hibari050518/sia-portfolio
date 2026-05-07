@@ -143,14 +143,14 @@ export default function WorksTheme() {
         opacity: navIn ? 1 : 0, transition:'opacity 0.6s ease 0.12s',
       }}>
         <Link to="/works"
-          style={{ fontSize:'12px', letterSpacing:'4px', textTransform:'uppercase',
+          style={{ fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
             color:'rgba(255,255,255,0.3)', textDecoration:'none', transition:'color 0.2s' }}
           onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.7)'}
           onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.3)'}>
           ← {t('backWorks',lang)}
         </Link>
-        <span style={{ fontSize:'12px', letterSpacing:'3px', color:'rgba(255,255,255,0.22)' }}>／</span>
-        <span style={{ fontSize:'12px', letterSpacing:'4px', textTransform:'uppercase',
+        <span style={{ fontSize:'12px', letterSpacing:'2px', color:'rgba(255,255,255,0.22)' }}>／</span>
+        <span style={{ fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
           color:'rgba(255,255,255,0.55)' }}>{getThemeName(works, decoded, lang)}</span>
       </div>
 
@@ -244,7 +244,7 @@ export default function WorksTheme() {
         }}>
           {gl(themeWorks[activeIdx], 'body_part', lang) && (
             <span style={{
-              fontSize:'12px', letterSpacing:'3px', textTransform:'uppercase',
+              fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
               color:'var(--ocean)', border:'1px solid var(--ocean)',
               padding:'3px 10px', opacity:0.85,
             }}>{gl(themeWorks[activeIdx], 'body_part', lang)}</span>
@@ -259,7 +259,7 @@ export default function WorksTheme() {
             style={{
               background:'none', border:'1px solid rgba(255,255,255,0.25)',
               color:'rgba(255,255,255,0.60)', fontSize:'12px',
-              letterSpacing:'3px', textTransform:'uppercase',
+              letterSpacing:'2px', textTransform:'uppercase',
               padding:'7px 20px', cursor:'pointer',
               transition:'border-color 0.25s, color 0.25s',
             }}

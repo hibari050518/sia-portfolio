@@ -194,7 +194,7 @@ export default function WorkDetail() {
         opacity: navIn ? 1 : 0, transition:'opacity 0.6s ease 0.12s',
       }}>
         <Link to={`/works/${encodeURIComponent(decoded)}`}
-          style={{ fontSize:'12px', letterSpacing:'4px', textTransform:'uppercase',
+          style={{ fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
             color:'rgba(255,255,255,0.38)', textDecoration:'none', transition:'color 0.2s' }}
           onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.8)'}
           onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.38)'}>
@@ -235,7 +235,7 @@ export default function WorkDetail() {
         <div style={{ padding:'88px 44px 60px', display:'flex', flexDirection:'column', minHeight:'100%' }}>
 
           {/* Theme tag */}
-          <p style={{ fontSize:'12px', letterSpacing:'4px', textTransform:'uppercase',
+          <p style={{ fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
             color:'var(--ocean)', marginBottom:'12px', opacity:0.85 }}>
             {getThemeName(works, decoded, lang)}
           </p>
@@ -265,8 +265,8 @@ export default function WorkDetail() {
             ].filter(d => d.value).map(d => (
               <div key={d.label} style={{ display:'flex', alignItems:'baseline', gap:'16px',
                 borderBottom:'1px solid rgba(255,255,255,0.06)', padding:'12px 0' }}>
-                <span style={{ fontSize:'12px', letterSpacing:'2.5px',
-                  color:'rgba(255,255,255,0.22)', width:'44px', flexShrink:0 }}>{d.label}</span>
+                <span style={{ fontSize:'12px', letterSpacing:'1.5px',
+                  color:'rgba(255,255,255,0.22)', width:'60px', flexShrink:0 }}>{d.label}</span>
                 <span style={{ fontSize:'12px', color:'rgba(255,255,255,0.58)',
                   letterSpacing:'0.5px' }}>{d.value}</span>
               </div>

@@ -161,7 +161,7 @@ export default function FlashDetail() {
         opacity: navIn ? 1 : 0, transition:'opacity 0.6s ease 0.12s',
       }}>
         <Link to={`/flash/${encodeURIComponent(decoded)}`}
-          style={{ fontSize:'12px', letterSpacing:'4px', textTransform:'uppercase',
+          style={{ fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
             color:'rgba(255,255,255,0.38)', textDecoration:'none', transition:'color 0.2s' }}
           onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.8)'}
           onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.38)'}>
@@ -202,7 +202,7 @@ export default function FlashDetail() {
         <div style={{ padding:'88px 44px 60px', display:'flex', flexDirection:'column', minHeight:'100%' }}>
 
           {/* Series tag */}
-          <p style={{ fontSize:'12px', letterSpacing:'4px', textTransform:'uppercase',
+          <p style={{ fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
             color:'var(--ocean)', marginBottom:'10px', opacity:0.85 }}>
             {decoded}
           </p>
@@ -210,7 +210,7 @@ export default function FlashDetail() {
           {/* Status */}
           <div style={{ marginBottom:'16px' }}>
             <span style={{
-              fontSize:'12px', letterSpacing:'3px', textTransform:'uppercase',
+              fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
               padding:'3px 10px',
               color: isAvail ? 'var(--ocean)' : 'rgba(255,255,255,0.3)',
               border: `1px solid ${isAvail ? 'var(--ocean)' : 'rgba(255,255,255,0.18)'}`,
@@ -244,8 +244,8 @@ export default function FlashDetail() {
             ].filter(d => d.value).map(d => (
               <div key={d.label} style={{ display:'flex', alignItems:'baseline', gap:'16px',
                 borderBottom:'1px solid rgba(255,255,255,0.06)', padding:'12px 0' }}>
-                <span style={{ fontSize:'12px', letterSpacing:'2.5px',
-                  color:'rgba(255,255,255,0.22)', width:'44px', flexShrink:0 }}>{d.label}</span>
+                <span style={{ fontSize:'12px', letterSpacing:'1.5px',
+                  color:'rgba(255,255,255,0.22)', width:'60px', flexShrink:0 }}>{d.label}</span>
                 <span style={{ fontSize:'12px', color: d.label === 'PRICE' ? 'var(--gold)' : 'rgba(255,255,255,0.58)',
                   letterSpacing:'0.5px', fontStyle: d.label === 'PRICE' ? 'italic' : 'normal' }}>{d.value}</span>
               </div>
@@ -262,7 +262,7 @@ export default function FlashDetail() {
                   background: copied ? 'rgba(74,143,160,0.15)' : 'none',
                   border: `1px solid ${copied ? 'var(--ocean)' : 'rgba(255,255,255,0.28)'}`,
                   color: copied ? 'var(--ocean)' : 'rgba(255,255,255,0.75)',
-                  fontSize:'12px', letterSpacing:'2.5px', textTransform:'uppercase',
+                  fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
                   padding:'12px 20px', cursor:'pointer',
                   transition:'all 0.25s', textAlign:'center',
                 }}>

@@ -143,15 +143,15 @@ export default function FlashSeries() {
         opacity: navIn ? 1 : 0, transition:'opacity 0.6s ease 0.12s',
       }}>
         <Link to="/flash"
-          style={{ fontSize:'12px', letterSpacing:'4px', textTransform:'uppercase',
+          style={{ fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
             color:'rgba(255,255,255,0.3)', textDecoration:'none', transition:'color 0.2s' }}
           onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.7)'}
           onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.3)'}>
           ← {t('backFlash',lang)}
         </Link>
-        <span style={{ fontSize:'12px', letterSpacing:'3px', color:'rgba(255,255,255,0.22)' }}>／</span>
-        <span style={{ fontSize:'12px', letterSpacing:'4px', textTransform:'uppercase',
-          color:'rgba(255,255,255,0.55)' }}>{decoded}</span>
+        <span style={{ fontSize:'12px', letterSpacing:'2px', color:'rgba(255,255,255,0.22)' }}>／</span>
+        <span style={{ fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
+          color:'rgba(255,255,255,0.55)' }}>{getSeriesName(flash, decoded, lang)}</span>
       </div>
 
       {/* ── Series description ── */}
@@ -245,7 +245,7 @@ export default function FlashSeries() {
         }}>
           {/* Status badge */}
           <span style={{
-            fontSize:'12px', letterSpacing:'3px', textTransform:'uppercase',
+            fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
             padding:'3px 10px', opacity:0.85,
             color: isAvail ? 'var(--ocean)' : 'rgba(255,255,255,0.3)',
             border: `1px solid ${isAvail ? 'var(--ocean)' : 'rgba(255,255,255,0.2)'}`,
@@ -271,7 +271,7 @@ export default function FlashSeries() {
             style={{
               background:'none', border:'1px solid rgba(255,255,255,0.25)',
               color:'rgba(255,255,255,0.60)', fontSize:'12px',
-              letterSpacing:'3px', textTransform:'uppercase',
+              letterSpacing:'2px', textTransform:'uppercase',
               padding:'7px 20px', cursor:'pointer',
               transition:'border-color 0.25s, color 0.25s',
             }}

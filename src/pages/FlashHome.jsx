@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useFlash } from '../hooks/useSheets'
 import { getSeries } from '../utils/sheets'
 import { WIX_URL } from '../config'
-import { useLang, t } from '../context/LangContext'
+import { useLang, t, getSeriesName } from '../context/LangContext'
 
 const BG = '#111'
 
@@ -79,7 +79,7 @@ export default function FlashHome() {
   const seriesNames = getSeries(flash)
   const seriesData  = seriesNames.map(name => {
     const items = flash.filter(f => f.series === name)
-    const availCount = items.filter(i => i.status === '可認領').length
+    const availCount = items.filter(i => i.status?.trim() === '可認領').length
     return { name, count: items.length, availCount, image: items.find(i => i.image_url)?.image_url }
   })
   const total  = seriesData.length
@@ -164,14 +164,14 @@ export default function FlashHome() {
           opacity: navIn ? 1 : 0, transition:'opacity 0.9s ease 0.25s',
         }}>
           <p style={{
-            fontSize:'12px', letterSpacing:'5px', textTransform:'uppercase',
+            fontSize:'12px', letterSpacing:'3px', textTransform:'uppercase',
             color:'rgba(255,255,255,0.38)', marginBottom:'10px',
           }}>
             {series.count} {t('flashCount',lang)}
           </p>
           {series.availCount > 0 && (
             <p style={{
-              fontSize:'12px', letterSpacing:'3px', textTransform:'uppercase',
+              fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
               color:'var(--ocean)', marginBottom:'16px', opacity:0.9,
             }}>
               {series.availCount} {t('available',lang)}
@@ -182,7 +182,7 @@ export default function FlashHome() {
             fontSize:'clamp(30px, 4.5vw, 70px)', color:'rgba(255,255,255,0.92)',
             lineHeight:1.1, marginBottom:'32px',
           }}>
-            {series.name}
+            {getSeriesName(flash, series.name, lang)}
           </h1>
           <button
             onClick={() => navigate(`/flash/${encodeURIComponent(series.name)}`)}
@@ -190,7 +190,7 @@ export default function FlashHome() {
               pointerEvents:'auto', background:'none',
               border:'1px solid rgba(255,255,255,0.28)',
               color:'rgba(255,255,255,0.65)', fontSize:'12px',
-              letterSpacing:'3.5px', textTransform:'uppercase',
+              letterSpacing:'2.5px', textTransform:'uppercase',
               padding:'10px 26px', cursor:'pointer',
               transition:'border-color 0.25s, color 0.25s',
             }}
