@@ -141,7 +141,7 @@ export default function Home() {
   const prevPosRef   = useRef({ x: 0, y: 0 })
   const onMouseMove = useCallback((e) => {
     const now = Date.now()
-    if (now - lastSpawnRef.current < 65) return
+    if (now - lastSpawnRef.current < 130) return
     lastSpawnRef.current = now
     const container = cursorContainerRef.current
     if (!container) return
