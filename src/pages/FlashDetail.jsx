@@ -199,7 +199,7 @@ export default function FlashDetail() {
         overflowY:'auto', zIndex:20,
         opacity: navIn ? 1 : 0, transition:'opacity 0.8s ease 0.3s',
       }}>
-        <div style={{ padding:'88px 44px 60px', display:'flex', flexDirection:'column', minHeight:'100%' }}>
+        <div style={{ padding:'112px 44px 60px', display:'flex', flexDirection:'column', minHeight:'100%' }}>
 
           {/* Series tag */}
           <p style={{ fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
