@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { useWorks } from '../hooks/useSheets'
 import { WIX_URL } from '../config'
@@ -136,6 +136,14 @@ export default function Home() {
   const [rightVert, setRightVert] = useState('bottom')
   const [navIn,    setNavIn]    = useState(false)
 
+  const cursorRef = useRef(null)
+  const onMouseMove = useCallback((e) => {
+    if (cursorRef.current) {
+      cursorRef.current.style.left = `${e.clientX - 45}px`
+      cursorRef.current.style.top  = `${e.clientY - 45}px`
+    }
+  }, [])
+
   const VERT = ['top', 'center', 'bottom']
 
   useEffect(() => {
@@ -167,7 +175,8 @@ export default function Home() {
   }, [])
 
   return (
-    <div style={{ position:'fixed', inset:0, background:BG, overflow:'hidden' }}>
+    <div style={{ position:'fixed', inset:0, background:BG, overflow:'hidden' }}
+      onMouseMove={onMouseMove}>
 
       <style>{`
         @keyframes breatheImg {
@@ -178,9 +187,9 @@ export default function Home() {
           0%,100% { border-color: rgba(255,255,255,0.28); box-shadow: 0 0 0px rgba(255,255,255,0); background: transparent; }
           50%     { border-color: rgba(255,255,255,0.95); box-shadow: 0 0 32px rgba(255,255,255,0.22), inset 0 0 14px rgba(255,255,255,0.07); background: rgba(255,255,255,0.05); }
         }
-        @keyframes textShimmer {
-          0%, 25%  { background-position: -200% center; }
-          65%, 100% { background-position: 250% center; }
+        @keyframes textBreathe {
+          0%   { background-position: -80% center; }
+          100% { background-position: 280% center; }
         }
         @keyframes textGlow {
           0%,100% { text-shadow: 0 0 0px rgba(90,170,191,0); }
@@ -282,7 +291,13 @@ export default function Home() {
             <p style={{
               fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
               fontSize:'clamp(15px, 1.6vw, 20px)', lineHeight:1.8,
-              color:'rgba(255,255,255,0.72)', marginBottom:'12px',
+              marginBottom:'12px',
+              background:'linear-gradient(90deg, rgba(255,255,255,0.60) 0%, rgba(255,255,255,0.60) 25%, rgba(255,255,255,0.96) 50%, rgba(255,255,255,0.60) 75%, rgba(255,255,255,0.60) 100%)',
+              backgroundSize:'300% auto',
+              WebkitBackgroundClip:'text',
+              WebkitTextFillColor:'transparent',
+              backgroundClip:'text',
+              animation:'textBreathe 11s linear infinite',
             }}>
               A tattoo,<br />composed from the voice of your soul.
             </p>
@@ -296,8 +311,8 @@ export default function Home() {
               WebkitBackgroundClip:'text',
               WebkitTextFillColor:'transparent',
               backgroundClip:'text',
-              animation:'textShimmer 5.5s ease-in-out infinite',
-              animationDelay:'3.2s',
+              animation:'textBreathe 11s linear infinite',
+              animationDelay:'-5s',
             }}>
               以刺青為你譜下靈魂深處的聲音
             </p>
@@ -339,6 +354,19 @@ export default function Home() {
           </span>
         </div>
       </div>
+
+      {/* 游標光 */}
+      <div ref={cursorRef} style={{
+        position: 'fixed',
+        left: '-90px', top: '-90px',
+        width: '90px', height: '90px',
+        borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(140,205,220,0.28) 0%, rgba(140,205,220,0.08) 55%, transparent 75%)',
+        pointerEvents: 'none',
+        zIndex: 50,
+        mixBlendMode: 'screen',
+        transition: 'left 0.18s cubic-bezier(0.22,1,0.36,1), top 0.18s cubic-bezier(0.22,1,0.36,1)',
+      }} />
     </div>
   )
 }
