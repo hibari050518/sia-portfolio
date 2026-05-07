@@ -2,6 +2,26 @@ import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useWorks } from '../hooks/useSheets'
 import { WIX_URL } from '../config'
+import { useLang, gl, getThemeName } from '../context/LangContext'
+
+function LangSwitcher() {
+  const { lang, setLang } = useLang()
+  return (
+    <div style={{ display:'flex', gap:'16px', alignItems:'center' }}>
+      {[['zh','中'],['en','EN'],['ko','한']].map(([l, label]) => (
+        <div key={l} onClick={() => setLang(l)}
+          style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:'4px', cursor:'pointer' }}>
+          <span style={{ fontSize:'11px', letterSpacing:'2px',
+            color: lang===l ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.32)',
+            transition:'color 0.2s' }}>{label}</span>
+          <div style={{ width:'4px', height:'4px', borderRadius:'50%',
+            background: lang===l ? 'rgba(255,255,255,0.7)' : 'transparent',
+            transition:'background 0.2s' }} />
+        </div>
+      ))}
+    </div>
+  )
+}
 
 const BG    = '#111'
 const PANEL = '#161616'
@@ -47,6 +67,7 @@ export default function WorkDetail() {
   const decoded        = decodeURIComponent(theme)
   const navigate       = useNavigate()
   const { works, loading } = useWorks()
+  const { lang }       = useLang()
 
   const [navIn,       setNavIn]       = useState(false)
   const [imgLoaded,   setImgLoaded]   = useState(false)
@@ -199,6 +220,7 @@ export default function WorkDetail() {
             style={{ fontSize:'12px', letterSpacing:'2px', color:'var(--warm)', textDecoration:'none' }}>
             Appointments ↗
           </a>
+          <LangSwitcher />
         </div>
       </nav>
 
@@ -215,29 +237,29 @@ export default function WorkDetail() {
           {/* Theme tag */}
           <p style={{ fontSize:'9px', letterSpacing:'4px', textTransform:'uppercase',
             color:'var(--ocean)', marginBottom:'12px', opacity:0.85 }}>
-            {decoded}
+            {getThemeName(works, decoded, lang)}
           </p>
 
           {/* Title */}
           <h1 style={{ fontFamily:'var(--serif)', fontWeight:300, fontStyle:'italic',
             fontSize:'clamp(22px, 2.2vw, 38px)', color:'rgba(255,255,255,0.92)',
             lineHeight:1.2, marginBottom:'28px' }}>
-            {work.title}
+            {gl(work, 'title', lang)}
           </h1>
 
           {/* Story */}
-          {work.story && (
+          {gl(work, 'story', lang) && (
             <p style={{ fontSize:'14px', lineHeight:2.0, color:'rgba(255,255,255,0.52)',
               fontStyle:'italic', marginBottom:'40px',
               borderLeft:'1px solid rgba(255,255,255,0.10)', paddingLeft:'20px' }}>
-              {work.story}
+              {gl(work, 'story', lang)}
             </p>
           )}
 
           {/* Details */}
           <div style={{ display:'flex', flexDirection:'column' }}>
             {[
-              { label:'BODY',  value: work.body_part },
+              { label:'BODY',  value: gl(work, 'body_part', lang) },
               { label:'SIZE',  value: work.size_cm },
               { label:'DATE',  value: work.date },
             ].filter(d => d.value).map(d => (

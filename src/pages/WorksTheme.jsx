@@ -2,6 +2,26 @@ import { useState, useEffect, useRef } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useWorks } from '../hooks/useSheets'
 import { WIX_URL } from '../config'
+import { useLang, gl, getThemeName } from '../context/LangContext'
+
+function LangSwitcher() {
+  const { lang, setLang } = useLang()
+  return (
+    <div style={{ display:'flex', gap:'16px', alignItems:'center' }}>
+      {[['zh','中'],['en','EN'],['ko','한']].map(([l, label]) => (
+        <div key={l} onClick={() => setLang(l)}
+          style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:'4px', cursor:'pointer' }}>
+          <span style={{ fontSize:'11px', letterSpacing:'2px',
+            color: lang===l ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.32)',
+            transition:'color 0.2s' }}>{label}</span>
+          <div style={{ width:'4px', height:'4px', borderRadius:'50%',
+            background: lang===l ? 'rgba(255,255,255,0.7)' : 'transparent',
+            transition:'background 0.2s' }} />
+        </div>
+      ))}
+    </div>
+  )
+}
 
 const BG = '#111'
 
@@ -47,6 +67,7 @@ export default function WorksTheme() {
   const decoded    = decodeURIComponent(theme)
   const navigate   = useNavigate()
   const { works, loading } = useWorks()
+  const { lang }   = useLang()
   const [activeIdx, setActiveIdx] = useState(0)
   const [navIn,     setNavIn]     = useState(false)
   const hoverTimer                = useRef(null)
@@ -58,7 +79,11 @@ export default function WorksTheme() {
 
   const themeWorks        = works.filter(w => w.theme === decoded)
   const total             = themeWorks.length
-  const themeDescription  = themeWorks[0]?.theme_description || ''
+  const themeDescription  = themeWorks[0]
+    ? (lang === 'zh'
+        ? themeWorks[0].theme_description || ''
+        : themeWorks[0][`theme_description_${lang}`] || themeWorks[0].theme_description || '')
+    : ''
 
   const go = (delta) => setActiveIdx(i => Math.max(0, Math.min(total - 1, i + delta)))
 
@@ -107,6 +132,7 @@ export default function WorksTheme() {
             style={{ fontSize:'12px', letterSpacing:'2px', color:'var(--warm)', textDecoration:'none' }}>
             Appointments ↗
           </a>
+          <LangSwitcher />
         </div>
       </nav>
 
@@ -125,7 +151,7 @@ export default function WorksTheme() {
         </Link>
         <span style={{ fontSize:'9px', letterSpacing:'3px', color:'rgba(255,255,255,0.22)' }}>／</span>
         <span style={{ fontSize:'9px', letterSpacing:'4px', textTransform:'uppercase',
-          color:'rgba(255,255,255,0.55)' }}>{decoded}</span>
+          color:'rgba(255,255,255,0.55)' }}>{getThemeName(works, decoded, lang)}</span>
       </div>
 
       {/* ── Theme description ── */}
@@ -216,17 +242,17 @@ export default function WorksTheme() {
           display:'flex', flexDirection:'column', alignItems:'center', gap:'10px',
           opacity: navIn ? 1 : 0, transition:'opacity 0.7s ease 0.3s',
         }}>
-          {themeWorks[activeIdx].body_part && (
+          {gl(themeWorks[activeIdx], 'body_part', lang) && (
             <span style={{
               fontSize:'9px', letterSpacing:'3px', textTransform:'uppercase',
               color:'var(--ocean)', border:'1px solid var(--ocean)',
               padding:'3px 10px', opacity:0.85,
-            }}>{themeWorks[activeIdx].body_part}</span>
+            }}>{gl(themeWorks[activeIdx], 'body_part', lang)}</span>
           )}
           <p style={{ fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
             fontSize:'clamp(14px,1.4vw,20px)', color:'rgba(255,255,255,0.88)',
             letterSpacing:'1.5px', textAlign:'center', margin:0 }}>
-            {themeWorks[activeIdx].title}
+            {gl(themeWorks[activeIdx], 'title', lang)}
           </p>
           <button
             onClick={() => navigate(`/works/${encodeURIComponent(decoded)}/${themeWorks[activeIdx].id}`)}

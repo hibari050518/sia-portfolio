@@ -3,6 +3,26 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useWorks } from '../hooks/useSheets'
 import { getThemes } from '../utils/sheets'
 import { WIX_URL } from '../config'
+import { useLang, getThemeName } from '../context/LangContext'
+
+function LangSwitcher() {
+  const { lang, setLang } = useLang()
+  return (
+    <div style={{ display:'flex', gap:'16px', alignItems:'center' }}>
+      {[['zh','中'],['en','EN'],['ko','한']].map(([l, label]) => (
+        <div key={l} onClick={() => setLang(l)}
+          style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:'4px', cursor:'pointer' }}>
+          <span style={{ fontSize:'11px', letterSpacing:'2px',
+            color: lang===l ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.32)',
+            transition:'color 0.2s' }}>{label}</span>
+          <div style={{ width:'4px', height:'4px', borderRadius:'50%',
+            background: lang===l ? 'rgba(255,255,255,0.7)' : 'transparent',
+            transition:'background 0.2s' }} />
+        </div>
+      ))}
+    </div>
+  )
+}
 
 const BG = '#111'
 
@@ -46,6 +66,7 @@ function ArrowBtn({ dir, onClick, disabled }) {
 export default function WorksHome() {
   const { works, loading } = useWorks()
   const navigate           = useNavigate()
+  const { lang }           = useLang()
   const [activeIdx, setActiveIdx] = useState(0)
   const [navIn,     setNavIn]     = useState(false)
   const [imgLoaded, setImgLoaded] = useState(false)
@@ -129,6 +150,7 @@ export default function WorksHome() {
             style={{ fontSize:'12px', letterSpacing:'2px', color:'var(--warm)', textDecoration:'none' }}>
             Appointments ↗
           </a>
+          <LangSwitcher />
         </div>
       </nav>
 
@@ -151,7 +173,7 @@ export default function WorksHome() {
             fontSize:'clamp(30px, 4.5vw, 70px)', color:'rgba(255,255,255,0.92)',
             lineHeight:1.1, marginBottom:'32px',
           }}>
-            {theme.name}
+            {getThemeName(works, theme.name, lang)}
           </h1>
           <button
             onClick={() => navigate(`/works/${encodeURIComponent(theme.name)}`)}

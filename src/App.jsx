@@ -7,6 +7,7 @@ import WorkDetail from './pages/WorkDetail'
 import FlashHome from './pages/FlashHome'
 import FlashSeries from './pages/FlashSeries'
 import FlashDetail from './pages/FlashDetail'
+import { LangProvider } from './context/LangContext'
 import './styles/global.css'
 
 function Layout() {
@@ -30,8 +31,10 @@ function Layout() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Layout />
-    </BrowserRouter>
+    <LangProvider>
+      <BrowserRouter>
+        <Layout />
+      </BrowserRouter>
+    </LangProvider>
   )
 }

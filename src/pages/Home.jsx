@@ -2,6 +2,26 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { useWorks } from '../hooks/useSheets'
 import { WIX_URL } from '../config'
+import { useLang } from '../context/LangContext'
+
+function LangSwitcher() {
+  const { lang, setLang } = useLang()
+  return (
+    <div style={{ display:'flex', gap:'16px', alignItems:'center' }}>
+      {[['zh','中'],['en','EN'],['ko','한']].map(([l, label]) => (
+        <div key={l} onClick={() => setLang(l)}
+          style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:'4px', cursor:'pointer' }}>
+          <span style={{ fontSize:'11px', letterSpacing:'2px',
+            color: lang===l ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.32)',
+            transition:'color 0.2s' }}>{label}</span>
+          <div style={{ width:'4px', height:'4px', borderRadius:'50%',
+            background: lang===l ? 'rgba(255,255,255,0.7)' : 'transparent',
+            transition:'background 0.2s' }} />
+        </div>
+      ))}
+    </div>
+  )
+}
 
 const LOGO_URL = 'https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/Sia_logo_%E6%96%87%E5%AD%97%EF%BC%88%E7%99%BD%EF%BC%89.png'
 
@@ -304,6 +324,7 @@ export default function Home() {
               <HoverNavLink key={zh} to={to} zh={zh} en={en} />
             ))}
             <HoverWarmLink href={WIX_URL} zh="預約請前往主站 ↗" en="Appointments ↗" />
+            <LangSwitcher />
           </div>
         </nav>
 
