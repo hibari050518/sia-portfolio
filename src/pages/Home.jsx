@@ -1,136 +1,164 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useWorks } from '../hooks/useSheets'
-import { getThemes } from '../utils/sheets'
-import { WIX_URL } from '../config'
+import { WIX_URL, LINE_ID } from '../config'
 
-const SLIDE_DURATION = 5000   // 每張停留時間 ms
-const FADE_DURATION  = 1200   // crossfade ms
+// 示範圖片（之後從 sheet 抓，或手動補充）
+const DEMO_IMGS = [
+  'https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/IMG_0138.jpg',
+  'https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/IMG_0316.jpg',
+  'https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/IMG_0784.jpg',
+  'https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/IMG_0884.jpg',
+]
+
+// 每次呼吸週期（ms）
+const BREATH_CYCLE = 4000
+// 左右換圖間隔（左右錯開 2 秒）
+const SWAP_INTERVAL = 6000
+
+function SideImage({ src, side }) {
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    // 進場延遲：左側先出現
+    const delay = side === 'left' ? 300 : 1400
+    const t = setTimeout(() => setVisible(true), delay)
+    return () => clearTimeout(t)
+  }, [side])
+
+  // 邊緣漸層方向
+  const maskGradient = side === 'left'
+    ? 'linear-gradient(to right, transparent 0%, black 18%, black 100%)'
+    : 'linear-gradient(to left, transparent 0%, black 18%, black 100%)'
+
+  return (
+    <div style={{
+      position: 'absolute',
+      top: 0, bottom: 0,
+      [side]: 0,
+      width: '38%',
+      overflow: 'hidden',
+      opacity: visible ? 1 : 0,
+      transition: 'opacity 1.4s ease',
+      WebkitMaskImage: maskGradient,
+      maskImage: maskGradient,
+    }}>
+      <img
+        src={src}
+        alt=""
+        style={{
+          width: '100%', height: '100%',
+          objectFit: 'cover',
+          objectPosition: side === 'left' ? 'right center' : 'left center',
+          filter: 'brightness(0.6) contrast(1.05)',
+          animation: `breatheImg ${BREATH_CYCLE}ms ease-in-out infinite`,
+          animationDelay: side === 'left' ? '0ms' : `${BREATH_CYCLE / 2}ms`,
+        }}
+      />
+      {/* 暗角補強 */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: side === 'left'
+          ? 'linear-gradient(to bottom, rgba(17,17,17,0.4) 0%, transparent 30%, transparent 70%, rgba(17,17,17,0.5) 100%)'
+          : 'linear-gradient(to bottom, rgba(17,17,17,0.4) 0%, transparent 30%, transparent 70%, rgba(17,17,17,0.5) 100%)',
+        pointerEvents: 'none',
+      }} />
+    </div>
+  )
+}
 
 export default function Home() {
   const { works } = useWorks()
-  const themes = getThemes(works)
 
-  // 每個主題取第一張有圖的作品作為幻燈片
-  const slides = themes
-    .map(t => works.find(w => w.theme === t && w.image_url))
-    .filter(Boolean)
+  // 從 sheet 取圖，不夠就補 demo 圖
+  const sheetImgs = works.filter(w => w.image_url).map(w => w.image_url)
+  const allImgs = sheetImgs.length >= 4 ? sheetImgs : [...sheetImgs, ...DEMO_IMGS].slice(0, Math.max(4, sheetImgs.length))
 
-  const [cur, setCur]       = useState(0)
-  const [prev, setPrev]     = useState(null)
-  const [fading, setFading] = useState(false)
-  const [textIn, setTextIn] = useState(false)
-  const timerRef = useRef(null)
+  // 左右各自的圖片 index，錯開
+  const [leftIdx,  setLeftIdx]  = useState(0)
+  const [rightIdx, setRightIdx] = useState(1)
+  const [leftKey,  setLeftKey]  = useState(0)
+  const [rightKey, setRightKey] = useState(0)
+  const [textIn,   setTextIn]   = useState(false)
 
-  // 初始：文字淡入
   useEffect(() => {
-    const t = setTimeout(() => setTextIn(true), 600)
+    const t = setTimeout(() => setTextIn(true), 500)
     return () => clearTimeout(t)
   }, [])
 
-  const goTo = (next) => {
-    if (fading || next === cur) return
-    setFading(true)
-    setPrev(cur)
-    setCur(next)
-    setTimeout(() => { setPrev(null); setFading(false) }, FADE_DURATION)
-  }
-
-  // 自動輪播
+  // 左側換圖
   useEffect(() => {
-    if (slides.length <= 1) return
-    timerRef.current = setInterval(() => {
-      setCur(c => {
-        const next = (c + 1) % slides.length
-        setPrev(c)
-        setFading(true)
-        setTimeout(() => { setPrev(null); setFading(false) }, FADE_DURATION)
-        return next
-      })
-    }, SLIDE_DURATION)
-    return () => clearInterval(timerRef.current)
-  }, [slides.length])
+    if (allImgs.length < 2) return
+    const t = setInterval(() => {
+      setLeftIdx(i => (i + 2) % allImgs.length)
+      setLeftKey(k => k + 1)
+    }, SWAP_INTERVAL)
+    return () => clearInterval(t)
+  }, [allImgs.length])
 
-  const currentSlide = slides[cur]
+  // 右側換圖（延遲 2 秒）
+  useEffect(() => {
+    if (allImgs.length < 2) return
+    const delay = setTimeout(() => {
+      const t = setInterval(() => {
+        setRightIdx(i => (i + 2) % allImgs.length)
+        setRightKey(k => k + 1)
+      }, SWAP_INTERVAL)
+      return () => clearInterval(t)
+    }, SWAP_INTERVAL / 2)
+    return () => clearTimeout(delay)
+  }, [allImgs.length])
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: '#111', overflow: 'hidden' }}>
 
-      {/* ── 幻燈片層 ── */}
-      {slides.map((slide, i) => {
-        const isActive = i === cur
-        const isPrev   = i === prev
-        if (!isActive && !isPrev) return null
-        return (
-          <div key={slide.id} style={{
-            position: 'absolute', inset: 0,
-            opacity: isActive ? 1 : 0,
-            transition: `opacity ${FADE_DURATION}ms ease`,
-            zIndex: isActive ? 2 : 1,
-          }}>
-            <img
-              src={slide.image_url}
-              alt=""
-              style={{
-                width: '100%', height: '100%',
-                objectFit: 'contain',          // 直式照片自然呈現，兩側黑
-                objectPosition: 'center',
-                filter: 'brightness(0.68)',
-                animation: isActive ? `kenBurns ${SLIDE_DURATION + FADE_DURATION}ms ease forwards` : 'none',
-              }}
-            />
-            {/* 左右漸層（讓直式照片兩側更自然融入） */}
-            <div style={{
-              position: 'absolute', inset: 0,
-              background: 'linear-gradient(to right, rgba(17,17,17,0.6) 0%, transparent 20%, transparent 80%, rgba(17,17,17,0.6) 100%)',
-              pointerEvents: 'none',
-            }} />
-            {/* 上下漸層 */}
-            <div style={{
-              position: 'absolute', inset: 0,
-              background: 'linear-gradient(to bottom, rgba(17,17,17,0.5) 0%, transparent 25%, transparent 65%, rgba(17,17,17,0.7) 100%)',
-              pointerEvents: 'none',
-            }} />
-          </div>
-        )
-      })}
-
-      {/* Ken Burns keyframe */}
       <style>{`
-        @keyframes kenBurns {
-          from { transform: scale(1.06); }
-          to   { transform: scale(1.0);  }
+        @keyframes breatheImg {
+          0%, 100% { transform: scale(1.0);   opacity: 1;    }
+          50%       { transform: scale(1.035); opacity: 0.85; }
         }
       `}</style>
 
-      {/* ── UI 層 ── */}
-      <div style={{ position: 'absolute', inset: 0, zIndex: 10, display: 'flex', flexDirection: 'column' }}>
+      {/* ── 左右圖片 ── */}
+      {allImgs.length > 0 && (
+        <SideImage key={`L${leftKey}`}  src={allImgs[leftIdx  % allImgs.length]} side="left"  />
+      )}
+      {allImgs.length > 1 && (
+        <SideImage key={`R${rightKey}`} src={allImgs[rightIdx % allImgs.length]} side="right" />
+      )}
 
+      {/* ── 中央 UI ── */}
+      <div style={{
+        position: 'absolute', inset: 0, zIndex: 10,
+        display: 'flex', flexDirection: 'column',
+      }}>
         {/* 頂部導覽 */}
         <nav style={{
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          padding: '28px 40px',
+          padding: '32px 48px',
           opacity: textIn ? 1 : 0, transition: 'opacity 0.8s ease',
         }}>
-          <span style={{ fontSize: '11px', letterSpacing: '5px', color: 'rgba(255,255,255,0.85)' }}>
+          <span style={{ fontSize: '13px', letterSpacing: '5px', color: 'rgba(255,255,255,0.85)' }}>
             S I A
           </span>
-          <div style={{ display: 'flex', gap: '36px', alignItems: 'center' }}>
-            <Link to="/works" style={{ fontSize: '9px', letterSpacing: '4px', textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.5)', transition: 'color 0.2s' }}
-              onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.9)'}
-              onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.5)'}>
-              作品
-            </Link>
-            <Link to="/flash" style={{ fontSize: '9px', letterSpacing: '4px', textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.5)', transition: 'color 0.2s' }}
-              onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.9)'}
-              onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.5)'}>
-              認領圖
-            </Link>
-            <a href={WIX_URL} target="_blank" rel="noreferrer"
-              style={{ fontSize: '9px', letterSpacing: '4px', textTransform: 'uppercase',
-                color: 'var(--warm)', transition: 'color 0.2s' }}
+          <div style={{ display: 'flex', gap: '40px', alignItems: 'center' }}>
+            {[
+              { label: '作品', to: '/works', isLink: true },
+              { label: '認領圖', to: '/flash', isLink: true },
+            ].map(({ label, to }) => (
+              <Link key={label} to={to} style={{
+                fontSize: '11px', letterSpacing: '4px', textTransform: 'uppercase',
+                color: 'rgba(255,255,255,0.5)', transition: 'color 0.2s',
+              }}
+                onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.9)'}
+                onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.5)'}>
+                {label}
+              </Link>
+            ))}
+            <a href={WIX_URL} target="_blank" rel="noreferrer" style={{
+              fontSize: '11px', letterSpacing: '4px', textTransform: 'uppercase',
+              color: 'var(--warm)', transition: 'color 0.2s',
+            }}
               onMouseEnter={e => e.currentTarget.style.color = 'var(--warm-hover)'}
               onMouseLeave={e => e.currentTarget.style.color = 'var(--warm)'}>
               ↗ 主站
@@ -142,71 +170,92 @@ export default function Home() {
         <div style={{
           flex: 1, display: 'flex', flexDirection: 'column',
           alignItems: 'center', justifyContent: 'center',
-          textAlign: 'center', padding: '0 40px',
+          textAlign: 'center',
+          padding: '0 32%',   // 保留兩側給圖片
           opacity: textIn ? 1 : 0,
-          transform: textIn ? 'translateY(0)' : 'translateY(16px)',
-          transition: 'opacity 1s ease 0.3s, transform 1s ease 0.3s',
+          transform: textIn ? 'translateY(0)' : 'translateY(20px)',
+          transition: 'opacity 1s ease 0.4s, transform 1s ease 0.4s',
         }}>
+
           <p style={{
-            fontSize: '9px', letterSpacing: '6px', textTransform: 'uppercase',
-            color: 'var(--ocean)', marginBottom: '24px', opacity: 0.9,
+            fontSize: '11px', letterSpacing: '6px', textTransform: 'uppercase',
+            color: 'var(--ocean)', marginBottom: '28px',
           }}>
-            靈性刺青師 · Spiritual Tattoo Artist
+            Spiritual Tattoo Artist
           </p>
+
           <h1 style={{
-            fontFamily: 'var(--serif)', fontWeight: 300, fontStyle: 'italic',
-            fontSize: 'clamp(32px, 5vw, 64px)', lineHeight: 1.2,
-            color: 'rgba(255,255,255,0.92)', letterSpacing: '-0.5px',
-            marginBottom: '40px', textShadow: '0 2px 40px rgba(0,0,0,0.4)',
+            fontFamily: 'var(--serif)', fontWeight: 300,
+            fontSize: 'clamp(28px, 3.5vw, 52px)', lineHeight: 1.15,
+            color: 'rgba(255,255,255,0.92)', letterSpacing: '0.5px',
+            marginBottom: '8px',
           }}>
-            以針為筆，<br />在皮膚上刻下故事。
+            SIA TATTOOIST
           </h1>
-          <Link to="/works" style={{
-            fontSize: '9px', letterSpacing: '5px', textTransform: 'uppercase',
-            color: 'rgba(255,255,255,0.45)', borderBottom: '1px solid rgba(255,255,255,0.2)',
-            paddingBottom: '4px', transition: 'all 0.3s',
-          }}
-            onMouseEnter={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.85)'; e.currentTarget.style.borderBottomColor = 'rgba(255,255,255,0.5)' }}
-            onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.45)'; e.currentTarget.style.borderBottomColor = 'rgba(255,255,255,0.2)' }}>
-            瀏覽作品
-          </Link>
+
+          <p style={{
+            fontFamily: 'var(--serif)', fontStyle: 'italic', fontWeight: 300,
+            fontSize: 'clamp(14px, 1.6vw, 22px)', lineHeight: 1.6,
+            color: 'rgba(255,255,255,0.55)', marginBottom: '6px',
+          }}>
+            A tattoo,<br />composed from the voice of your soul.
+          </p>
+
+          <p style={{
+            fontSize: '12px', letterSpacing: '2px',
+            color: 'rgba(255,255,255,0.35)', marginBottom: '48px',
+          }}>
+            以刺青為你譜下靈魂深處的聲音
+          </p>
+
+          {/* Book 按鈕 */}
+          <a
+            href={`https://line.me/R/ti/p/${LINE_ID}`}
+            target="_blank" rel="noreferrer"
+            style={{
+              display: 'inline-block',
+              padding: '14px 40px',
+              border: '1px solid rgba(255,255,255,0.35)',
+              fontSize: '11px', letterSpacing: '5px', textTransform: 'uppercase',
+              color: 'rgba(255,255,255,0.8)',
+              transition: 'all 0.3s ease',
+              background: 'transparent',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.background = 'rgba(255,255,255,0.08)'
+              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.7)'
+              e.currentTarget.style.color = '#fff'
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.background = 'transparent'
+              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.35)'
+              e.currentTarget.style.color = 'rgba(255,255,255,0.8)'
+            }}
+          >
+            Book
+          </a>
         </div>
 
-        {/* 底部：幻燈片指示點 + 當前作品主題 */}
+        {/* 底部 */}
         <div style={{
-          padding: '28px 40px',
+          padding: '28px 48px',
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          opacity: textIn ? 1 : 0, transition: 'opacity 0.8s ease 0.6s',
+          opacity: textIn ? 1 : 0, transition: 'opacity 0.8s ease 0.8s',
         }}>
-          {/* 主題名 */}
-          <span style={{
-            fontFamily: 'var(--serif)', fontStyle: 'italic',
-            fontSize: '13px', color: 'rgba(255,255,255,0.35)',
-            letterSpacing: '0.5px',
-          }}>
-            {currentSlide?.theme || ''}
+          <Link to="/works" style={{
+            fontSize: '11px', letterSpacing: '4px', textTransform: 'uppercase',
+            color: 'rgba(255,255,255,0.3)', borderBottom: '1px solid rgba(255,255,255,0.15)',
+            paddingBottom: '3px', transition: 'all 0.3s',
+          }}
+            onMouseEnter={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.7)'; e.currentTarget.style.borderBottomColor = 'rgba(255,255,255,0.4)' }}
+            onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.3)'; e.currentTarget.style.borderBottomColor = 'rgba(255,255,255,0.15)' }}>
+            瀏覽作品 →
+          </Link>
+          <span style={{ fontSize: '10px', letterSpacing: '3px', color: 'rgba(255,255,255,0.2)' }}>
+            © SIA TATTOOIST
           </span>
-
-          {/* 指示點 */}
-          {slides.length > 1 && (
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              {slides.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => goTo(i)}
-                  style={{
-                    width: i === cur ? '24px' : '6px',
-                    height: '2px', border: 'none', cursor: 'pointer',
-                    background: i === cur ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.25)',
-                    transition: 'all 0.4s ease', padding: 0, borderRadius: '1px',
-                  }}
-                />
-              ))}
-            </div>
-          )}
         </div>
       </div>
-
     </div>
   )
 }
