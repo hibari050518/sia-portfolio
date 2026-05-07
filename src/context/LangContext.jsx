@@ -46,6 +46,19 @@ const UI = {
   tagline:      { zh:'以刺青為你譜下靈魂深處的聲音', en:'', ko:'' },
   prev:         { zh:'← Prev',  en:'← Prev',      ko:'← 이전'   },
   next:         { zh:'Next →',  en:'Next →',      ko:'다음 →'   },
+  // Flash
+  backFlash:    { zh:'認領圖',  en:'Flash',        ko:'플래시'   },
+  viewDesign:   { zh:'查看設計', en:'View Design', ko:'디자인 보기' },
+  available:    { zh:'可認領',  en:'Available',    ko:'가능'     },
+  taken:        { zh:'已認領',  en:'Taken',        ko:'완료'     },
+  copyInquiry:  { zh:'複製詢問內文', en:'Copy Inquiry', ko:'문의 복사' },
+  copied:       { zh:'已複製！', en:'Copied!',     ko:'복사됨!'  },
+  goLine:       { zh:'前往 LINE 預約', en:'Book via LINE', ko:'LINE 예약' },
+  takenNote:    { zh:'這張認領圖已被認領。如有興趣，歡迎透過 LINE 詢問是否有類似設計。',
+                  en:'This design has been claimed. Feel free to inquire via LINE about similar designs.',
+                  ko:'이 디자인은 이미 예약되었습니다. 비슷한 디자인은 LINE으로 문의해 주세요.' },
+  flashCount:   { zh:'件設計', en:'designs', ko:'디자인' },
+  exploreFlash: { zh:'探索系列', en:'Explore Series', ko:'시리즈 탐색' },
 }
 
 /** 取得靜態 UI 翻譯字串 */
