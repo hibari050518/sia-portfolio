@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useWorks } from '../hooks/useSheets'
 import { WIX_URL } from '../config'
-import { useLang, gl, getThemeName } from '../context/LangContext'
+import { useLang, gl, getThemeName, t } from '../context/LangContext'
 
 function LangSwitcher() {
   const { lang, setLang } = useLang()
@@ -126,11 +126,11 @@ export default function WorksTheme() {
           SIA TATTOOIST
         </Link>
         <div style={{ display:'flex', gap:'36px', alignItems:'center' }}>
-          <NavLink to="/works" zh="作品" en="Works" />
-          <NavLink to="/flash" zh="認領圖" en="Flash" />
+          <NavLink to="/works" zh={t('works',lang)} en={t('works',lang)} />
+          <NavLink to="/flash" zh={t('flash',lang)} en={t('flash',lang)} />
           <a href={WIX_URL} target="_blank" rel="noreferrer"
             style={{ fontSize:'12px', letterSpacing:'2px', color:'var(--warm)', textDecoration:'none' }}>
-            Appointments ↗
+            {t('appointments',lang)}
           </a>
           <LangSwitcher />
         </div>
@@ -147,7 +147,7 @@ export default function WorksTheme() {
             color:'rgba(255,255,255,0.3)', textDecoration:'none', transition:'color 0.2s' }}
           onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.7)'}
           onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.3)'}>
-          ← 作品集
+          ← {t('backWorks',lang)}
         </Link>
         <span style={{ fontSize:'9px', letterSpacing:'3px', color:'rgba(255,255,255,0.22)' }}>／</span>
         <span style={{ fontSize:'9px', letterSpacing:'4px', textTransform:'uppercase',
@@ -271,7 +271,7 @@ export default function WorksTheme() {
               e.currentTarget.style.borderColor = 'rgba(255,255,255,0.25)'
               e.currentTarget.style.color = 'rgba(255,255,255,0.60)'
             }}>
-            閱讀故事 →
+            {t('readStory',lang)} →
           </button>
         </div>
       )}

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useWorks } from '../hooks/useSheets'
 import { WIX_URL } from '../config'
-import { useLang, gl, getThemeName } from '../context/LangContext'
+import { useLang, gl, getThemeName, t } from '../context/LangContext'
 
 function LangSwitcher() {
   const { lang, setLang } = useLang()
@@ -214,11 +214,11 @@ export default function WorkDetail() {
           SIA TATTOOIST
         </Link>
         <div style={{ display:'flex', gap:'36px', alignItems:'center' }}>
-          <NavLink to="/works" zh="作品" en="Works" />
-          <NavLink to="/flash" zh="認領圖" en="Flash" />
+          <NavLink to="/works" zh={t('works',lang)} en={t('works',lang)} />
+          <NavLink to="/flash" zh={t('flash',lang)} en={t('flash',lang)} />
           <a href={WIX_URL} target="_blank" rel="noreferrer"
             style={{ fontSize:'12px', letterSpacing:'2px', color:'var(--warm)', textDecoration:'none' }}>
-            Appointments ↗
+            {t('appointments',lang)}
           </a>
           <LangSwitcher />
         </div>
@@ -284,7 +284,7 @@ export default function WorkDetail() {
                       color:'rgba(255,255,255,0.28)', textDecoration:'none', transition:'color 0.2s' }}
                     onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.7)'}
                     onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.28)'}>
-                    ← Prev
+                    {t('prev',lang)}
                   </Link>
                 : <span />
               }
@@ -294,7 +294,7 @@ export default function WorkDetail() {
                       color:'rgba(255,255,255,0.28)', textDecoration:'none', transition:'color 0.2s' }}
                     onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.7)'}
                     onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.28)'}>
-                    Next →
+                    {t('next',lang)}
                   </Link>
                 : <span />
               }

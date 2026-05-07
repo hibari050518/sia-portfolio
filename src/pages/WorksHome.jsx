@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useWorks } from '../hooks/useSheets'
 import { getThemes } from '../utils/sheets'
 import { WIX_URL } from '../config'
-import { useLang, getThemeName } from '../context/LangContext'
+import { useLang, getThemeName, t } from '../context/LangContext'
 
 function LangSwitcher() {
   const { lang, setLang } = useLang()
@@ -144,11 +144,11 @@ export default function WorksHome() {
           SIA TATTOOIST
         </Link>
         <div style={{ display:'flex', gap:'36px', alignItems:'center' }}>
-          <NavLink to="/works" zh="作品" en="Works" />
-          <NavLink to="/flash" zh="認領圖" en="Flash" />
+          <NavLink to="/works" zh={t('works',lang)} en={t('works',lang)} />
+          <NavLink to="/flash" zh={t('flash',lang)} en={t('flash',lang)} />
           <a href={WIX_URL} target="_blank" rel="noreferrer"
             style={{ fontSize:'12px', letterSpacing:'2px', color:'var(--warm)', textDecoration:'none' }}>
-            Appointments ↗
+            {t('appointments',lang)}
           </a>
           <LangSwitcher />
         </div>
@@ -166,7 +166,7 @@ export default function WorksHome() {
             fontSize:'9px', letterSpacing:'5px', textTransform:'uppercase',
             color:'rgba(255,255,255,0.38)', marginBottom:'18px',
           }}>
-            {theme.count} 件作品
+            {theme.count} {t('pieces',lang)}
           </p>
           <h1 style={{
             fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
@@ -193,7 +193,7 @@ export default function WorksHome() {
               e.currentTarget.style.borderColor = 'rgba(255,255,255,0.28)'
               e.currentTarget.style.color = 'rgba(255,255,255,0.65)'
             }}>
-            查看作品 →
+            {t('viewWorks',lang)} →
           </button>
         </div>
       )}

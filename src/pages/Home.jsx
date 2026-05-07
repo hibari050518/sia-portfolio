@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { useWorks } from '../hooks/useSheets'
 import { WIX_URL } from '../config'
-import { useLang } from '../context/LangContext'
+import { useLang, t } from '../context/LangContext'
 
 function LangSwitcher() {
   const { lang, setLang } = useLang()
@@ -167,6 +167,7 @@ function HoverWarmLink({ href, zh, en }) {
 
 export default function Home() {
   const { works } = useWorks()
+  const { lang }  = useLang()
 
   const [leftIdx,  setLeftIdx]  = useState(0)
   const [rightIdx, setRightIdx] = useState(0)
@@ -323,7 +324,7 @@ export default function Home() {
             {[{zh:'作品',en:'Works',to:'/works'},{zh:'認領圖',en:'Flash',to:'/flash'}].map(({ zh, en, to }) => (
               <HoverNavLink key={zh} to={to} zh={zh} en={en} />
             ))}
-            <HoverWarmLink href={WIX_URL} zh="預約請前往主站 ↗" en="Appointments ↗" />
+            <HoverWarmLink href={WIX_URL} zh={t('appointments',lang)} en={t('appointments',lang)} />
             <LangSwitcher />
           </div>
         </nav>
@@ -364,14 +365,16 @@ export default function Home() {
             </p>
           </FadeUp>
 
-          <FadeUp delay={1550}>
-            <p style={{
-              fontSize:'12px', letterSpacing:'2.5px', marginBottom:'44px',
-              color:'rgba(255,255,255,0.55)',
-            }}>
-              以刺青為你譜下靈魂深處的聲音
-            </p>
-          </FadeUp>
+          {lang === 'zh' && (
+            <FadeUp delay={1550}>
+              <p style={{
+                fontSize:'12px', letterSpacing:'2.5px', marginBottom:'44px',
+                color:'rgba(255,255,255,0.55)',
+              }}>
+                以刺青為你譜下靈魂深處的聲音
+              </p>
+            </FadeUp>
+          )}
 
           <FadeUp delay={1800}>
             <Link to="/works" style={{
@@ -396,11 +399,7 @@ export default function Home() {
                 e.currentTarget.style.borderColor='rgba(255,255,255,0.28)'
                 e.currentTarget.style.color='rgba(255,255,255,0.8)'
               }}>
-              <span style={{ position:'relative', display:'inline-block' }}>
-                <span style={{ visibility:'hidden', display:'block' }}>View Works</span>
-                <span style={{ position:'absolute', inset:0, textAlign:'center', opacity: btnHov ? 0 : 1, transition:'opacity 0.5s ease' }}>瀏覽作品</span>
-                <span style={{ position:'absolute', inset:0, textAlign:'center', opacity: btnHov ? 1 : 0, transition:'opacity 0.5s ease' }}>View Works</span>
-              </span>
+              {t('browseWorks', lang)}
             </Link>
           </FadeUp>
         </div>
