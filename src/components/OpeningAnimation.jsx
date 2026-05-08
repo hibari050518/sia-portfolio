@@ -190,7 +190,7 @@ export default function OpeningAnimation({ style, className }) {
         if (isSpark) {
           const sizeMul = p.tier === 'hero' ? 1.05 : 0.78
           const armBase = (11.0 + p.depth * 6.0) * sizeMul
-          const sw = p.tier === 'hero' ? 2.6 : 1.9
+          const sw = p.tier === 'hero' ? 0.9 : 0.6
           const x = p.x, y = p.y, gap = armBase * 0.45
           const rayDList = []
           for (let i = 0; i < 4; i++) {
