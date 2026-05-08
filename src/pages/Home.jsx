@@ -225,9 +225,8 @@ function HomeMobile() {
     <div style={{ position:'fixed', inset:0, background:'#111' }}>
       <style>{`
         @keyframes mLogoReveal {
-          0%   { transform: scale(0.78); opacity: 0; }
-          55%  { transform: scale(1.08); }
-          100% { transform: scale(1);   opacity: 0.56; }
+          0%   { opacity: 0; transform: translateY(14px); }
+          100% { opacity: 0.50; transform: translateY(0); }
         }
         @keyframes mParticleDrift {
           0%   { transform:translate(0,0) scale(1); opacity:0; }
@@ -302,15 +301,15 @@ function HomeMobile() {
             ))}
           </div>
 
-          {/* LOGO — 置中偏上 */}
+          {/* LOGO — 置中偏上，壓在照片上的品牌感 */}
           <div style={{ position:'absolute', left:0, right:0, zIndex:3,
             display:'flex', justifyContent:'center',
-            top:'34%', transform:'translateY(-50%)' }}>
+            top:'26%', transform:'translateY(-50%)' }}>
             <img src={LOGO_URL} alt="SIA TATTOOIST"
-              style={{ width:'152px', maxWidth:'54vw',
+              style={{ width:'172px', maxWidth:'60vw',
                 opacity:0,
-                filter:'drop-shadow(0 2px 12px rgba(0,0,0,0.5))',
-                animation:'mLogoReveal 1.8s cubic-bezier(0.22,1,0.36,1) 0.3s forwards',
+                filter:'drop-shadow(0 2px 16px rgba(0,0,0,0.4))',
+                animation:'mLogoReveal 2.2s ease-out 0.4s forwards',
               }}
               onError={e => { e.currentTarget.style.display='none' }} />
           </div>
@@ -372,19 +371,19 @@ function HomeMobile() {
           {/* LOGO 再次出現，帶出文字序列 */}
           <img src={LOGO_URL} alt="SIA TATTOOIST"
             style={{
-              width:'108px', maxWidth:'42vw', marginBottom:'32px',
-              opacity: r0 ? 1 : 0,
-              transform: r0 ? 'translateY(0)' : 'translateY(18px)',
-              transition:'opacity 1.1s ease, transform 1.1s ease',
-              filter:'drop-shadow(0 2px 16px rgba(0,0,0,0.5))',
+              width:'136px', maxWidth:'50vw', marginBottom:'44px',
+              opacity: r0 ? 0.88 : 0,
+              transform: r0 ? 'translateY(0)' : 'translateY(22px)',
+              transition:'opacity 1.3s ease, transform 1.3s ease',
+              filter:'drop-shadow(0 2px 20px rgba(0,0,0,0.45))',
             }}
             onError={e => { e.currentTarget.style.display='none' }}
           />
 
           {/* 標語 */}
           <p style={{
-            fontSize:'11px', letterSpacing:'4px', textTransform:'uppercase',
-            color:'var(--ocean)', marginBottom:'24px',
+            fontSize:'11px', letterSpacing:'4.5px', textTransform:'uppercase',
+            color:'var(--ocean)', marginBottom:'32px',
             opacity: r1 ? 1 : 0,
             transform: r1 ? 'translateY(0)' : 'translateY(18px)',
             transition:'opacity 0.95s ease, transform 0.95s ease',
@@ -393,8 +392,8 @@ function HomeMobile() {
           {/* 引言 */}
           <p style={{
             fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
-            fontSize:'18px', lineHeight:2.2, letterSpacing:'0.2px',
-            color:'rgba(255,255,255,0.58)', marginBottom:'16px',
+            fontSize:'19px', lineHeight:2.4, letterSpacing:'0.3px',
+            color:'rgba(255,255,255,0.58)', marginBottom:'24px',
             opacity: r2 ? 1 : 0,
             transform: r2 ? 'translateY(0)' : 'translateY(18px)',
             transition:'opacity 0.95s ease, transform 0.95s ease',
@@ -406,7 +405,7 @@ function HomeMobile() {
           {lang !== 'en' && (
             <p style={{
               fontSize:'11px', letterSpacing: lang === 'ko' ? '1px' : '2px',
-              color:'rgba(255,255,255,0.30)', marginBottom:'28px',
+              color:'rgba(255,255,255,0.30)', marginBottom:'40px',
               opacity: r3 ? 1 : 0,
               transform: r3 ? 'translateY(0)' : 'translateY(14px)',
               transition:'opacity 0.95s ease, transform 0.95s ease',
@@ -414,7 +413,7 @@ function HomeMobile() {
               {t('tagline', lang)}
             </p>
           )}
-          {lang === 'en' && <div style={{ marginBottom:'28px' }} />}
+          {lang === 'en' && <div style={{ marginBottom:'40px' }} />}
 
           {/* CTA */}
           <Link to="/works" style={{
