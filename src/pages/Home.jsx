@@ -640,7 +640,7 @@ export default function Home() {
           alignItems:'center', justifyContent:'center', textAlign:'center',
           padding:'0 36%',
         }}>
-          <OpeningAnimation style={{ width:'min(360px,28vw)', marginBottom:'28px' }} />
+          <OpeningAnimation style={{ width:'min(440px,34vw)', marginBottom:'28px' }} />
 
           <FadeUp delay={1100}>
             <p style={{

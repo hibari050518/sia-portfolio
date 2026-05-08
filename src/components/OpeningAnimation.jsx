@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 const ANIM_CSS = `
 @property --ink-bloom{syntax:"<number>";inherits:false;initial-value:0}
 
-.oa-wrap { --ink: #f5f0ea; }
+.oa-wrap { --ink: #f5f0ea; opacity: 0.82; }
 .oa-stage { position:relative; width:100%; aspect-ratio:870.82/419.42; }
 .oa-logo  { width:100%; height:100%; display:block; overflow:visible; }
 
@@ -46,7 +46,7 @@ const ANIM_CSS = `
   animation:oaLinkFlow var(--tdur,6s) ease-in-out var(--delay,0s) infinite both;
 }
 .oa-wrap .orn.sparkle {
-  stroke-width:.35; fill:none; stroke-linecap:round; filter:url(#oa-star-glow);
+  fill:none; stroke-linecap:round; filter:url(#oa-star-glow);
   transform-box:fill-box; transform-origin:center;
   stroke-dasharray:var(--len,80); stroke-dashoffset:var(--len,80);
   animation:oaRayDraw 1.1s cubic-bezier(.4,.05,.25,1) var(--rdelay,0s) forwards,
@@ -70,7 +70,7 @@ const ANIM_CSS = `
   72% {opacity:var(--maxOp,.6);transform:scale(1.08)}
   100%{opacity:0;transform:scale(.6)}
 }
-.oa-wrap .nib { opacity:0; }
+.oa-wrap .nib { display:none; }
 `
 
 const SVG_INNER = `
@@ -127,7 +127,7 @@ export default function OpeningAnimation({ style, className }) {
     const svg = wrap.querySelector('svg')
     if (!svg) return
 
-    const STATE = { speed: 1.35, silk: 135, orn: 16, ink: '#f5f0ea' }
+    const STATE = { speed: 1.35, silk: 135, orn: 26, ink: '#f5f0ea' }
     const spread_val = 0.50
     const T = {
       s:    { dur: 0.95, delay: 0.30 },
@@ -189,8 +189,8 @@ export default function OpeningAnimation({ style, className }) {
         const isSpark = p.fixed ? true : Math.random() > 0.35
         if (isSpark) {
           const sizeMul = p.tier === 'hero' ? 1.05 : 0.78
-          const armBase = (7.0 + p.depth * 4.0) * sizeMul
-          const sw = p.tier === 'hero' ? 0.28 : 0.20
+          const armBase = (11.0 + p.depth * 6.0) * sizeMul
+          const sw = p.tier === 'hero' ? 0.52 : 0.38
           const x = p.x, y = p.y, gap = armBase * 0.45
           const rayDList = []
           for (let i = 0; i < 4; i++) {
@@ -207,14 +207,14 @@ export default function OpeningAnimation({ style, className }) {
             const path = document.createElementNS(NS, 'path')
             path.setAttribute('d', rd)
             path.setAttribute('class', 'orn sparkle')
-            path.setAttribute('stroke-width', sw)
+            path.style.strokeWidth = sw
             path.dataset.depth = p.depth.toFixed(2)
             path.style.setProperty('--rdelay', (i * 0.42 + Math.random() * 0.08) + 's')
             ornG.appendChild(path)
           })
         } else {
           const sizeMul = p.tier === 'hero' ? 0.95 : 0.72
-          const base = (4.8 + p.depth * 2.8) * sizeMul
+          const base = (7.0 + p.depth * 4.0) * sizeMul
           const sV = base * 2.8, sH = base * 0.30, ww = base * 0.07
           const f = v => v.toFixed(2)
           const px = p.x, py = p.y
@@ -291,7 +291,6 @@ export default function OpeningAnimation({ style, className }) {
       applyOrn()
       brushes.forEach(p => { p.style.animation = '' })
       orns.forEach(p => { p.style.animation = '' })
-      Object.keys(nibs).forEach(k => animateNib(k))
     }
 
     drawStars(generateStars())
