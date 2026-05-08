@@ -171,7 +171,7 @@ export default function WorksTheme() {
           }}/>
           {/* Top fade into card bg */}
           <div style={{
-            position:'absolute', top:0, left:0, right:0, height:'52%', pointerEvents:'none',
+            position:'absolute', top:0, left:0, right:0, height:'68%', pointerEvents:'none',
             background:'linear-gradient(to bottom, #111 0%, transparent 100%)',
           }}/>
           {/* Bottom fade */}
@@ -222,8 +222,8 @@ export default function WorksTheme() {
 
           {/* Card stack — ghost cards behind center */}
           {themeWorks.length > 1 && [
-            { dy:16, rot:-7, bg:'rgba(38,36,42,0.80)' },
-            { dy:30, rot: 7, bg:'rgba(30,28,34,0.60)' },
+            { dy:14, rot:-7 },
+            { dy:26, rot: 7 },
           ].map((s, si) => (
             <div key={`stack-${si}`} style={{
               position:'absolute', left:'14%', width:'72%',
@@ -232,8 +232,9 @@ export default function WorksTheme() {
               transform:`translateY(-52%) translateY(${s.dy}px) rotate(${s.rot}deg)`,
               transformOrigin:'50% 100%',
               borderRadius:'12px',
-              border:`1px solid rgba(255,255,255,${si === 0 ? 0.13 : 0.07})`,
-              background: s.bg,
+              border:`1px solid rgba(255,255,255,${si === 0 ? 0.18 : 0.09})`,
+              background:'transparent',
+              boxShadow: si === 0 ? '0 6px 24px rgba(0,0,0,0.45)' : 'none',
               zIndex: si === 0 ? 1 : 0,
               pointerEvents:'none',
             }} />

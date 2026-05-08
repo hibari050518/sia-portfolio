@@ -178,7 +178,7 @@ export default function FlashSeries() {
           }}/>
           {/* Top fade into card bg */}
           <div style={{
-            position:'absolute', top:0, left:0, right:0, height:'52%', pointerEvents:'none',
+            position:'absolute', top:0, left:0, right:0, height:'68%', pointerEvents:'none',
             background:'linear-gradient(to bottom, #0c0c0e 0%, transparent 100%)',
           }}/>
           {/* Bottom fade */}

@@ -162,82 +162,71 @@ export default function WorksHome() {
             animation: imgLoaded ? `kenBurns ${BG_CYCLE_MS}ms ease-out forwards` : 'none' }} />
       )}
 
-      {/* Vignette */}
+      {/* Vignette — stronger at bottom for info section */}
       <div style={{ position:'absolute', inset:0, pointerEvents:'none', zIndex:5,
-        background:'linear-gradient(to bottom, rgba(17,17,17,0.65) 0%, rgba(17,17,17,0) 25%, rgba(17,17,17,0) 45%, rgba(17,17,17,0.75) 80%, rgba(17,17,17,0.96) 100%)' }} />
+        background:'linear-gradient(to bottom, rgba(17,17,17,0.60) 0%, rgba(17,17,17,0) 22%, rgba(17,17,17,0) 42%, rgba(17,17,17,0.82) 72%, rgba(17,17,17,0.97) 100%)' }} />
 
-      {/* Mobile swipe arrow hints */}
+      {/* Swipe areas */}
       {activeIdx > 0 && (
         <div onClick={() => go(-1)}
-          style={{ position:'absolute', left:0, top:0, bottom:0, width:'52px', zIndex:20,
-            display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer' }}>
-          <svg width="22" height="22" viewBox="0 0 32 32" fill="none" style={{ opacity:0.45 }}>
-            <path d="M20 4 L8 16 L20 28" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </div>
+          style={{ position:'absolute', left:0, top:0, bottom:0, width:'52px', zIndex:20, cursor:'pointer' }} />
       )}
       {activeIdx < total - 1 && (
         <div onClick={() => go(1)}
-          style={{ position:'absolute', right:0, top:0, bottom:0, width:'52px', zIndex:20,
-            display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer' }}>
-          <svg width="22" height="22" viewBox="0 0 32 32" fill="none" style={{ opacity:0.45 }}>
-            <path d="M12 4 L24 16 L12 28" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </div>
+          style={{ position:'absolute', right:0, top:0, bottom:0, width:'52px', zIndex:20, cursor:'pointer' }} />
       )}
 
-      {/* Center content */}
+      {/* Bottom info section — title, count, button, thumbnails */}
       {theme && (
-        <div style={{ position:'absolute', inset:0, zIndex:15,
-          display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
-          textAlign:'center', padding:'0 64px' }}>
-          <p style={{ fontSize:'11px', letterSpacing:'4px', textTransform:'uppercase',
-            color:'rgba(255,255,255,0.38)', marginBottom:'16px' }}>
+        <div style={{
+          position:'absolute', zIndex:20,
+          bottom:'calc(62px + env(safe-area-inset-bottom, 0px))',
+          left:0, right:0,
+          display:'flex', flexDirection:'column', alignItems:'center',
+          gap:'8px', padding:'14px 32px 18px', textAlign:'center',
+        }}>
+          {/* Thumbnail strip */}
+          {total > 1 && (
+            <div style={{ display:'flex', gap:'5px', alignItems:'flex-end', marginBottom:'4px' }}>
+              {themeData.map((th, i) => {
+                const isActive = i === activeIdx
+                return (
+                  <div key={th.name}
+                    onClick={() => { setImgLoaded(false); setActiveIdx(i) }}
+                    style={{ width: isActive ? '38px' : '26px', height: isActive ? '38px' : '26px',
+                      overflow:'hidden', flexShrink:0, cursor:'pointer',
+                      border: isActive ? '1.5px solid rgba(255,255,255,0.70)' : '1px solid rgba(255,255,255,0.18)',
+                      opacity: isActive ? 1 : 0.45,
+                      transition:'all 0.38s cubic-bezier(0.22,1,0.36,1)' }}>
+                    {th.image
+                      ? <img src={th.image} alt={th.name}
+                          style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'center top' }} />
+                      : <div style={{ width:'100%', height:'100%', background:'rgba(255,255,255,0.06)' }} />
+                    }
+                  </div>
+                )
+              })}
+            </div>
+          )}
+          <span style={{ fontSize:'10px', letterSpacing:'2px', color:'rgba(255,255,255,0.30)' }}>
+            {String(activeIdx+1).padStart(2,'0')} / {String(total).padStart(2,'0')}
+          </span>
+          <h2 style={{ fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
+            fontSize:'28px', color:'rgba(255,255,255,0.92)', lineHeight:1.2, margin:'2px 0 0' }}>
+            {getThemeName(works, theme.name, lang)}
+          </h2>
+          <p style={{ fontSize:'11px', letterSpacing:'3px', textTransform:'uppercase',
+            color:'rgba(255,255,255,0.35)', margin:0 }}>
             {theme.count} {t('pieces',lang)}
           </p>
-          <h1 style={{ fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
-            fontSize:'38px', color:'rgba(255,255,255,0.92)', lineHeight:1.15, marginBottom:'30px' }}>
-            {getThemeName(works, theme.name, lang)}
-          </h1>
           <button onClick={() => navigate(`/works/${encodeURIComponent(theme.name)}`)}
             style={{ background:'none', border:'1px solid rgba(255,255,255,0.28)',
               color:'rgba(255,255,255,0.65)', fontSize:'11px', letterSpacing:'3px',
-              textTransform:'uppercase', padding:'11px 28px', cursor:'pointer' }}>
+              textTransform:'uppercase', padding:'10px 28px', cursor:'pointer', marginTop:'4px' }}>
             {t('viewWorks',lang)} →
           </button>
         </div>
       )}
-
-      {/* Counter + thumbnails above tab bar */}
-      <div style={{ position:'absolute', zIndex:20,
-        bottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 16px)',
-        left:0, right:0, display:'flex', flexDirection:'column', alignItems:'center', gap:'10px' }}>
-        <span style={{ fontSize:'11px', letterSpacing:'2px', color:'rgba(255,255,255,0.28)' }}>
-          {total > 0 ? `${String(activeIdx+1).padStart(2,'0')} / ${String(total).padStart(2,'0')}` : ''}
-        </span>
-        {total > 1 && (
-          <div style={{ display:'flex', gap:'5px', alignItems:'flex-end' }}>
-            {themeData.map((th, i) => {
-              const isActive = i === activeIdx
-              return (
-                <div key={th.name}
-                  onClick={() => { setImgLoaded(false); setActiveIdx(i) }}
-                  style={{ width: isActive ? '42px' : '30px', height: isActive ? '42px' : '30px',
-                    overflow:'hidden', flexShrink:0, cursor:'pointer',
-                    border: isActive ? '1.5px solid rgba(255,255,255,0.70)' : '1px solid rgba(255,255,255,0.18)',
-                    opacity: isActive ? 1 : 0.45,
-                    transition:'all 0.38s cubic-bezier(0.22,1,0.36,1)' }}>
-                  {th.image
-                    ? <img src={th.image} alt={th.name}
-                        style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'center top' }} />
-                    : <div style={{ width:'100%', height:'100%', background:'rgba(255,255,255,0.06)' }} />
-                  }
-                </div>
-              )
-            })}
-          </div>
-        )}
-      </div>
 
       <MobileTabBar />
     </div>
