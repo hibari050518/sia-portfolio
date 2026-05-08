@@ -157,25 +157,24 @@ export default function OpeningAnimation({ style, className }) {
     const cx = W / 2, cy = H / 2
 
     const inLogoZone = (x, y) => {
-      if (x > 335 && x < 545 && y > 140 && y < 215) return true
-      if (x > 40  && x < 835 && y > 250 && y < 320) return true
+      if (x > 210 && x < 660 && y > 100 && y < 245) return true   // Sia 字母擴大排除區
+      if (x > 40  && x < 835 && y > 245 && y < 330) return true   // TATTOOIST 排除區
       return false
     }
 
     function generateStars() {
       while (ornG.firstChild) ornG.removeChild(ornG.firstChild)
       const pts = []
-      pts.push({ x: 288, y: 175, depth: 0.78, tier: 'hero', fixed: true })
-      pts.push({ x: 572, y: 170, depth: 0.82, tier: 'hero', fixed: true })
-      pts.push({ x: 440, y: 120, depth: 0.72, tier: 'hero', fixed: true })
+      pts.push({ x: 110, y: 190, depth: 0.78, tier: 'hero', fixed: true })  // 左側遠端
+      pts.push({ x: 762, y: 185, depth: 0.82, tier: 'hero', fixed: true })  // 右側遠端
+      pts.push({ x: 435, y:  42, depth: 0.72, tier: 'hero', fixed: true })  // 正上方遠端
       let tries = 0
       while (pts.length < 9 && tries++ < 4000) {
-        const x = cx + (Math.random() - 0.5) * W * spread_val
-        const y = cy + (Math.random() - 0.5) * H * spread_val
+        const x = cx + (Math.random() - 0.5) * W * 0.88
+        const y = cy + (Math.random() - 0.5) * H * 0.88
         if (x < 14 || x > W - 14 || y < 14 || y > H - 14) continue
         if (inLogoZone(x, y)) continue
-        if (x > 320 && x < 560 && y > 205 && y < 260) continue
-        if (pts.some(p => (p.x - x) ** 2 + (p.y - y) ** 2 < 95 ** 2)) continue
+        if (pts.some(p => (p.x - x) ** 2 + (p.y - y) ** 2 < 110 ** 2)) continue
         pts.push({ x, y, depth: Math.random() })
       }
       pts.filter(p => !p.fixed).forEach(p => (p.tier = 'medium'))
