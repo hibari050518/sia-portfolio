@@ -127,7 +127,7 @@ export default function OpeningAnimation({ style, className }) {
     const svg = wrap.querySelector('svg')
     if (!svg) return
 
-    const STATE = { speed: 1.35, silk: 135, orn: 100, ink: '#f5f0ea' }
+    const STATE = { speed: 1.35, silk: 135, orn: 38, ink: '#f5f0ea' }
     const spread_val = 0.50
     const T = {
       s:    { dur: 0.95, delay: 0.30 },
@@ -239,7 +239,7 @@ export default function OpeningAnimation({ style, className }) {
         const m = isSolid ? Math.min(1, op * 2.4) : isStar ? starOp : op * 0.55
         el.style.setProperty('--maxOp', m)
         if (!el.dataset.tdur) {
-          const period = isStar ? (11.0 + Math.random() * 7.0) : (18.0 + Math.random() * 10.0)
+          const period = isStar ? (22.0 + Math.random() * 14.0) : (32.0 + Math.random() * 16.0)
           const phase  = isSolid ? -(0.18 + Math.random() * 0.20) * period : -Math.random() * period
           el.dataset.tdur   = period.toFixed(2)
           el.dataset.tdelay = phase.toFixed(2)
