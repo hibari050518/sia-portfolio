@@ -3,6 +3,9 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useFlash } from '../hooks/useSheets'
 import { WIX_URL, LINE_ID } from '../config'
 import { useLang, t, formatSize } from '../context/LangContext'
+import { useIsMobile } from '../hooks/useIsMobile'
+import { useTouchSwipe } from '../hooks/useTouchSwipe'
+import { MobileTopBar, MobileTabBar } from '../components/MobileNav'
 
 const BG    = '#111'
 const PANEL = '#161616'
@@ -86,7 +89,6 @@ export default function FlashDetail() {
   const prev        = itemIdx > 0         ? seriesItems[itemIdx - 1] : null
   const next        = itemIdx < total - 1 ? seriesItems[itemIdx + 1] : null
 
-  // 收集多圖
   const images = item
     ? [item.image_url, item.image_url_2, item.image_url_3].filter(Boolean)
     : []
@@ -101,6 +103,9 @@ export default function FlashDetail() {
     setImgLoaded(false)
     setActiveImgIdx(i => Math.max(0, Math.min(images.length - 1, i + delta)))
   }
+
+  const isMobile = useIsMobile()
+  const imgSwipe = useTouchSwipe(() => goImg(1), () => goImg(-1))
 
   useEffect(() => {
     const handler = (e) => {
@@ -155,6 +160,183 @@ export default function FlashDetail() {
 
   const lineUrl = `https://line.me/R/ti/p/${encodeURIComponent(LINE_ID)}`
 
+  /* ── Mobile layout: image top, content below, scrollable ── */
+  if (isMobile) return (
+    <div style={{ position:'fixed', inset:0, background:BG, overflow:'hidden' }}>
+      <MobileTopBar />
+
+      {/* Scrollable content area */}
+      <div style={{
+        position:'absolute',
+        top:'52px',
+        bottom:'calc(62px + env(safe-area-inset-bottom, 0px))',
+        left:0, right:0,
+        overflowY:'auto',
+        WebkitOverflowScrolling:'touch',
+      }}>
+        {/* Image section — 52vh */}
+        <div style={{ position:'relative', height:'52vh', overflow:'hidden', flexShrink:0 }}
+          onTouchStart={imgSwipe.onTouchStart} onTouchEnd={imgSwipe.onTouchEnd}>
+          {activeImg && (
+            <img
+              key={`${item.id}-${activeImgIdx}`}
+              src={activeImg}
+              alt={item.title}
+              onLoad={() => setImgLoaded(true)}
+              style={{
+                position:'absolute', inset:0, width:'100%', height:'100%',
+                objectFit:'cover', objectPosition:'center center',
+                filter:`brightness(${isAvail ? 0.75 : 0.45})`,
+                opacity: imgLoaded ? 1 : 0,
+                transition:'opacity 0.65s ease',
+              }}
+            />
+          )}
+          {/* Bottom fade */}
+          <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'35%',
+            background:`linear-gradient(to top, ${BG}, transparent)`, pointerEvents:'none', zIndex:2 }} />
+
+          {/* Image dots */}
+          {images.length > 1 && (
+            <div style={{ position:'absolute', bottom:'16px', left:'50%', transform:'translateX(-50%)',
+              display:'flex', gap:'5px', zIndex:5 }}>
+              {images.map((_, i) => (
+                <button key={i} onClick={() => { setImgLoaded(false); setActiveImgIdx(i) }}
+                  style={{ width: i === activeImgIdx ? '18px' : '5px', height:'2px',
+                    borderRadius:'1px', border:'none', padding:0, cursor:'pointer',
+                    background: i === activeImgIdx ? 'rgba(255,255,255,0.70)' : 'rgba(255,255,255,0.25)',
+                    transition:'all 0.35s ease' }}/>
+              ))}
+            </div>
+          )}
+
+          {/* Back link */}
+          <div style={{ position:'absolute', top:'14px', left:'18px', zIndex:10 }}>
+            <Link to={`/flash/${encodeURIComponent(decoded)}`}
+              style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase',
+                color:'rgba(255,255,255,0.55)', textDecoration:'none' }}>
+              ← {decoded}
+            </Link>
+          </div>
+        </div>
+
+        {/* Content section */}
+        <div style={{ padding:'28px 24px 40px', background:BG }}>
+
+          {/* Series + status row */}
+          <div style={{ display:'flex', alignItems:'center', marginBottom:'20px', gap:'12px' }}>
+            <span style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase',
+              color:'var(--ocean)', opacity:0.85, flexShrink:0 }}>
+              {decoded}
+            </span>
+            <div style={{ flex:1, height:'1px', background:'rgba(255,255,255,0.10)' }} />
+            <span style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase',
+              padding:'3px 10px', flexShrink:0,
+              color: isAvail ? 'var(--ocean)' : 'rgba(255,255,255,0.3)',
+              border: `1px solid ${isAvail ? 'rgba(74,143,160,0.6)' : 'rgba(255,255,255,0.15)'}` }}>
+              {isAvail ? t('available',lang) : t('taken',lang)}
+            </span>
+          </div>
+
+          {/* Title */}
+          <h1 style={{ fontFamily:'var(--serif)', fontWeight:300, fontStyle:'italic',
+            fontSize:'clamp(22px, 6vw, 36px)', color:'rgba(255,255,255,0.92)',
+            lineHeight:1.25, marginBottom:'24px' }}>
+            {item.title}
+          </h1>
+
+          {/* Description */}
+          {item.description && (
+            <p style={{ fontSize:'14px', lineHeight:2.0, color:'rgba(255,255,255,0.52)',
+              fontStyle:'italic', marginBottom:'28px',
+              borderLeft:'1px solid rgba(255,255,255,0.10)', paddingLeft:'16px' }}>
+              {item.description}
+            </p>
+          )}
+
+          {/* Details */}
+          <div style={{ display:'flex', flexDirection:'column', marginBottom:'28px' }}>
+            {[
+              { label:'BODY',  value: item.body_part },
+              { label:'SIZE',  value: formatSize(item.size_suggestion, lang) },
+              { label:'PRICE', value: item.price_range },
+            ].filter(d => d.value).map(d => (
+              <div key={d.label} style={{ display:'flex', alignItems:'baseline', gap:'14px',
+                borderBottom:'1px solid rgba(255,255,255,0.06)', padding:'14px 0' }}>
+                <span style={{ fontSize:'11px', letterSpacing:'1.5px',
+                  color:'rgba(255,255,255,0.22)', width:'52px', flexShrink:0 }}>{d.label}</span>
+                <span style={{ fontSize:'13px',
+                  color: d.label === 'PRICE' ? 'var(--gold)' : 'rgba(255,255,255,0.62)',
+                  letterSpacing:'0.5px',
+                  fontStyle: d.label === 'PRICE' ? 'italic' : 'normal' }}>{d.value}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* CTA */}
+          {isAvail ? (
+            <div style={{ display:'flex', flexDirection:'column', gap:'12px', marginBottom:'32px' }}>
+              <button
+                onClick={handleCopyAndLine}
+                style={{
+                  background: copied ? 'rgba(74,143,160,0.15)' : 'none',
+                  border: `1px solid ${copied ? 'var(--ocean)' : 'rgba(255,255,255,0.28)'}`,
+                  color: copied ? 'var(--ocean)' : 'rgba(255,255,255,0.75)',
+                  fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
+                  padding:'15px 20px', cursor:'pointer',
+                  transition:'all 0.25s', textAlign:'center',
+                }}>
+                {copied ? t('copied',lang) : `${t('copyInquiry',lang)} ↗`}
+              </button>
+              <a href={lineUrl} target="_blank" rel="noreferrer"
+                style={{
+                  display:'block', textAlign:'center',
+                  background:'rgba(0,185,0,0.12)',
+                  border:'1px solid rgba(0,185,0,0.4)',
+                  color:'rgba(100,255,100,0.85)',
+                  fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
+                  padding:'15px 20px', textDecoration:'none',
+                }}>
+                {t('goLine',lang)} →
+              </a>
+            </div>
+          ) : (
+            <p style={{ fontSize:'13px', lineHeight:2.0, color:'rgba(255,255,255,0.35)',
+              fontStyle:'italic', marginBottom:'32px' }}>
+              {t('takenNote',lang)}
+            </p>
+          )}
+
+          {/* Prev / Next */}
+          {(prev || next) && (
+            <div style={{ display:'flex', justifyContent:'space-between',
+              paddingTop:'28px', borderTop:'1px solid rgba(255,255,255,0.07)' }}>
+              {prev
+                ? <Link to={`/flash/${encodeURIComponent(decoded)}/${prev.id}`}
+                    style={{ fontSize:'12px', letterSpacing:'2px',
+                      color:'rgba(255,255,255,0.35)', textDecoration:'none' }}>
+                    {t('prev',lang)}
+                  </Link>
+                : <span />
+              }
+              {next
+                ? <Link to={`/flash/${encodeURIComponent(decoded)}/${next.id}`}
+                    style={{ fontSize:'12px', letterSpacing:'2px',
+                      color:'rgba(255,255,255,0.35)', textDecoration:'none' }}>
+                    {t('next',lang)}
+                  </Link>
+                : <span />
+              }
+            </div>
+          )}
+        </div>
+      </div>
+
+      <MobileTabBar />
+    </div>
+  )
+
+  /* ── Desktop layout ── */
   return (
     <div style={{ position:'fixed', inset:0, background:BG, overflow:'hidden' }}>
 

@@ -4,6 +4,9 @@ import { useFlash } from '../hooks/useSheets'
 import { getSeries } from '../utils/sheets'
 import { WIX_URL } from '../config'
 import { useLang, t, getSeriesName } from '../context/LangContext'
+import { useIsMobile } from '../hooks/useIsMobile'
+import { useTouchSwipe } from '../hooks/useTouchSwipe'
+import { MobileTopBar, MobileTabBar } from '../components/MobileNav'
 
 const BG = '#111'
 
@@ -90,6 +93,9 @@ export default function FlashHome() {
     setActiveIdx(i => Math.max(0, Math.min(total - 1, i + delta)))
   }
 
+  const isMobile = useIsMobile()
+  const swipe    = useTouchSwipe(() => go(1), () => go(-1))
+
   useEffect(() => {
     const handler = (e) => {
       if (e.key === 'ArrowRight') go(1)
@@ -107,6 +113,90 @@ export default function FlashHome() {
     </div>
   )
 
+  /* ── Mobile layout ── */
+  if (isMobile) return (
+    <div style={{ position:'fixed', inset:0, background:BG, overflow:'hidden' }}
+      onTouchStart={swipe.onTouchStart} onTouchEnd={swipe.onTouchEnd}>
+
+      <MobileTopBar />
+
+      {/* BG image */}
+      {series?.image && (
+        <img key={series.name} src={series.image} alt={series.name}
+          onLoad={() => setImgLoaded(true)}
+          style={{ position:'absolute', inset:0, width:'100%', height:'100%',
+            objectFit:'cover', objectPosition:'center', filter:'brightness(0.52)',
+            opacity: imgLoaded ? 1 : 0, transition:'opacity 0.75s ease' }} />
+      )}
+
+      {/* Vignette */}
+      <div style={{ position:'absolute', inset:0, pointerEvents:'none', zIndex:5,
+        background:'linear-gradient(to bottom, rgba(17,17,17,0.65) 0%, rgba(17,17,17,0) 25%, rgba(17,17,17,0) 45%, rgba(17,17,17,0.75) 80%, rgba(17,17,17,0.96) 100%)' }} />
+
+      {/* Center content */}
+      {series && (
+        <div style={{ position:'absolute', inset:0, zIndex:15,
+          display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
+          textAlign:'center', padding:'0 24px' }}>
+          <p style={{ fontSize:'11px', letterSpacing:'4px', textTransform:'uppercase',
+            color:'rgba(255,255,255,0.38)', marginBottom:'10px' }}>
+            {series.count} {t('flashCount',lang)}
+          </p>
+          {series.availCount > 0 && (
+            <p style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase',
+              color:'var(--ocean)', marginBottom:'12px', opacity:0.9 }}>
+              {series.availCount} {t('available',lang)}
+            </p>
+          )}
+          <h1 style={{ fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
+            fontSize:'38px', color:'rgba(255,255,255,0.92)', lineHeight:1.15, marginBottom:'30px' }}>
+            {getSeriesName(flash, series.name, lang)}
+          </h1>
+          <button onClick={() => navigate(`/flash/${encodeURIComponent(series.name)}`)}
+            style={{ background:'none', border:'1px solid rgba(255,255,255,0.28)',
+              color:'rgba(255,255,255,0.65)', fontSize:'11px', letterSpacing:'3px',
+              textTransform:'uppercase', padding:'11px 28px', cursor:'pointer' }}>
+            {t('exploreFlash',lang)} →
+          </button>
+        </div>
+      )}
+
+      {/* Counter + thumbnails above tab bar */}
+      <div style={{ position:'absolute', zIndex:20,
+        bottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 16px)',
+        left:0, right:0, display:'flex', flexDirection:'column', alignItems:'center', gap:'10px' }}>
+        <span style={{ fontSize:'11px', letterSpacing:'2px', color:'rgba(255,255,255,0.28)' }}>
+          {total > 0 ? `${String(activeIdx+1).padStart(2,'0')} / ${String(total).padStart(2,'0')}` : ''}
+        </span>
+        {total > 1 && (
+          <div style={{ display:'flex', gap:'5px', alignItems:'flex-end' }}>
+            {seriesData.map((s, i) => {
+              const isActive = i === activeIdx
+              return (
+                <div key={s.name}
+                  onClick={() => { setImgLoaded(false); setActiveIdx(i) }}
+                  style={{ width: isActive ? '42px' : '30px', height: isActive ? '42px' : '30px',
+                    overflow:'hidden', flexShrink:0, cursor:'pointer',
+                    border: isActive ? '1.5px solid rgba(255,255,255,0.70)' : '1px solid rgba(255,255,255,0.18)',
+                    opacity: isActive ? 1 : 0.45,
+                    transition:'all 0.38s cubic-bezier(0.22,1,0.36,1)' }}>
+                  {s.image
+                    ? <img src={s.image} alt={s.name}
+                        style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'center top' }} />
+                    : <div style={{ width:'100%', height:'100%', background:'rgba(255,255,255,0.06)' }} />
+                  }
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </div>
+
+      <MobileTabBar />
+    </div>
+  )
+
+  /* ── Desktop layout ── */
   return (
     <div style={{ position:'fixed', inset:0, background:BG, overflow:'hidden' }}>
 

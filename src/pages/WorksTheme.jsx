@@ -3,6 +3,9 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useWorks } from '../hooks/useSheets'
 import { WIX_URL } from '../config'
 import { useLang, gl, getThemeName, t } from '../context/LangContext'
+import { useIsMobile } from '../hooks/useIsMobile'
+import { useTouchSwipe } from '../hooks/useTouchSwipe'
+import { MobileTopBar, MobileTabBar } from '../components/MobileNav'
 
 function LangSwitcher() {
   const { lang, setLang } = useLang()
@@ -87,6 +90,9 @@ export default function WorksTheme() {
 
   const go = (delta) => setActiveIdx(i => Math.max(0, Math.min(total - 1, i + delta)))
 
+  const isMobile = useIsMobile()
+  const swipe    = useTouchSwipe(() => go(1), () => go(-1))
+
   const handleHover = (i) => {
     if (i === activeIdx) return
     clearTimeout(hoverTimer.current)
@@ -111,6 +117,110 @@ export default function WorksTheme() {
     </div>
   )
 
+  /* ── Mobile layout: peek carousel ── */
+  if (isMobile) return (
+    <div style={{ position:'fixed', inset:0, background:BG, overflow:'hidden' }}>
+      <MobileTopBar />
+
+      {/* Content area between nav bars */}
+      <div style={{
+        position:'absolute', top:'52px', bottom:'calc(62px + env(safe-area-inset-bottom, 0px))',
+        left:0, right:0, display:'flex', flexDirection:'column',
+      }}>
+        {/* Breadcrumb */}
+        <div style={{ padding:'10px 18px 6px', flexShrink:0,
+          display:'flex', alignItems:'center', gap:'8px' }}>
+          <Link to="/works"
+            style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase',
+              color:'rgba(255,255,255,0.32)', textDecoration:'none' }}>
+            ← {t('backWorks',lang)}
+          </Link>
+          <span style={{ fontSize:'11px', color:'rgba(255,255,255,0.18)' }}>／</span>
+          <span style={{ fontSize:'11px', letterSpacing:'1px', textTransform:'uppercase',
+            color:'rgba(255,255,255,0.50)' }}>
+            {getThemeName(works, decoded, lang)}
+          </span>
+        </div>
+
+        {/* Peek carousel */}
+        <div style={{ flex:1, position:'relative', overflow:'hidden' }}
+          onTouchStart={swipe.onTouchStart} onTouchEnd={swipe.onTouchEnd}>
+
+          {themeWorks.map((work, i) => {
+            const offset = i - activeIdx
+            if (Math.abs(offset) > 1) return null
+            // center card: left=10%, width=80% → right edge at 90%
+            // prev card:   left=-70% (right edge at 10%)
+            // next card:   left=90%  (left edge at 90%)
+            const leftPct = 10 + offset * 80
+
+            return (
+              <div key={work.id}
+                onClick={() => {
+                  if (offset === 0) navigate(`/works/${encodeURIComponent(decoded)}/${work.id}`)
+                  else setActiveIdx(i)
+                }}
+                style={{
+                  position:'absolute', left:`${leftPct}%`, width:'80%',
+                  top:'8px', bottom:'8px', overflow:'hidden', cursor:'pointer',
+                  transition:'left 0.42s cubic-bezier(0.22,1,0.36,1)',
+                }}>
+                {work.image_url
+                  ? <img src={work.image_url} alt={work.title}
+                      style={{ width:'100%', height:'100%', objectFit:'cover',
+                        filter:`brightness(${offset === 0 ? 0.82 : 0.35})`,
+                        transition:'filter 0.4s ease' }} />
+                  : <div style={{ width:'100%', height:'100%', background:'rgba(255,255,255,0.04)' }} />
+                }
+                {/* Top/bottom fades */}
+                <div style={{ position:'absolute', top:0, left:0, right:0, height:'18%',
+                  background:`linear-gradient(to bottom,${BG},transparent)`, pointerEvents:'none' }}/>
+                <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'18%',
+                  background:`linear-gradient(to top,${BG},transparent)`, pointerEvents:'none' }}/>
+              </div>
+            )
+          })}
+
+          {/* Edge fade overlays to reveal peek cards */}
+          <div style={{ position:'absolute', top:0, left:0, bottom:0, width:'12%', zIndex:5,
+            background:`linear-gradient(to right, ${BG}, transparent)`, pointerEvents:'none' }} />
+          <div style={{ position:'absolute', top:0, right:0, bottom:0, width:'12%', zIndex:5,
+            background:`linear-gradient(to left, ${BG}, transparent)`, pointerEvents:'none' }} />
+        </div>
+
+        {/* Info section */}
+        {themeWorks[activeIdx] && (
+          <div style={{ padding:'12px 18px 10px', flexShrink:0,
+            display:'flex', flexDirection:'column', alignItems:'center', gap:'8px', textAlign:'center' }}>
+            <span style={{ fontSize:'11px', letterSpacing:'2px', color:'rgba(255,255,255,0.28)' }}>
+              {String(activeIdx+1).padStart(2,'0')} / {String(total).padStart(2,'0')}
+            </span>
+            {gl(themeWorks[activeIdx], 'body_part', lang) && (
+              <span style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase',
+                color:'var(--ocean)', border:'1px solid var(--ocean)', padding:'2px 8px', opacity:0.85 }}>
+                {gl(themeWorks[activeIdx], 'body_part', lang)}
+              </span>
+            )}
+            <p style={{ fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
+              fontSize:'18px', color:'rgba(255,255,255,0.88)', letterSpacing:'0.5px', margin:0 }}>
+              {gl(themeWorks[activeIdx], 'title', lang)}
+            </p>
+            <button
+              onClick={() => navigate(`/works/${encodeURIComponent(decoded)}/${themeWorks[activeIdx].id}`)}
+              style={{ background:'none', border:'1px solid rgba(255,255,255,0.25)',
+                color:'rgba(255,255,255,0.60)', fontSize:'11px', letterSpacing:'2px',
+                textTransform:'uppercase', padding:'8px 22px', cursor:'pointer' }}>
+              {t('readStory',lang)} →
+            </button>
+          </div>
+        )}
+      </div>
+
+      <MobileTabBar />
+    </div>
+  )
+
+  /* ── Desktop layout ── */
   return (
     <div style={{ position:'fixed', inset:0, background:BG,
       display:'flex', flexDirection:'column', overflow:'hidden' }}>
@@ -229,7 +339,6 @@ export default function WorksTheme() {
                     : `linear-gradient(to left,${BG} 0%,transparent 60%)`,
                   pointerEvents:'none' }}/>
               )}
-              {/* No overlay text — label/title/button shown below the carousel */}
             </div>
           )
         })}

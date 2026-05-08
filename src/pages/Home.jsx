@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import { useWorks } from '../hooks/useSheets'
 import { WIX_URL } from '../config'
 import { useLang, t } from '../context/LangContext'
+import { useIsMobile } from '../hooks/useIsMobile'
+import { MobileTabBar } from '../components/MobileNav'
 
 function LangSwitcher() {
   const { lang, setLang } = useLang()
@@ -148,9 +150,101 @@ function NavLink({ to, label }) {
   )
 }
 
+const LOGO_URL = 'https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/Sia_logo_%E6%96%87%E5%AD%97%EF%BC%88%E7%99%BD%EF%BC%89.png'
+
+function HomeMobile({ lang }) {
+  const [bgLoaded, setBgLoaded] = useState(false)
+  const bgSrc = ALL_IMGS[0]
+
+  return (
+    <div style={{ position:'fixed', inset:0, background:BG, overflow:'hidden' }}>
+      {/* 全幅背景圖 */}
+      <img
+        src={bgSrc}
+        alt=""
+        onLoad={() => setBgLoaded(true)}
+        style={{
+          position:'absolute', inset:0, width:'100%', height:'100%',
+          objectFit:'cover', objectPosition:'center 30%',
+          filter:'brightness(0.6)',
+          opacity: bgLoaded ? 1 : 0,
+          transition:'opacity 1.2s ease',
+        }}
+      />
+
+      {/* 漸層遮罩：上下均有，讓中央內容清晰 */}
+      <div style={{
+        position:'absolute', inset:0, pointerEvents:'none',
+        background:'linear-gradient(to bottom, rgba(17,17,17,0.5) 0%, transparent 30%, transparent 55%, rgba(17,17,17,0.85) 100%)',
+      }} />
+
+      {/* 中央內容 */}
+      <div style={{
+        position:'absolute', inset:0,
+        display:'flex', flexDirection:'column',
+        alignItems:'center', justifyContent:'center',
+        padding:'0 32px 80px',
+        textAlign:'center',
+      }}>
+        {/* Logo 圖片 */}
+        <img
+          src={LOGO_URL}
+          alt="SIA TATTOOIST"
+          style={{ width:'160px', maxWidth:'60vw', marginBottom:'20px', filter:'drop-shadow(0 2px 20px rgba(0,0,0,0.6))' }}
+          onError={e => { e.currentTarget.style.display='none'; e.currentTarget.nextElementSibling.style.display='block' }}
+        />
+        <span style={{
+          display:'none', fontFamily:'var(--serif)',
+          fontSize:'16px', letterSpacing:'5px', color:'rgba(255,255,255,0.88)',
+          marginBottom:'20px',
+        }}>SIA TATTOOIST</span>
+
+        <p style={{
+          fontSize:'11px', letterSpacing:'3px', textTransform:'uppercase',
+          color:'var(--ocean)', marginBottom:'16px',
+        }}>Spiritual Tattoo Artist</p>
+
+        <p style={{
+          fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
+          fontSize:'15px', lineHeight:1.85,
+          color:'rgba(255,255,255,0.65)',
+          marginBottom:'32px',
+        }}>
+          A tattoo,<br />composed from the voice of your soul.
+        </p>
+
+        {lang !== 'en' && (
+          <p style={{
+            fontSize:'11px', letterSpacing: lang === 'ko' ? '1px' : '2px',
+            color:'rgba(255,255,255,0.45)', marginBottom:'28px',
+          }}>
+            {t('tagline', lang)}
+          </p>
+        )}
+
+        <Link to="/works" style={{
+          display:'inline-block', padding:'13px 36px',
+          border:'1px solid rgba(255,255,255,0.35)',
+          fontSize:'11px', letterSpacing:'4px', textTransform:'uppercase',
+          color:'rgba(255,255,255,0.78)',
+        }}>
+          {t('browseWorks', lang)}
+        </Link>
+      </div>
+
+      {/* 底部 Tab Bar */}
+      <MobileTabBar />
+    </div>
+  )
+}
+
 export default function Home() {
   const { works } = useWorks()
   const { lang }  = useLang()
+  const isMobile  = useIsMobile()
+
+  // ── 行動版直接渲染 ──
+  if (isMobile) return <HomeMobile lang={lang} />
 
   const [leftIdx,  setLeftIdx]  = useState(0)
   const [rightIdx, setRightIdx] = useState(0)

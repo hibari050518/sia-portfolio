@@ -3,6 +3,9 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useFlash } from '../hooks/useSheets'
 import { WIX_URL } from '../config'
 import { useLang, t, gl, getSeriesName } from '../context/LangContext'
+import { useIsMobile } from '../hooks/useIsMobile'
+import { useTouchSwipe } from '../hooks/useTouchSwipe'
+import { MobileTopBar, MobileTabBar } from '../components/MobileNav'
 
 const BG = '#111'
 
@@ -84,6 +87,9 @@ export default function FlashSeries() {
 
   const go = (delta) => setActiveIdx(i => Math.max(0, Math.min(total - 1, i + delta)))
 
+  const isMobile = useIsMobile()
+  const swipe    = useTouchSwipe(() => go(1), () => go(-1))
+
   const handleHover = (i) => {
     if (i === activeIdx) return
     clearTimeout(hoverTimer.current)
@@ -111,6 +117,110 @@ export default function FlashSeries() {
   const activeItem = seriesItems[activeIdx]
   const isAvail    = activeItem?.status?.trim() === '可認領'
 
+  /* ── Mobile layout: peek carousel ── */
+  if (isMobile) return (
+    <div style={{ position:'fixed', inset:0, background:BG, overflow:'hidden' }}>
+      <MobileTopBar />
+
+      {/* Content area between nav bars */}
+      <div style={{
+        position:'absolute', top:'52px', bottom:'calc(62px + env(safe-area-inset-bottom, 0px))',
+        left:0, right:0, display:'flex', flexDirection:'column',
+      }}>
+        {/* Breadcrumb */}
+        <div style={{ padding:'10px 18px 6px', flexShrink:0,
+          display:'flex', alignItems:'center', gap:'8px' }}>
+          <Link to="/flash"
+            style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase',
+              color:'rgba(255,255,255,0.32)', textDecoration:'none' }}>
+            ← {t('backFlash',lang)}
+          </Link>
+          <span style={{ fontSize:'11px', color:'rgba(255,255,255,0.18)' }}>／</span>
+          <span style={{ fontSize:'11px', letterSpacing:'1px', textTransform:'uppercase',
+            color:'rgba(255,255,255,0.50)' }}>
+            {getSeriesName(flash, decoded, lang)}
+          </span>
+        </div>
+
+        {/* Peek carousel */}
+        <div style={{ flex:1, position:'relative', overflow:'hidden' }}
+          onTouchStart={swipe.onTouchStart} onTouchEnd={swipe.onTouchEnd}>
+
+          {seriesItems.map((item, i) => {
+            const offset = i - activeIdx
+            if (Math.abs(offset) > 1) return null
+            const leftPct = 10 + offset * 80
+            const claimedDim = offset === 0 && item.status?.trim() !== '可認領' ? 0.55 : 1
+
+            return (
+              <div key={item.id}
+                onClick={() => {
+                  if (offset === 0) navigate(`/flash/${encodeURIComponent(decoded)}/${item.id}`)
+                  else setActiveIdx(i)
+                }}
+                style={{
+                  position:'absolute', left:`${leftPct}%`, width:'80%',
+                  top:'8px', bottom:'8px', overflow:'hidden', cursor:'pointer',
+                  opacity: claimedDim,
+                  transition:'left 0.42s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease',
+                }}>
+                {item.image_url
+                  ? <img src={item.image_url} alt={item.title}
+                      style={{ width:'100%', height:'100%', objectFit:'cover',
+                        filter:`brightness(${offset === 0 ? 0.82 : 0.35})`,
+                        transition:'filter 0.4s ease' }} />
+                  : <div style={{ width:'100%', height:'100%', background:'rgba(255,255,255,0.04)' }} />
+                }
+                {/* Top/bottom fades */}
+                <div style={{ position:'absolute', top:0, left:0, right:0, height:'18%',
+                  background:`linear-gradient(to bottom,${BG},transparent)`, pointerEvents:'none' }}/>
+                <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'18%',
+                  background:`linear-gradient(to top,${BG},transparent)`, pointerEvents:'none' }}/>
+              </div>
+            )
+          })}
+
+          {/* Edge fade overlays */}
+          <div style={{ position:'absolute', top:0, left:0, bottom:0, width:'12%', zIndex:5,
+            background:`linear-gradient(to right, ${BG}, transparent)`, pointerEvents:'none' }} />
+          <div style={{ position:'absolute', top:0, right:0, bottom:0, width:'12%', zIndex:5,
+            background:`linear-gradient(to left, ${BG}, transparent)`, pointerEvents:'none' }} />
+        </div>
+
+        {/* Info section */}
+        {activeItem && (
+          <div style={{ padding:'12px 18px 10px', flexShrink:0,
+            display:'flex', flexDirection:'column', alignItems:'center', gap:'8px', textAlign:'center' }}>
+            <span style={{ fontSize:'11px', letterSpacing:'2px', color:'rgba(255,255,255,0.28)' }}>
+              {String(activeIdx+1).padStart(2,'0')} / {String(total).padStart(2,'0')}
+            </span>
+            {/* Status badge */}
+            <span style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase',
+              padding:'2px 8px', opacity:0.85,
+              color: isAvail ? 'var(--ocean)' : 'rgba(255,255,255,0.3)',
+              border: `1px solid ${isAvail ? 'var(--ocean)' : 'rgba(255,255,255,0.2)'}` }}>
+              {isAvail ? t('available',lang) : t('taken',lang)}
+            </span>
+            <p style={{ fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
+              fontSize:'18px', color:'rgba(255,255,255,0.88)', letterSpacing:'0.5px', margin:0 }}>
+              {activeItem.title}
+            </p>
+            <button
+              onClick={() => navigate(`/flash/${encodeURIComponent(decoded)}/${activeItem.id}`)}
+              style={{ background:'none', border:'1px solid rgba(255,255,255,0.25)',
+                color:'rgba(255,255,255,0.60)', fontSize:'11px', letterSpacing:'2px',
+                textTransform:'uppercase', padding:'8px 22px', cursor:'pointer' }}>
+              {t('viewDesign',lang)} →
+            </button>
+          </div>
+        )}
+      </div>
+
+      <MobileTabBar />
+    </div>
+  )
+
+  /* ── Desktop layout ── */
   return (
     <div style={{ position:'fixed', inset:0, background:BG,
       display:'flex', flexDirection:'column', overflow:'hidden' }}>
@@ -183,7 +293,6 @@ export default function FlashSeries() {
           const leftPct    = 40 + offset * 20
           const heightPct  = isCenter ? 84 : absOff === 1 ? 62 : 50
           const brightness = isCenter ? 0.78 : absOff === 1 ? 0.38 : 0.22
-          // dim claimed designs slightly
           const claimedDim = isCenter && item.status?.trim() !== '可認領' ? 0.55 : 1
 
           return (

@@ -3,6 +3,9 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useWorks } from '../hooks/useSheets'
 import { WIX_URL } from '../config'
 import { useLang, gl, getThemeName, t, formatSize } from '../context/LangContext'
+import { useIsMobile } from '../hooks/useIsMobile'
+import { useTouchSwipe } from '../hooks/useTouchSwipe'
+import { MobileTopBar, MobileTabBar } from '../components/MobileNav'
 
 function LangSwitcher() {
   const { lang, setLang } = useLang()
@@ -85,12 +88,10 @@ export default function WorkDetail() {
   const prev       = workIdx > 0             ? themeWorks[workIdx - 1] : null
   const next       = workIdx < total - 1     ? themeWorks[workIdx + 1] : null
 
-  // Collect all images for this work
   const images = work
     ? [work.image_url, work.image_url_2, work.image_url_3].filter(Boolean)
     : []
 
-  // Reset image index when work changes
   useEffect(() => {
     setImgLoaded(false)
     setActiveImgIdx(0)
@@ -100,6 +101,9 @@ export default function WorkDetail() {
     setImgLoaded(false)
     setActiveImgIdx(i => Math.max(0, Math.min(images.length - 1, i + delta)))
   }
+
+  const isMobile   = useIsMobile()
+  const imgSwipe   = useTouchSwipe(() => goImg(1), () => goImg(-1))
 
   useEffect(() => {
     const handler = (e) => {
@@ -125,6 +129,138 @@ export default function WorkDetail() {
 
   const activeImg = images[activeImgIdx]
 
+  /* ── Mobile layout: image top, content below, scrollable ── */
+  if (isMobile) return (
+    <div style={{ position:'fixed', inset:0, background:BG, overflow:'hidden' }}>
+      <MobileTopBar />
+
+      {/* Scrollable content area */}
+      <div style={{
+        position:'absolute',
+        top:'52px',
+        bottom:'calc(62px + env(safe-area-inset-bottom, 0px))',
+        left:0, right:0,
+        overflowY:'auto',
+        WebkitOverflowScrolling:'touch',
+      }}>
+        {/* Image section — 52vh */}
+        <div style={{ position:'relative', height:'52vh', overflow:'hidden', flexShrink:0 }}
+          onTouchStart={imgSwipe.onTouchStart} onTouchEnd={imgSwipe.onTouchEnd}>
+          {activeImg && (
+            <img
+              key={`${work.id}-${activeImgIdx}`}
+              src={activeImg}
+              alt={work.title}
+              onLoad={() => setImgLoaded(true)}
+              style={{
+                position:'absolute', inset:0, width:'100%', height:'100%',
+                objectFit:'cover', objectPosition:'center center',
+                filter:'brightness(0.72)',
+                opacity: imgLoaded ? 1 : 0,
+                transition:'opacity 0.65s ease',
+              }}
+            />
+          )}
+          {/* Bottom fade into content */}
+          <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'35%',
+            background:`linear-gradient(to top, ${BG}, transparent)`, pointerEvents:'none', zIndex:2 }} />
+
+          {/* Image dots */}
+          {images.length > 1 && (
+            <div style={{ position:'absolute', bottom:'16px', left:'50%', transform:'translateX(-50%)',
+              display:'flex', gap:'5px', zIndex:5 }}>
+              {images.map((_, i) => (
+                <button key={i} onClick={() => { setImgLoaded(false); setActiveImgIdx(i) }}
+                  style={{ width: i === activeImgIdx ? '18px' : '5px', height:'2px',
+                    borderRadius:'1px', border:'none', padding:0, cursor:'pointer',
+                    background: i === activeImgIdx ? 'rgba(255,255,255,0.70)' : 'rgba(255,255,255,0.25)',
+                    transition:'all 0.35s ease' }}/>
+              ))}
+            </div>
+          )}
+
+          {/* Back link overlaid on image */}
+          <div style={{ position:'absolute', top:'14px', left:'18px', zIndex:10 }}>
+            <Link to={`/works/${encodeURIComponent(decoded)}`}
+              style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase',
+                color:'rgba(255,255,255,0.55)', textDecoration:'none' }}>
+              ← {getThemeName(works, decoded, lang)}
+            </Link>
+          </div>
+        </div>
+
+        {/* Content section */}
+        <div style={{ padding:'28px 24px 40px', background:BG }}>
+
+          {/* Theme tag */}
+          <p style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase',
+            color:'var(--ocean)', marginBottom:'16px', opacity:0.85 }}>
+            {getThemeName(works, decoded, lang)}
+          </p>
+
+          {/* Title */}
+          <h1 style={{ fontFamily:'var(--serif)', fontWeight:300, fontStyle:'italic',
+            fontSize:'clamp(22px, 6vw, 36px)', color:'rgba(255,255,255,0.92)',
+            lineHeight:1.25, marginBottom:'24px' }}>
+            {gl(work, 'title', lang)}
+          </h1>
+
+          {/* Story */}
+          {gl(work, 'story', lang) && (
+            <p style={{ fontSize:'14px', lineHeight:2.0, color:'rgba(255,255,255,0.52)',
+              fontStyle:'italic', marginBottom:'32px',
+              borderLeft:'1px solid rgba(255,255,255,0.10)', paddingLeft:'16px' }}>
+              {gl(work, 'story', lang)}
+            </p>
+          )}
+
+          {/* Details */}
+          <div style={{ display:'flex', flexDirection:'column', marginBottom:'32px' }}>
+            {[
+              { label:'BODY',  value: gl(work, 'body_part', lang) },
+              { label:'SIZE',  value: formatSize(work.size_cm, lang) },
+              { label:'DATE',  value: work.date },
+            ].filter(d => d.value).map(d => (
+              <div key={d.label} style={{ display:'flex', alignItems:'baseline', gap:'14px',
+                borderBottom:'1px solid rgba(255,255,255,0.06)', padding:'14px 0' }}>
+                <span style={{ fontSize:'11px', letterSpacing:'1.5px',
+                  color:'rgba(255,255,255,0.22)', width:'52px', flexShrink:0 }}>{d.label}</span>
+                <span style={{ fontSize:'13px', color:'rgba(255,255,255,0.62)',
+                  letterSpacing:'0.5px' }}>{d.value}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Prev / Next */}
+          {(prev || next) && (
+            <div style={{ display:'flex', justifyContent:'space-between',
+              paddingTop:'28px', borderTop:'1px solid rgba(255,255,255,0.07)' }}>
+              {prev
+                ? <Link to={`/works/${encodeURIComponent(decoded)}/${prev.id}`}
+                    style={{ fontSize:'12px', letterSpacing:'2px',
+                      color:'rgba(255,255,255,0.35)', textDecoration:'none' }}>
+                    {t('prev',lang)}
+                  </Link>
+                : <span />
+              }
+              {next
+                ? <Link to={`/works/${encodeURIComponent(decoded)}/${next.id}`}
+                    style={{ fontSize:'12px', letterSpacing:'2px',
+                      color:'rgba(255,255,255,0.35)', textDecoration:'none' }}>
+                    {t('next',lang)}
+                  </Link>
+                : <span />
+              }
+            </div>
+          )}
+        </div>
+      </div>
+
+      <MobileTabBar />
+    </div>
+  )
+
+  /* ── Desktop layout ── */
   return (
     <div style={{ position:'fixed', inset:0, background:BG, overflow:'hidden' }}>
 
