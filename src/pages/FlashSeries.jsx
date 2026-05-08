@@ -187,44 +187,53 @@ export default function FlashSeries() {
         <div style={{ flex:1, position:'relative', overflow:'hidden' }}
           onTouchStart={swipe.onTouchStart} onTouchEnd={swipe.onTouchEnd}>
 
-          {/* Floating star particles (bottom area) */}
+          {/* Floating star particles — below card, high z-index so visible */}
           {[
-            {x:12, y:78, sz:1.2, dur:'4.4s', d:'0s'},
-            {x:26, y:84, sz:0.9, dur:'3.8s', d:'0.8s'},
-            {x:44, y:90, sz:1.4, dur:'5.2s', d:'1.5s'},
-            {x:56, y:82, sz:1.0, dur:'4.8s', d:'0.3s'},
-            {x:70, y:88, sz:1.3, dur:'3.6s', d:'2.0s'},
-            {x:83, y:80, sz:0.8, dur:'5.0s', d:'1.1s'},
-            {x:36, y:93, sz:1.1, dur:'4.2s', d:'2.4s'},
-            {x:64, y:95, sz:0.7, dur:'4.6s', d:'0.6s'},
-            {x:20, y:96, sz:0.6, dur:'5.5s', d:'1.8s'},
-            {x:78, y:92, sz:1.0, dur:'3.9s', d:'3.0s'},
+            {x:8,  y:86, sz:1.3, dur:'4.4s', d:'0s'},
+            {x:22, y:90, sz:0.9, dur:'3.8s', d:'0.8s'},
+            {x:38, y:94, sz:1.5, dur:'5.2s', d:'1.5s'},
+            {x:52, y:88, sz:1.0, dur:'4.8s', d:'0.3s'},
+            {x:66, y:92, sz:1.3, dur:'3.6s', d:'2.0s'},
+            {x:80, y:87, sz:0.8, dur:'5.0s', d:'1.1s'},
+            {x:33, y:96, sz:1.1, dur:'4.2s', d:'2.4s'},
+            {x:62, y:97, sz:0.7, dur:'4.6s', d:'0.6s'},
+            {x:16, y:98, sz:0.6, dur:'5.5s', d:'1.8s'},
+            {x:76, y:95, sz:1.0, dur:'3.9s', d:'3.0s'},
+            {x:90, y:91, sz:0.8, dur:'4.1s', d:'1.3s'},
           ].map((p, i) => (
             <div key={i} style={{
               position:'absolute', left:`${p.x}%`, top:`${p.y}%`,
               width:`${p.sz}px`, height:`${p.sz}px`, borderRadius:'50%',
-              background:`radial-gradient(circle, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.2) 60%, transparent 100%)`,
-              boxShadow:`0 0 ${p.sz*3}px ${p.sz*1.5}px rgba(255,255,255,0.12)`,
+              background:`radial-gradient(circle, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.25) 60%, transparent 100%)`,
+              boxShadow:`0 0 ${p.sz*4}px ${p.sz*2}px rgba(255,255,255,0.18)`,
               animation:`starFloat ${p.dur} ease-in-out infinite`,
               animationDelay: p.d,
-              pointerEvents:'none', zIndex:0,
+              pointerEvents:'none', zIndex:8,
             }} />
           ))}
 
           {/* Left/Right swipe arrows */}
           {activeIdx > 0 && total > 1 && (
             <div style={{
-              position:'absolute', left:'3%', top:'46%', zIndex:15, pointerEvents:'none',
-              fontSize:'28px', color:'rgba(255,255,255,0.22)', lineHeight:1,
-              animation:'arrowLeftF 2.4s ease-in-out infinite',
-            }}>‹</div>
+              position:'absolute', left:'2%', top:'44%', zIndex:15, pointerEvents:'none',
+              width:'28px', height:'52px', borderRadius:'6px',
+              background:'rgba(255,255,255,0.07)', border:'1px solid rgba(255,255,255,0.14)',
+              display:'flex', alignItems:'center', justifyContent:'center',
+              animation:'arrowLeftF 2.2s ease-in-out infinite',
+            }}>
+              <span style={{ fontSize:'20px', color:'rgba(255,255,255,0.60)', lineHeight:1 }}>‹</span>
+            </div>
           )}
           {activeIdx < total - 1 && total > 1 && (
             <div style={{
-              position:'absolute', right:'3%', top:'46%', zIndex:15, pointerEvents:'none',
-              fontSize:'28px', color:'rgba(255,255,255,0.22)', lineHeight:1,
-              animation:'arrowRightF 2.4s ease-in-out 0.3s infinite',
-            }}>›</div>
+              position:'absolute', right:'2%', top:'44%', zIndex:15, pointerEvents:'none',
+              width:'28px', height:'52px', borderRadius:'6px',
+              background:'rgba(255,255,255,0.07)', border:'1px solid rgba(255,255,255,0.14)',
+              display:'flex', alignItems:'center', justifyContent:'center',
+              animation:'arrowRightF 2.2s ease-in-out 0.3s infinite',
+            }}>
+              <span style={{ fontSize:'20px', color:'rgba(255,255,255,0.60)', lineHeight:1 }}>›</span>
+            </div>
           )}
 
           {seriesItems.map((item, i) => {
