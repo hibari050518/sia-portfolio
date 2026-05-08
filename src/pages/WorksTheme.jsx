@@ -201,8 +201,8 @@ export default function WorksTheme() {
 
           {/* Card stack — ghost cards behind center */}
           {themeWorks.length > 1 && [
-            { dy:10, rot:-4, op:0.20 },
-            { dy:19, rot: 4, op:0.11 },
+            { dy:16, rot:-7, bg:'rgba(38,36,42,0.80)' },
+            { dy:30, rot: 7, bg:'rgba(30,28,34,0.60)' },
           ].map((s, si) => (
             <div key={`stack-${si}`} style={{
               position:'absolute', left:'14%', width:'72%',
@@ -211,8 +211,8 @@ export default function WorksTheme() {
               transform:`translateY(-52%) translateY(${s.dy}px) rotate(${s.rot}deg)`,
               transformOrigin:'50% 100%',
               borderRadius:'12px',
-              border:'1px solid rgba(255,255,255,0.07)',
-              background:'rgba(20,20,22,0.55)',
+              border:`1px solid rgba(255,255,255,${si === 0 ? 0.13 : 0.07})`,
+              background: s.bg,
               zIndex: si === 0 ? 1 : 0,
               pointerEvents:'none',
             }} />
@@ -292,40 +292,58 @@ export default function WorksTheme() {
 
         {/* Info section */}
         {themeWorks[activeIdx] && (
-          <div style={{ padding:'10px 18px 10px', flexShrink:0,
-            display:'flex', flexDirection:'column', alignItems:'center', gap:'7px', textAlign:'center' }}>
-            {total > 1 && (
-              <div style={{ display:'flex', gap:'4px', alignItems:'center', marginBottom:'2px' }}>
-                {themeWorks.map((_, i) => (
-                  <div key={i} onClick={() => setActiveIdx(i)} style={{
-                    width: i === activeIdx ? '18px' : '4px', height:'2px',
-                    borderRadius:'1px', cursor:'pointer',
-                    background: i === activeIdx ? 'rgba(255,255,255,0.60)' : 'rgba(255,255,255,0.18)',
-                    transition:'all 0.35s ease',
-                  }} />
-                ))}
-              </div>
-            )}
-            <span style={{ fontSize:'10px', letterSpacing:'2px', color:'rgba(255,255,255,0.25)' }}>
-              {String(activeIdx+1).padStart(2,'0')} / {String(total).padStart(2,'0')}
-            </span>
-            {gl(themeWorks[activeIdx], 'body_part', lang) && (
-              <span style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase',
-                color:'var(--ocean)', border:'1px solid var(--ocean)', padding:'2px 8px', opacity:0.85 }}>
-                {gl(themeWorks[activeIdx], 'body_part', lang)}
+          <div style={{ padding:'14px 18px 14px', flexShrink:0,
+            position:'relative', overflow:'hidden' }}>
+
+            {/* Background image */}
+            <div style={{
+              position:'absolute', inset:0, zIndex:0,
+              backgroundImage:`url(https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/%E8%A1%8C%E5%8B%95%E7%89%88%E8%83%8C%E6%99%AF.jpg)`,
+              backgroundSize:'cover', backgroundPosition:'center 30%',
+              opacity:0.28,
+            }}/>
+            {/* Gradient overlay */}
+            <div style={{
+              position:'absolute', inset:0, zIndex:1, pointerEvents:'none',
+              background:'linear-gradient(to bottom, rgba(17,17,17,0.72) 0%, rgba(17,17,17,0.38) 50%, rgba(17,17,17,0.68) 100%)',
+            }}/>
+
+            {/* Content */}
+            <div style={{ position:'relative', zIndex:2,
+              display:'flex', flexDirection:'column', alignItems:'center', gap:'7px', textAlign:'center' }}>
+              {total > 1 && (
+                <div style={{ display:'flex', gap:'4px', alignItems:'center', marginBottom:'2px' }}>
+                  {themeWorks.map((_, i) => (
+                    <div key={i} onClick={() => setActiveIdx(i)} style={{
+                      width: i === activeIdx ? '18px' : '4px', height:'2px',
+                      borderRadius:'1px', cursor:'pointer',
+                      background: i === activeIdx ? 'rgba(255,255,255,0.60)' : 'rgba(255,255,255,0.18)',
+                      transition:'all 0.35s ease',
+                    }} />
+                  ))}
+                </div>
+              )}
+              <span style={{ fontSize:'10px', letterSpacing:'2px', color:'rgba(255,255,255,0.35)' }}>
+                {String(activeIdx+1).padStart(2,'0')} / {String(total).padStart(2,'0')}
               </span>
-            )}
-            <p style={{ fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
-              fontSize:'18px', color:'rgba(255,255,255,0.88)', letterSpacing:'0.5px', margin:0 }}>
-              {gl(themeWorks[activeIdx], 'title', lang)}
-            </p>
-            <button
-              onClick={() => navigate(`/works/${encodeURIComponent(decoded)}/${themeWorks[activeIdx].id}`)}
-              style={{ background:'none', border:'1px solid rgba(255,255,255,0.25)',
-                color:'rgba(255,255,255,0.60)', fontSize:'11px', letterSpacing:'2px',
-                textTransform:'uppercase', padding:'8px 22px', cursor:'pointer' }}>
-              {t('readStory',lang)} →
-            </button>
+              {gl(themeWorks[activeIdx], 'body_part', lang) && (
+                <span style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase',
+                  color:'var(--ocean)', border:'1px solid var(--ocean)', padding:'2px 8px', opacity:0.85 }}>
+                  {gl(themeWorks[activeIdx], 'body_part', lang)}
+                </span>
+              )}
+              <p style={{ fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
+                fontSize:'18px', color:'rgba(255,255,255,0.92)', letterSpacing:'0.5px', margin:0 }}>
+                {gl(themeWorks[activeIdx], 'title', lang)}
+              </p>
+              <button
+                onClick={() => navigate(`/works/${encodeURIComponent(decoded)}/${themeWorks[activeIdx].id}`)}
+                style={{ background:'none', border:'1px solid rgba(255,255,255,0.30)',
+                  color:'rgba(255,255,255,0.70)', fontSize:'11px', letterSpacing:'2px',
+                  textTransform:'uppercase', padding:'8px 22px', cursor:'pointer' }}>
+                {t('readStory',lang)} →
+              </button>
+            </div>
           </div>
         )}
       </div>
