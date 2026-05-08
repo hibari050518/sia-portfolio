@@ -4,7 +4,6 @@ import { useWorks } from '../hooks/useSheets'
 import { WIX_URL } from '../config'
 import { useLang, t } from '../context/LangContext'
 import { useIsMobile } from '../hooks/useIsMobile'
-import { MobileTabBar } from '../components/MobileNav'
 
 function LangSwitcher() {
   const { lang, setLang } = useLang()
@@ -452,7 +451,6 @@ function HomeMobile() {
         </div>
       </div>
 
-      <MobileTabBar />
     </div>
   )
 }
