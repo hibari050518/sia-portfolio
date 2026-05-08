@@ -162,21 +162,23 @@ export default function WorksTheme() {
                 }}
                 style={{
                   position:'absolute', left:`${leftPct}%`, width:'80%',
-                  top:'8px', bottom:'8px', overflow:'hidden', cursor:'pointer',
+                  top:'4px', bottom:'4px', overflow:'hidden', cursor:'pointer',
                   transition:'left 0.42s cubic-bezier(0.22,1,0.36,1)',
                 }}>
                 {work.image_url
                   ? <img src={work.image_url} alt={work.title}
                       style={{ width:'100%', height:'100%', objectFit:'cover',
-                        filter:`brightness(${offset === 0 ? 0.82 : 0.50})`,
+                        filter:`brightness(${offset === 0 ? 0.90 : 0.50})`,
                         transition:'filter 0.4s ease' }} />
                   : <div style={{ width:'100%', height:'100%', background:'rgba(255,255,255,0.04)' }} />
                 }
-                {/* Top/bottom fades */}
-                <div style={{ position:'absolute', top:0, left:0, right:0, height:'18%',
-                  background:`linear-gradient(to bottom,${BG},transparent)`, pointerEvents:'none' }}/>
-                <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'18%',
-                  background:`linear-gradient(to top,${BG},transparent)`, pointerEvents:'none' }}/>
+                {/* Top/bottom fades — only for adjacent cards */}
+                {offset !== 0 && <>
+                  <div style={{ position:'absolute', top:0, left:0, right:0, height:'18%',
+                    background:`linear-gradient(to bottom,${BG},transparent)`, pointerEvents:'none' }}/>
+                  <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'18%',
+                    background:`linear-gradient(to top,${BG},transparent)`, pointerEvents:'none' }}/>
+                </>}
               </div>
             )
           })}

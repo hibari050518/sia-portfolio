@@ -5,21 +5,9 @@ import { WIX_URL } from '../config'
 const LOGO_URL =
   'https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/Sia_logo_%E6%96%87%E5%AD%97%EF%BC%88%E7%99%BD%EF%BC%89.png'
 
-const TEAL     = '#5aaabf'
 const WARM     = '#c8916e'
-const DIM      = 'rgba(255,255,255,0.30)'
-
-// ── 小 2×2 grid icon ──────────────────────────────
-function GridIcon({ active }) {
-  const c = active ? TEAL : DIM
-  return (
-    <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'2.5px', width:'13px', height:'13px' }}>
-      {[0,1,2,3].map(i => (
-        <div key={i} style={{ background: c, borderRadius:'1.5px' }} />
-      ))}
-    </div>
-  )
-}
+const DIM      = 'rgba(255,255,255,0.32)'
+const ACTIVE   = 'rgba(255,255,255,0.88)'
 
 // ── 頂部 bar：Logo + 語系切換 ─────────────────────
 export function MobileTopBar() {
@@ -80,34 +68,55 @@ export function MobileTabBar() {
     flex: 1,
     display: 'flex', flexDirection: 'column',
     alignItems: 'center', justifyContent: 'center',
-    gap: '4px',
+    gap: '5px',
     textDecoration: 'none',
-    borderTop: active ? `2px solid ${TEAL}` : '2px solid transparent',
     paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+    position: 'relative',
+  })
+
+  const labelStyle = (active) => ({
+    fontSize: '10px',
+    letterSpacing: '2.5px',
+    textTransform: 'uppercase',
+    color: active ? ACTIVE : DIM,
+    fontFamily: active ? 'var(--serif)' : 'inherit',
+    fontStyle: active ? 'italic' : 'normal',
+    fontWeight: active ? 300 : 400,
+    transition: 'color 0.25s, font-style 0.25s',
   })
 
   return (
     <div style={{
       position: 'fixed', bottom: 0, left: 0, right: 0,
       height: 'calc(62px + env(safe-area-inset-bottom, 0px))',
-      background: '#0a0a0a',
-      borderTop: '0.5px solid rgba(255,255,255,0.09)',
+      background: 'rgba(10,10,10,0.88)',
+      backdropFilter: 'blur(24px)',
+      WebkitBackdropFilter: 'blur(24px)',
+      borderTop: '0.5px solid rgba(255,255,255,0.07)',
       display: 'flex',
       zIndex: 200,
     }}>
       <Link to="/works" style={tabStyle(isWorks)}>
-        <GridIcon active={isWorks} />
-        <span style={{ fontSize:'9px', letterSpacing:'0.5px', color: isWorks ? TEAL : DIM }}>作品</span>
+        <span style={labelStyle(isWorks)}>作品</span>
+        {isWorks && (
+          <div style={{ width:'3px', height:'3px', borderRadius:'50%',
+            background:'rgba(255,255,255,0.55)', position:'absolute',
+            bottom:'calc(env(safe-area-inset-bottom, 0px) + 8px)' }} />
+        )}
       </Link>
 
       <Link to="/flash" style={tabStyle(isFlash)}>
-        <GridIcon active={isFlash} />
-        <span style={{ fontSize:'9px', letterSpacing:'0.5px', color: isFlash ? TEAL : DIM }}>認領圖</span>
+        <span style={labelStyle(isFlash)}>認領圖</span>
+        {isFlash && (
+          <div style={{ width:'3px', height:'3px', borderRadius:'50%',
+            background:'rgba(255,255,255,0.55)', position:'absolute',
+            bottom:'calc(env(safe-area-inset-bottom, 0px) + 8px)' }} />
+        )}
       </Link>
 
       <a href={WIX_URL} target="_blank" rel="noreferrer" style={tabStyle(false)}>
-        <span style={{ fontSize:'16px', color: WARM, lineHeight: 1 }}>↗</span>
-        <span style={{ fontSize:'9px', color: WARM, letterSpacing:'0.5px' }}>預約</span>
+        <span style={{ fontSize:'10px', letterSpacing:'2.5px', textTransform:'uppercase',
+          color: WARM, fontFamily:'inherit' }}>預約 ↗</span>
       </a>
     </div>
   )

@@ -150,7 +150,22 @@ function NavLink({ to, label }) {
   )
 }
 
-function HomeMobile({ lang }) {
+// Section 1 の星點（全螢幕散布）
+const S1_PARTICLES = [
+  { x: 12, y: 12, sz: 2, dur: '19s', d: '0.5s',  op: 0.30 },
+  { x: 28, y:  8, sz: 3, dur: '17s', d: '2.1s',  op: 0.18 },
+  { x: 48, y: 22, sz: 2, dur: '21s', d: '0.9s',  op: 0.45 },
+  { x: 65, y: 14, sz: 2, dur: '16s', d: '3.4s',  op: 0.25 },
+  { x: 82, y: 28, sz: 3, dur: '18s', d: '1.2s',  op: 0.18 },
+  { x: 20, y: 38, sz: 2, dur: '20s', d: '4.0s',  op: 0.30 },
+  { x: 55, y: 44, sz: 3, dur: '15s', d: '0.3s',  op: 0.50 },
+  { x: 78, y: 50, sz: 2, dur: '22s', d: '2.6s',  op: 0.20 },
+  { x: 35, y: 58, sz: 2, dur: '17s', d: '1.7s',  op: 0.35 },
+  { x: 70, y: 62, sz: 3, dur: '19s', d: '3.8s',  op: 0.22 },
+]
+
+function HomeMobile() {
+  const { lang, setLang } = useLang()
   const [bgIdx,    setBgIdx]    = useState(0)
   const [imgLoaded, setImgLoaded] = useState(false)
   const [scrollY,  setScrollY]  = useState(0)
@@ -174,11 +189,13 @@ function HomeMobile({ lang }) {
   }, [])
 
   const vh  = typeof window !== 'undefined' ? window.innerHeight : 800
-  const s2y = Math.max(0, scrollY - vh)   // 滾入第二屏的深度
-  const r1  = s2y > 30
-  const r2  = s2y > 120
-  const r3  = s2y > 210
-  const r4  = s2y > 300
+  // section 2 is minHeight: calc(100vh + 400px), so max scrollTop = vh + 400
+  // s2y tracks how deep into section 2 we've scrolled
+  const s2y = Math.max(0, scrollY - vh)
+  const r1  = s2y > 15
+  const r2  = s2y > 90
+  const r3  = s2y > 175
+  const r4  = s2y > 265
 
   return (
     <div style={{ position:'fixed', inset:0, background:'#111' }}>
@@ -195,8 +212,28 @@ function HomeMobile({ lang }) {
           0%   { top: -28px; }
           100% { top: 56px;  }
         }
+        @keyframes mKenBurns {
+          0%   { transform: scale(1) translate(0, 0); }
+          100% { transform: scale(1.07) translate(0, -0.4%); }
+        }
         .m-scroll::-webkit-scrollbar { display: none; }
       `}</style>
+
+      {/* 語言切換器：固定右上角，不隨 scroll 移動 */}
+      <div style={{
+        position:'absolute', top:0, right:0, zIndex:35,
+        paddingTop:'calc(env(safe-area-inset-top, 0px) + 18px)',
+        paddingRight:'22px',
+        display:'flex', gap:'14px', alignItems:'center',
+      }}>
+        {[['zh','中'],['en','EN'],['ko','한']].map(([l, label]) => (
+          <span key={l} onClick={() => setLang(l)} style={{
+            fontSize:'11px', letterSpacing:'1.5px', cursor:'pointer',
+            color: lang===l ? 'rgba(255,255,255,0.90)' : 'rgba(255,255,255,0.28)',
+            transition:'color 0.2s', padding:'6px 2px',
+          }}>{label}</span>
+        ))}
+      </div>
 
       <div ref={scrollRef} onScroll={handleScroll}
         className="m-scroll"
@@ -206,60 +243,83 @@ function HomeMobile({ lang }) {
 
         {/* ── 第一屏：作品幻燈片 ── */}
         <div style={{ height:'100vh', position:'relative', overflow:'hidden' }}>
+          {/* 底層：前一張圖（crossfade 用） */}
           {prevImgRef.current && (
             <img src={prevImgRef.current} alt=""
               style={{ position:'absolute', inset:0, width:'100%', height:'100%',
                 objectFit:'cover', objectPosition:'center 30%', filter:'brightness(0.48)' }} />
           )}
+          {/* 上層：當前圖 + Ken Burns 呼吸動態 */}
           <img key={bgIdx} src={ALL_IMGS[bgIdx]} alt=""
             onLoad={() => setImgLoaded(true)}
             style={{ position:'absolute', inset:0, width:'100%', height:'100%',
               objectFit:'cover', objectPosition:'center 30%', filter:'brightness(0.48)',
-              opacity: imgLoaded ? 1 : 0, transition:'opacity 1.4s ease' }} />
+              opacity: imgLoaded ? 1 : 0, transition:'opacity 1.4s ease',
+              animation: imgLoaded ? `mKenBurns ${SWAP_INTERVAL}ms ease-out forwards` : 'none',
+              transformOrigin:'center center',
+            }} />
+
+          {/* Section 1 星點 */}
+          <div style={{ position:'absolute', inset:0, pointerEvents:'none', zIndex:2 }}>
+            {S1_PARTICLES.map((p, i) => (
+              <div key={i} style={{
+                position:'absolute', left:`${p.x}vw`, top:`${p.y}vh`,
+                width:`${p.sz}px`, height:`${p.sz}px`, borderRadius:'50%',
+                background:`radial-gradient(circle, rgba(255,255,255,${(0.85*p.op).toFixed(2)}) 0%, rgba(255,255,255,${(0.2*p.op).toFixed(2)}) 60%, transparent 100%)`,
+                boxShadow:`0 0 ${p.sz*2}px ${p.sz}px rgba(255,255,255,${(0.12*p.op).toFixed(2)})`,
+                animation:`mParticleDrift ${p.dur} ease-in-out infinite`,
+                animationDelay:p.d,
+              }} />
+            ))}
+          </div>
 
           {/* Logo */}
-          <div style={{ position:'absolute', top:0, left:0, right:0,
+          <div style={{ position:'absolute', top:0, left:0, right:0, zIndex:3,
             display:'flex', justifyContent:'center',
             paddingTop:'calc(env(safe-area-inset-top, 0px) + 28px)' }}>
             <img src={LOGO_URL} alt="SIA TATTOOIST"
-              style={{ width:'108px', maxWidth:'40vw',
-                opacity:0.60, filter:'drop-shadow(0 2px 10px rgba(0,0,0,0.4))' }}
+              style={{ width:'132px', maxWidth:'48vw',
+                opacity:0.62, filter:'drop-shadow(0 2px 12px rgba(0,0,0,0.5))' }}
               onError={e => { e.currentTarget.style.display='none' }} />
           </div>
 
           {/* 底部漸層 → 融入第二屏深色背景 */}
-          <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'45%',
+          <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'45%', zIndex:2,
             background:'linear-gradient(to bottom, transparent 0%, #111 100%)',
             pointerEvents:'none' }} />
 
-          {/* 滾動指示器：流動光線 + 箭頭 */}
+          {/* 滾動指示器：流動光線 + 箭頭 + SCROLL DOWN */}
           <div style={{
-            position:'absolute',
-            bottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 44px)',
+            position:'absolute', zIndex:3,
+            bottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 36px)',
             left:'50%', transform:'translateX(-50%)',
-            display:'flex', flexDirection:'column', alignItems:'center', gap:'10px',
+            display:'flex', flexDirection:'column', alignItems:'center', gap:'8px',
             opacity: scrollY < 18 ? 1 : 0, transition:'opacity 0.4s ease',
             pointerEvents:'none',
           }}>
-            <div style={{ width:'1px', height:'56px', position:'relative', overflow:'hidden',
+            <div style={{ width:'1px', height:'48px', position:'relative', overflow:'hidden',
               background:'rgba(255,255,255,0.08)' }}>
               <div style={{
-                position:'absolute', left:0, right:0, height:'28px',
+                position:'absolute', left:0, right:0, height:'24px',
                 background:'linear-gradient(to bottom, transparent, rgba(255,255,255,0.55), transparent)',
                 animation:'scrollFlow 1.65s ease-in-out infinite',
               }} />
             </div>
-            <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
-              <path d="M1 1 L6 6.5 L11 1" stroke="rgba(255,255,255,0.32)" strokeWidth="1.2"
+            <svg width="12" height="7" viewBox="0 0 12 7" fill="none">
+              <path d="M1 1 L6 5.5 L11 1" stroke="rgba(255,255,255,0.30)" strokeWidth="1.2"
                 strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
+            <span style={{
+              fontSize:'8px', letterSpacing:'3px', textTransform:'uppercase',
+              color:'rgba(255,255,255,0.28)', marginTop:'2px',
+            }}>scroll down</span>
           </div>
         </div>
 
         {/* ── 第二屏：純深色 + 星點 + 逐一揭示文字 ── */}
         <div style={{ background:'#111', position:'relative', overflow:'hidden',
-          minHeight:'100vh',
-          paddingTop:'72px', paddingLeft:'40px', paddingRight:'40px',
+          minHeight:'calc(100vh + 400px)',
+          paddingTop:'80px', paddingLeft:'40px', paddingRight:'40px',
           paddingBottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 80px)',
           display:'flex', flexDirection:'column', alignItems:'center', textAlign:'center',
         }}>
@@ -338,7 +398,7 @@ export default function Home() {
   const isMobile  = useIsMobile()
 
   // ── 行動版直接渲染 ──
-  if (isMobile) return <HomeMobile lang={lang} />
+  if (isMobile) return <HomeMobile />
 
   const [leftIdx,  setLeftIdx]  = useState(0)
   const [rightIdx, setRightIdx] = useState(0)

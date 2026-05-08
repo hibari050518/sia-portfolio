@@ -143,8 +143,8 @@ export default function WorkDetail() {
         overflowY:'auto',
         WebkitOverflowScrolling:'touch',
       }}>
-        {/* Image section — 65vh */}
-        <div style={{ position:'relative', height:'65vh', overflow:'hidden', flexShrink:0 }}
+        {/* Image section — 52vh */}
+        <div style={{ position:'relative', height:'52vh', overflow:'hidden', flexShrink:0 }}
           onTouchStart={imgSwipe.onTouchStart} onTouchEnd={imgSwipe.onTouchEnd}>
           {activeImg && (
             <img
