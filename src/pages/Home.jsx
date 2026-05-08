@@ -172,7 +172,6 @@ function HomeMobile() {
   const prevImgRef = useRef(null)
   const scrollRef  = useRef(null)
 
-  // Auto-cycle slideshow
   useEffect(() => {
     if (ALL_IMGS.length < 2) return
     const timer = setInterval(() => {
@@ -185,27 +184,18 @@ function HomeMobile() {
     return () => clearInterval(timer)
   }, [])
 
-  // Manual slide navigation
-  const goSlide = (dir) => {
-    setBgIdx(prev => {
-      prevImgRef.current = ALL_IMGS[prev]
-      setImgLoaded(false)
-      return (prev + dir + ALL_IMGS.length) % ALL_IMGS.length
-    })
-  }
-
   const handleScroll = useCallback(() => {
     if (scrollRef.current) setScrollY(scrollRef.current.scrollTop)
   }, [])
 
   const vh  = typeof window !== 'undefined' ? window.innerHeight : 800
   const s2y = Math.max(0, scrollY - vh)
-  const r1  = s2y > 15
-  const r2  = s2y > 80
-  const r3  = s2y > 155
-  const r4  = s2y > 295
+  const r0  = s2y > 5    // logo in section 2
+  const r1  = s2y > 80   // spiritual tattoo artist
+  const r2  = s2y > 155  // quote
+  const r3  = s2y > 230  // tagline
+  const r4  = s2y > 315  // CTA
 
-  // Language switcher fades out as section 1 approaches its end
   const langOpacity = scrollY < vh * 0.72
     ? 1
     : Math.max(0, 1 - (scrollY - vh * 0.72) / (vh * 0.28))
@@ -232,7 +222,7 @@ function HomeMobile() {
         .m-scroll::-webkit-scrollbar { display: none; }
       `}</style>
 
-      {/* 語言切換器：隨 scroll 接近第二屏時淡出 */}
+      {/* 語言切換器：接近第二屏時淡出 */}
       <div style={{
         position:'absolute', top:0, right:0, zIndex:35,
         paddingTop:'calc(env(safe-area-inset-top, 0px) + 18px)',
@@ -256,7 +246,7 @@ function HomeMobile() {
           WebkitOverflowScrolling:'touch', scrollbarWidth:'none', msOverflowStyle:'none',
           overscrollBehaviorY:'contain' }}>
 
-        {/* ── 第一屏：作品幻燈片 ── */}
+        {/* ── Section 1：作品幻燈片 ── */}
         <div style={{ height:'100vh', position:'relative', overflow:'hidden' }}>
           {prevImgRef.current && (
             <img src={prevImgRef.current} alt=""
@@ -286,51 +276,22 @@ function HomeMobile() {
             ))}
           </div>
 
-          {/* Logo - 開始往下滑後出現於中央 */}
-          <div style={{
-            position:'absolute', top:'38%', left:0, right:0, zIndex:3,
+          {/* LOGO — 固定於頂部 */}
+          <div style={{ position:'absolute', top:0, left:0, right:0, zIndex:3,
             display:'flex', justifyContent:'center',
-            opacity: scrollY > 32 ? 1 : 0,
-            transform: scrollY > 32 ? 'translateY(0)' : 'translateY(14px)',
-            transition:'opacity 0.9s ease, transform 0.9s ease',
-          }}>
+            paddingTop:'calc(env(safe-area-inset-top, 0px) + 28px)' }}>
             <img src={LOGO_URL} alt="SIA TATTOOIST"
               style={{ width:'132px', maxWidth:'48vw',
-                filter:'drop-shadow(0 2px 18px rgba(0,0,0,0.7))' }}
+                opacity:0.62, filter:'drop-shadow(0 2px 12px rgba(0,0,0,0.5))' }}
               onError={e => { e.currentTarget.style.display='none' }} />
           </div>
 
-          {/* 左右手動箭頭（滑動後才顯示） */}
-          <div onClick={() => goSlide(-1)} style={{
-            position:'absolute', left:0, top:0, width:'28%', height:'100%', zIndex:4,
-            display:'flex', alignItems:'center', paddingLeft:'18px', cursor:'pointer',
-            opacity: scrollY > 32 ? 1 : 0, transition:'opacity 0.5s ease',
-          }}>
-            <svg width="22" height="22" viewBox="0 0 22 22" fill="none"
-              style={{ filter:'drop-shadow(0 0 5px rgba(0,0,0,0.9))' }}>
-              <path d="M14 3.5 L7 11 L14 18.5" stroke="rgba(255,255,255,0.40)" strokeWidth="1.3"
-                strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
-          <div onClick={() => goSlide(1)} style={{
-            position:'absolute', right:0, top:0, width:'28%', height:'100%', zIndex:4,
-            display:'flex', alignItems:'center', justifyContent:'flex-end',
-            paddingRight:'18px', cursor:'pointer',
-            opacity: scrollY > 32 ? 1 : 0, transition:'opacity 0.5s ease',
-          }}>
-            <svg width="22" height="22" viewBox="0 0 22 22" fill="none"
-              style={{ filter:'drop-shadow(0 0 5px rgba(0,0,0,0.9))' }}>
-              <path d="M8 3.5 L15 11 L8 18.5" stroke="rgba(255,255,255,0.40)" strokeWidth="1.3"
-                strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
-
-          {/* 底部漸層 → 融入第二屏深色背景（更高更柔） */}
+          {/* 底部漸層 */}
           <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'58%', zIndex:2,
             background:'linear-gradient(to bottom, transparent 0%, rgba(17,17,17,0.6) 45%, #111 100%)',
             pointerEvents:'none' }} />
 
-          {/* 滾動指示器：SCROLL DOWN 在線的上方 */}
+          {/* 滾動指示器：SCROLL DOWN 在線上方 */}
           <div style={{
             position:'absolute', zIndex:3,
             bottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 44px)',
@@ -358,10 +319,10 @@ function HomeMobile() {
           </div>
         </div>
 
-        {/* ── 第二屏：純深色 + 星點 + 逐一揭示文字 ── */}
+        {/* ── Section 2：深色 + 星點 + LOGO 帶出文字 ── */}
         <div style={{ background:'#111', position:'relative', overflow:'hidden',
-          paddingTop:'58px', paddingLeft:'40px', paddingRight:'40px',
-          paddingBottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 32px)',
+          paddingTop:'44px', paddingLeft:'40px', paddingRight:'40px',
+          paddingBottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 24px)',
           display:'flex', flexDirection:'column', alignItems:'center', textAlign:'center',
         }}>
           {/* 星點 */}
@@ -378,22 +339,34 @@ function HomeMobile() {
             ))}
           </div>
 
+          {/* LOGO 再次出現，帶出文字序列 */}
+          <img src={LOGO_URL} alt="SIA TATTOOIST"
+            style={{
+              width:'108px', maxWidth:'42vw', marginBottom:'32px',
+              opacity: r0 ? 1 : 0,
+              transform: r0 ? 'translateY(0)' : 'translateY(18px)',
+              transition:'opacity 1.1s ease, transform 1.1s ease',
+              filter:'drop-shadow(0 2px 16px rgba(0,0,0,0.5))',
+            }}
+            onError={e => { e.currentTarget.style.display='none' }}
+          />
+
           {/* 標語 */}
           <p style={{
             fontSize:'11px', letterSpacing:'4px', textTransform:'uppercase',
-            color:'var(--ocean)', marginBottom:'28px',
+            color:'var(--ocean)', marginBottom:'24px',
             opacity: r1 ? 1 : 0,
-            transform: r1 ? 'translateY(0)' : 'translateY(20px)',
+            transform: r1 ? 'translateY(0)' : 'translateY(18px)',
             transition:'opacity 0.95s ease, transform 0.95s ease',
           }}>Spiritual Tattoo Artist</p>
 
-          {/* 英文引言 */}
+          {/* 引言 */}
           <p style={{
             fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
             fontSize:'18px', lineHeight:2.2, letterSpacing:'0.2px',
-            color:'rgba(255,255,255,0.58)', marginBottom:'18px',
+            color:'rgba(255,255,255,0.58)', marginBottom:'16px',
             opacity: r2 ? 1 : 0,
-            transform: r2 ? 'translateY(0)' : 'translateY(20px)',
+            transform: r2 ? 'translateY(0)' : 'translateY(18px)',
             transition:'opacity 0.95s ease, transform 0.95s ease',
           }}>
             A tattoo,<br />composed from the voice of your soul.
@@ -403,15 +376,15 @@ function HomeMobile() {
           {lang !== 'en' && (
             <p style={{
               fontSize:'11px', letterSpacing: lang === 'ko' ? '1px' : '2px',
-              color:'rgba(255,255,255,0.30)', marginBottom:'36px',
+              color:'rgba(255,255,255,0.30)', marginBottom:'28px',
               opacity: r3 ? 1 : 0,
-              transform: r3 ? 'translateY(0)' : 'translateY(16px)',
+              transform: r3 ? 'translateY(0)' : 'translateY(14px)',
               transition:'opacity 0.95s ease, transform 0.95s ease',
             }}>
               {t('tagline', lang)}
             </p>
           )}
-          {lang === 'en' && <div style={{ marginBottom:'36px' }} />}
+          {lang === 'en' && <div style={{ marginBottom:'28px' }} />}
 
           {/* CTA */}
           <Link to="/works" style={{
@@ -420,7 +393,7 @@ function HomeMobile() {
             fontSize:'11px', letterSpacing:'4.5px', textTransform:'uppercase',
             color:'rgba(255,255,255,0.65)', textDecoration:'none',
             opacity: r4 ? 1 : 0,
-            transform: r4 ? 'translateY(0)' : 'translateY(16px)',
+            transform: r4 ? 'translateY(0)' : 'translateY(14px)',
             transition:'opacity 0.95s ease, transform 0.95s ease',
           }}>
             {t('browseWorks', lang)}
@@ -432,6 +405,7 @@ function HomeMobile() {
     </div>
   )
 }
+
 
 export default function Home() {
   const { works } = useWorks()

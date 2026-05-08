@@ -180,10 +180,10 @@ export default function FlashSeries() {
                 </>}
                 {/* Center card: soft left/right edge vignette */}
                 {offset === 0 && <>
-                  <div style={{ position:'absolute', top:0, left:0, bottom:0, width:'12%',
-                    background:`linear-gradient(to right, rgba(17,17,17,0.50), transparent)`, pointerEvents:'none' }}/>
-                  <div style={{ position:'absolute', top:0, right:0, bottom:0, width:'12%',
-                    background:`linear-gradient(to left, rgba(17,17,17,0.50), transparent)`, pointerEvents:'none' }}/>
+                  <div style={{ position:'absolute', top:0, left:0, bottom:0, width:'22%',
+                    background:`linear-gradient(to right, rgba(17,17,17,0.68), transparent)`, pointerEvents:'none' }}/>
+                  <div style={{ position:'absolute', top:0, right:0, bottom:0, width:'22%',
+                    background:`linear-gradient(to left, rgba(17,17,17,0.68), transparent)`, pointerEvents:'none' }}/>
                 </>}
               </div>
             )
