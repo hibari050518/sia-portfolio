@@ -463,4 +463,6 @@ export default function FlashSeries() {
           © SIA TATTOOIST
         </span>
       </div>
-    </di
+    </div>
+  )
+}

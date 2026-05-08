@@ -169,10 +169,8 @@ function HomeMobile() {
   const [bgIdx,    setBgIdx]    = useState(0)
   const [imgLoaded, setImgLoaded] = useState(false)
   const [scrollY,  setScrollY]  = useState(0)
-  const [s2Phase,  setS2Phase]  = useState(0)
   const prevImgRef  = useRef(null)
   const scrollRef   = useRef(null)
-  const section2Ref = useRef(null)
 
   useEffect(() => {
     if (ALL_IMGS.length < 2) return
@@ -194,28 +192,12 @@ function HomeMobile() {
     return () => el.removeEventListener('scroll', onScroll)
   }, [])
 
-  // IntersectionObserver：section 2 進入畫面後依序帶出文字，像翻開篇章
-  useEffect(() => {
-    const el = section2Ref.current
-    if (!el) return
-    const obs = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting && s2Phase === 0) {
-        setTimeout(() => setS2Phase(1), 150)   // logo
-        setTimeout(() => setS2Phase(2), 850)   // spiritual tattoo artist
-        setTimeout(() => setS2Phase(3), 1650)  // quote
-        setTimeout(() => setS2Phase(4), 2500)  // tagline
-        setTimeout(() => setS2Phase(5), 3300)  // CTA
-      }
-    }, { threshold: 0.12 })
-    obs.observe(el)
-    return () => obs.disconnect()
-  }, [s2Phase])
-
-  const r0 = s2Phase >= 1
-  const r1 = s2Phase >= 2
-  const r2 = s2Phase >= 3
-  const r3 = s2Phase >= 4
-  const r4 = s2Phase >= 5
+  // scroll-based sequential reveal for section 2
+  const r0 = scrollY > 250   // logo
+  const r1 = scrollY > 430   // spiritual tattoo artist
+  const r2 = scrollY > 620   // quote
+  const r3 = scrollY > 790   // tagline
+  const r4 = scrollY > 960   // CTA
 
   const langOpacity = scrollY < 150
     ? 1
@@ -304,9 +286,9 @@ function HomeMobile() {
           {/* LOGO — 置中偏上，壓在照片上的品牌感 */}
           <div style={{ position:'absolute', left:0, right:0, zIndex:3,
             display:'flex', justifyContent:'center',
-            top:'26%', transform:'translateY(-50%)' }}>
+            top:'20%', transform:'translateY(-50%)' }}>
             <img src={LOGO_URL} alt="SIA TATTOOIST"
-              style={{ width:'172px', maxWidth:'60vw',
+              style={{ width:'54vw', maxWidth:'220px',
                 opacity:0,
                 filter:'drop-shadow(0 2px 16px rgba(0,0,0,0.4))',
                 animation:'mLogoReveal 2.2s ease-out 0.4s forwards',
@@ -348,11 +330,11 @@ function HomeMobile() {
         </div>
 
         {/* ── Section 2：深色 + 星點 + LOGO 帶出文字 ── */}
-        <div ref={section2Ref} style={{ background:'#111', position:'relative', overflow:'hidden',
-          minHeight:'calc(100dvh - 62px)',
-          paddingTop:'48px', paddingLeft:'40px', paddingRight:'40px',
-          paddingBottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 24px)',
-          display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', textAlign:'center',
+        <div style={{ background:'#111', position:'relative', overflow:'hidden',
+          minHeight:'170vh',
+          paddingTop:'28vh', paddingLeft:'40px', paddingRight:'40px',
+          paddingBottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 48px)',
+          display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'flex-start', textAlign:'center',
         }}>
           {/* 星點 */}
           <div style={{ position:'absolute', inset:0, pointerEvents:'none' }}>
@@ -371,7 +353,7 @@ function HomeMobile() {
           {/* LOGO 再次出現，帶出文字序列 */}
           <img src={LOGO_URL} alt="SIA TATTOOIST"
             style={{
-              width:'136px', maxWidth:'50vw', marginBottom:'44px',
+              width:'54vw', maxWidth:'220px', marginBottom:'14vh',
               opacity: r0 ? 0.88 : 0,
               transform: r0 ? 'translateY(0)' : 'translateY(22px)',
               transition:'opacity 1.3s ease, transform 1.3s ease',
@@ -383,7 +365,7 @@ function HomeMobile() {
           {/* 標語 */}
           <p style={{
             fontSize:'11px', letterSpacing:'4.5px', textTransform:'uppercase',
-            color:'var(--ocean)', marginBottom:'32px',
+            color:'var(--ocean)', marginBottom:'12vh',
             opacity: r1 ? 1 : 0,
             transform: r1 ? 'translateY(0)' : 'translateY(18px)',
             transition:'opacity 0.95s ease, transform 0.95s ease',
@@ -393,7 +375,7 @@ function HomeMobile() {
           <p style={{
             fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
             fontSize:'19px', lineHeight:2.4, letterSpacing:'0.3px',
-            color:'rgba(255,255,255,0.58)', marginBottom:'24px',
+            color:'rgba(255,255,255,0.58)', marginBottom:'10vh',
             opacity: r2 ? 1 : 0,
             transform: r2 ? 'translateY(0)' : 'translateY(18px)',
             transition:'opacity 0.95s ease, transform 0.95s ease',
@@ -405,7 +387,7 @@ function HomeMobile() {
           {lang !== 'en' && (
             <p style={{
               fontSize:'11px', letterSpacing: lang === 'ko' ? '1px' : '2px',
-              color:'rgba(255,255,255,0.30)', marginBottom:'40px',
+              color:'rgba(255,255,255,0.30)', marginBottom:'14vh',
               opacity: r3 ? 1 : 0,
               transform: r3 ? 'translateY(0)' : 'translateY(14px)',
               transition:'opacity 0.95s ease, transform 0.95s ease',
@@ -413,7 +395,7 @@ function HomeMobile() {
               {t('tagline', lang)}
             </p>
           )}
-          {lang === 'en' && <div style={{ marginBottom:'40px' }} />}
+          {lang === 'en' && <div style={{ marginBottom:'14vh' }} />}
 
           {/* CTA */}
           <Link to="/works" style={{
