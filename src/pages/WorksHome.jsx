@@ -177,14 +177,13 @@ export default function WorksHome() {
           style={{ position:'absolute', right:'60px', top:'52px', bottom:'calc(62px + env(safe-area-inset-bottom, 0px))', width:'52px', zIndex:20, cursor:'pointer' }} />
       )}
 
-      {/* Logo watermark — bottom-right, only "Sia" portion visible */}
+      {/* Logo watermark — large, faint, partially cropped bottom-right */}
       <div style={{
-        position:'absolute', right:'-8px',
-        bottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 20px)',
-        zIndex:8, pointerEvents:'none', opacity:0.10,
-        overflow:'hidden', width:'72px',
+        position:'absolute', right:'-24px',
+        bottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 8px)',
+        zIndex:8, pointerEvents:'none', opacity:0.08,
       }}>
-        <img src={LOGO_URL} alt="" style={{ height:'52px', maxWidth:'none', display:'block' }} />
+        <img src={LOGO_URL} alt="" style={{ height:'100px', display:'block' }} />
       </div>
 
       {/* Right-side thumbnail strip */}
