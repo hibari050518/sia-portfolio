@@ -257,6 +257,14 @@ function HomeMobile() {
         .m-scroll::-webkit-scrollbar { display: none; }
       `}</style>
 
+      {/* Nav bar 半透明黑色底 */}
+      <div style={{
+        position:'absolute', top:0, left:0, right:0, zIndex:34,
+        height:'calc(env(safe-area-inset-top, 0px) + 58px)',
+        background:'linear-gradient(to bottom, rgba(0,0,0,0.48) 0%, rgba(0,0,0,0.18) 72%, transparent 100%)',
+        pointerEvents:'none',
+      }} />
+
       {/* 語言切換器：接近第二屏時淡出 */}
       <div style={{
         position:'absolute', top:0, right:0, zIndex:35,
@@ -286,12 +294,12 @@ function HomeMobile() {
           {prevImgRef.current && (
             <img src={prevImgRef.current} alt=""
               style={{ position:'absolute', inset:0, width:'100%', height:'100%',
-                objectFit:'cover', objectPosition:'center 30%', filter:'brightness(0.48)' }} />
+                objectFit:'cover', objectPosition:'center 42%', filter:'brightness(0.48)' }} />
           )}
           <img key={bgIdx} src={ALL_IMGS[bgIdx]} alt=""
             onLoad={() => setImgLoaded(true)}
             style={{ position:'absolute', inset:0, width:'100%', height:'100%',
-              objectFit:'cover', objectPosition:'center 30%', filter:'brightness(0.48)',
+              objectFit:'cover', objectPosition:'center 42%', filter:'brightness(0.48)',
               opacity: imgLoaded ? 1 : 0, transition:'opacity 1.4s ease',
               animation: imgLoaded ? `mKenBurns ${SWAP_INTERVAL}ms ease-out forwards` : 'none',
               transformOrigin:'center center',
@@ -314,7 +322,7 @@ function HomeMobile() {
           {/* LOGO — 置中偏上，壓在照片上的品牌感 */}
           <div style={{ position:'absolute', left:0, right:0, zIndex:3,
             display:'flex', justifyContent:'center',
-            top:'20%', transform:'translateY(-50%)' }}>
+            top:'24%', transform:'translateY(-50%)' }}>
             <img src={LOGO_URL} alt="SIA TATTOOIST"
               style={{ width:'54vw', maxWidth:'220px',
                 opacity:0,
