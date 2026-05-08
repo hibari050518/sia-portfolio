@@ -127,7 +127,7 @@ export default function OpeningAnimation({ style, className }) {
     const svg = wrap.querySelector('svg')
     if (!svg) return
 
-    const STATE = { speed: 1.35, silk: 135, orn: 38, ink: '#f5f0ea' }
+    const STATE = { speed: 1.35, silk: 135, orn: 52, ink: '#f5f0ea' }
     const spread_val = 0.50
     const T = {
       s:    { dur: 0.95, delay: 0.30 },
