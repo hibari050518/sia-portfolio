@@ -4,6 +4,7 @@ import { useWorks } from '../hooks/useSheets'
 import { WIX_URL } from '../config'
 import { useLang, t } from '../context/LangContext'
 import { useIsMobile } from '../hooks/useIsMobile'
+import OpeningAnimation from '../components/OpeningAnimation'
 
 function LangSwitcher() {
   const { lang, setLang } = useLang()
@@ -639,13 +640,7 @@ export default function Home() {
           alignItems:'center', justifyContent:'center', textAlign:'center',
           padding:'0 36%',
         }}>
-          <FadeUp delay={800}>
-            <img src={LOGO_URL} alt="SIA TATTOOIST"
-              style={{ width:'100%', maxWidth:'260px', marginBottom:'28px',
-                filter:'drop-shadow(0 2px 24px rgba(0,0,0,0.5))' }}
-              onError={e => { e.currentTarget.style.display='none' }}
-            />
-          </FadeUp>
+          <OpeningAnimation style={{ width:'min(360px,28vw)', marginBottom:'28px' }} />
 
           <FadeUp delay={1100}>
             <p style={{
