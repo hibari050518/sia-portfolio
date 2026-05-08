@@ -142,15 +142,16 @@ export default function FlashSeries() {
           </span>
         </div>
 
-        {/* Peek carousel */}
+        {/* 選牌輪播：中間牌在最前，左右露出側邊壓在後方 */}
         <div style={{ flex:1, position:'relative', overflow:'hidden' }}
           onTouchStart={swipe.onTouchStart} onTouchEnd={swipe.onTouchEnd}>
 
           {seriesItems.map((item, i) => {
             const offset = i - activeIdx
             if (Math.abs(offset) > 1) return null
-            const leftPct = 10 + offset * 80
-            const claimedDim = offset === 0 && item.status?.trim() !== '可認領' ? 0.55 : 1
+            const isCenter = offset === 0
+            const claimedDim = isCenter && item.status?.trim() !== '可認領' ? 0.55 : 1
+            const leftPct = 14 + offset * 58
 
             return (
               <div key={item.id}
@@ -159,65 +160,54 @@ export default function FlashSeries() {
                   else setActiveIdx(i)
                 }}
                 style={{
-                  position:'absolute', left:`${leftPct}%`, width:'80%',
-                  top:'4px', bottom:'4px', overflow:'hidden', cursor:'pointer',
+                  position:'absolute', left:`${leftPct}%`, width:'72%',
+                  height:'min(52vh, calc(72vw * 1.3))',
+                  top:'50%',
+                  transform: isCenter ? 'translateY(-50%)' : 'translateY(-50%) scale(0.90)',
+                  transformOrigin:'center center',
+                  overflow:'hidden', cursor:'pointer',
                   opacity: claimedDim,
-                  transition:'left 0.55s cubic-bezier(0.34,1.56,0.64,1), opacity 0.35s ease',
+                  zIndex: isCenter ? 2 : 1,
+                  transition:[
+                    'left 0.65s cubic-bezier(0.25,0.1,0.25,1)',
+                    'transform 0.65s cubic-bezier(0.25,0.1,0.25,1)',
+                    'opacity 0.35s ease',
+                  ].join(', '),
                 }}>
                 {item.image_url
                   ? <img src={item.image_url} alt={item.title}
                       style={{ width:'100%', height:'100%', objectFit:'cover',
-                        filter:`brightness(${offset === 0 ? 0.90 : 0.50})`,
-                        transition:'filter 0.4s ease' }} />
+                        filter:`brightness(${isCenter ? 0.85 : 0.30})`,
+                        transition:'filter 0.55s ease' }} />
                   : <div style={{ width:'100%', height:'100%', background:'rgba(255,255,255,0.04)' }} />
                 }
-                {/* Adjacent cards: top/bottom fades */}
-                {offset !== 0 && <>
-                  <div style={{ position:'absolute', top:0, left:0, right:0, height:'18%',
+                {!isCenter && <>
+                  <div style={{ position:'absolute', top:0, left:0, right:0, height:'30%',
                     background:`linear-gradient(to bottom,${BG},transparent)`, pointerEvents:'none' }}/>
-                  <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'18%',
+                  <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'30%',
                     background:`linear-gradient(to top,${BG},transparent)`, pointerEvents:'none' }}/>
                 </>}
-                {/* Center card: soft left/right edge vignette */}
-                {offset === 0 && <>
-                  <div style={{ position:'absolute', top:0, left:0, bottom:0, width:'22%',
-                    background:`linear-gradient(to right, rgba(17,17,17,0.68), transparent)`, pointerEvents:'none' }}/>
-                  <div style={{ position:'absolute', top:0, right:0, bottom:0, width:'22%',
-                    background:`linear-gradient(to left, rgba(17,17,17,0.68), transparent)`, pointerEvents:'none' }}/>
+                {isCenter && <>
+                  <div style={{ position:'absolute', top:0, left:0, bottom:0, width:'15%',
+                    background:`linear-gradient(to right, rgba(17,17,17,0.50), transparent)`, pointerEvents:'none' }}/>
+                  <div style={{ position:'absolute', top:0, right:0, bottom:0, width:'15%',
+                    background:`linear-gradient(to left, rgba(17,17,17,0.50), transparent)`, pointerEvents:'none' }}/>
                 </>}
               </div>
             )
           })}
 
-          {/* Edge fade overlays */}
-          <div style={{ position:'absolute', top:0, left:0, bottom:0, width:'7%', zIndex:5,
-            background:`linear-gradient(to right, ${BG}, transparent)`, pointerEvents:'none' }} />
-          <div style={{ position:'absolute', top:0, right:0, bottom:0, width:'7%', zIndex:5,
-            background:`linear-gradient(to left, ${BG}, transparent)`, pointerEvents:'none' }} />
-
-          {/* 左右箭頭 */}
           {activeIdx > 0 && (
             <div onClick={() => go(-1)} style={{
-              position:'absolute', left:0, top:0, bottom:0, width:'52px', zIndex:10,
-              display:'flex', alignItems:'center', paddingLeft:'8px', cursor:'pointer',
-            }}>
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M13 3.5 L6.5 10 L13 16.5" stroke="rgba(255,255,255,0.42)" strokeWidth="1.3"
-                  strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
+              position:'absolute', left:0, top:0, bottom:0, width:'14%', zIndex:10,
+              cursor:'pointer',
+            }} />
           )}
           {activeIdx < total - 1 && (
             <div onClick={() => go(1)} style={{
-              position:'absolute', right:0, top:0, bottom:0, width:'52px', zIndex:10,
-              display:'flex', alignItems:'center', justifyContent:'flex-end',
-              paddingRight:'8px', cursor:'pointer',
-            }}>
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M7 3.5 L13.5 10 L7 16.5" stroke="rgba(255,255,255,0.42)" strokeWidth="1.3"
-                  strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
+              position:'absolute', right:0, top:0, bottom:0, width:'14%', zIndex:10,
+              cursor:'pointer',
+            }} />
           )}
         </div>
 
@@ -346,14 +336,17 @@ export default function FlashSeries() {
             <div key={item.id}
               style={{
                 position:'absolute', left:`${leftPct}%`, width:'20%',
-                height:`${heightPct}%`, top:'50%', transform:'translateY(-50%)',
+                height:`${heightPct}%`, top:'50%',
+                transform: isCenter ? 'translateY(-50%)' : `translateY(-50%) rotate(${offset < 0 ? 3 : -3}deg)`,
+                transformOrigin:'center bottom',
                 overflow:'hidden',
                 cursor: isCenter ? 'pointer' : 'ew-resize',
                 opacity: Math.abs(offset) > 2 ? 0 : claimedDim,
                 zIndex: isCenter ? 2 : 1,
                 transition:[
-                  'left 0.55s cubic-bezier(0.34,1.56,0.64,1)',
-                  'height 0.55s cubic-bezier(0.34,1.56,0.64,1)',
+                  'left 0.65s cubic-bezier(0.25,0.1,0.25,1)',
+                  'height 0.65s cubic-bezier(0.25,0.1,0.25,1)',
+                  'transform 0.65s cubic-bezier(0.25,0.1,0.25,1)',
                   'opacity 0.35s ease',
                 ].join(', '),
               }}
@@ -470,6 +463,4 @@ export default function FlashSeries() {
           © SIA TATTOOIST
         </span>
       </div>
-    </div>
-  )
-}
+    </di
