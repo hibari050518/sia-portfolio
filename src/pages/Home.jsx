@@ -638,7 +638,7 @@ export default function Home() {
           alignItems:'center', justifyContent:'center', textAlign:'center',
           padding:'0 28%',
         }}>
-          <OpeningAnimation style={{ width:'min(580px,44vw)', marginBottom:'-59px', marginTop:'-10px' }} />
+          <OpeningAnimation style={{ width:'min(580px,44vw)', marginBottom:'-59px', marginTop:'-20px' }} />
 
           <FadeUp delay={1100}>
             <p style={{

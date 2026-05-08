@@ -134,10 +134,7 @@ export default function WorksHome() {
   }, [activeIdx, theme])
 
   if (loading) return (
-    <div style={{ position:'fixed', inset:0, background:BG, display:'flex',
-      alignItems:'center', justifyContent:'center' }}>
-      <p style={{ color:'rgba(255,255,255,0.25)', fontSize:'12px', letterSpacing:'4px' }}>loading</p>
-    </div>
+    <div style={{ position:'fixed', inset:0, background:BG }} />
   )
 
   /* ── Mobile layout ── */
@@ -180,7 +177,7 @@ export default function WorksHome() {
       {/* Logo watermark — left portion visible at bottom-right */}
       <div style={{
         position:'absolute', left:'100px',
-        bottom:'calc(62px + env(safe-area-inset-bottom, 0px) - 125px)',
+        bottom:'calc(62px + env(safe-area-inset-bottom, 0px) - 112px)',
         zIndex:8, pointerEvents:'none', opacity:0.13,
       }}>
         <img src={LOGO_URL} alt="" style={{ height:'225px', width:'auto', maxWidth:'none', display:'block' }} />
