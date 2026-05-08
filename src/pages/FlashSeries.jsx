@@ -204,7 +204,7 @@ export default function FlashSeries() {
         </div>
 
         {/* Card spread */}
-        <div style={{ flex:1, position:'relative', overflow:'hidden', paddingTop:'10px' }}
+        <div style={{ flex:1, position:'relative', overflow:'hidden', paddingTop:'18px' }}
           onTouchStart={swipe.onTouchStart} onTouchEnd={swipe.onTouchEnd}>
 
           {/* Floating star particles — below card, high z-index so visible */}
