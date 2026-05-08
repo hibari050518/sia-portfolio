@@ -221,11 +221,11 @@ function HomeMobile() {
   }, [])
 
   // scroll-based sequential reveal for section 2
-  const r0 = scrollY > 80    // logo — fires as photo tail comes into view
-  const r1 = scrollY > 280   // spiritual tattoo artist
-  const r2 = scrollY > 450   // quote
-  const r3 = scrollY > 600   // tagline
-  const r4 = scrollY > 730   // CTA
+  const r0 = scrollY > 80    // logo
+  const r1 = scrollY > 220   // spiritual tattoo artist
+  const r2 = scrollY > 360   // quote
+  const r3 = scrollY > 460   // tagline
+  const r4 = scrollY > 540   // CTA
 
   const langOpacity = scrollY < 150
     ? 1
@@ -355,7 +355,7 @@ function HomeMobile() {
 
         {/* ── Section 2：深色 + 星點 + LOGO 帶出文字 ── */}
         <div style={{ background:'#111', position:'relative',
-          minHeight:'fit-content',
+          minHeight:'100vh',
           paddingTop:'1vh', paddingLeft:'40px', paddingRight:'40px',
           paddingBottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 48px)',
           display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'flex-start', textAlign:'center',
