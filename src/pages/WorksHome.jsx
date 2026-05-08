@@ -178,7 +178,7 @@ export default function WorksHome() {
       <div style={{
         position:'absolute', left:'100px',
         bottom:'calc(62px + env(safe-area-inset-bottom, 0px) - 102px)',
-        zIndex:8, pointerEvents:'none', opacity:0.13,
+        zIndex:8, pointerEvents:'none', opacity:0.07,
       }}>
         <img src={LOGO_URL} alt="" style={{ height:'225px', width:'auto', maxWidth:'none', display:'block' }} />
       </div>
