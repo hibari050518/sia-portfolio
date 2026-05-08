@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useWorks } from '../hooks/useSheets'
 import { getThemes } from '../utils/sheets'
@@ -66,6 +66,8 @@ function ArrowBtn({ dir, onClick, disabled }) {
   )
 }
 
+const BG_CYCLE_MS = 5000
+
 export default function WorksHome() {
   const { works, loading } = useWorks()
   const navigate           = useNavigate()
@@ -73,6 +75,8 @@ export default function WorksHome() {
   const [activeIdx, setActiveIdx] = useState(0)
   const [navIn,     setNavIn]     = useState(false)
   const [imgLoaded, setImgLoaded] = useState(false)
+  const [bgImgIdx,  setBgImgIdx]  = useState(0)
+  const prevImgRef = useRef(null)
 
   useEffect(() => {
     const t = setTimeout(() => setNavIn(true), 300)
@@ -82,13 +86,35 @@ export default function WorksHome() {
   const themeNames  = getThemes(works)
   const themeData   = themeNames.map(name => {
     const tw = works.filter(w => w.theme === name)
-    return { name, count: tw.length, image: tw.find(w => w.image_url)?.image_url }
+    const images = tw.flatMap(w =>
+      [w.image_url, w.image_url_2, w.image_url_3].filter(Boolean)
+    )
+    return { name, count: tw.length, image: images[0] || '', images }
   })
   const total  = themeData.length
   const theme  = themeData[activeIdx]
 
-  const go = (delta) => {
+  // Reset bg cycle when active theme changes
+  useEffect(() => {
+    prevImgRef.current = null
+    setBgImgIdx(0)
     setImgLoaded(false)
+  }, [activeIdx])
+
+  // Auto-cycle through the current theme's images
+  useEffect(() => {
+    if (!theme || theme.images.length < 2) return
+    const id = setInterval(() => {
+      setBgImgIdx(prev => {
+        prevImgRef.current = theme.images[prev]
+        return (prev + 1) % theme.images.length
+      })
+      setImgLoaded(false)
+    }, BG_CYCLE_MS)
+    return () => clearInterval(id)
+  }, [activeIdx, theme])
+
+  const go = (delta) => {
     setActiveIdx(i => Math.max(0, Math.min(total - 1, i + delta)))
   }
 
@@ -119,24 +145,49 @@ export default function WorksHome() {
 
       <MobileTopBar />
 
-      {/* BG image */}
-      {theme?.image && (
-        <img key={theme.name} src={theme.image} alt={theme.name}
+      {/* BG image — two-layer crossfade */}
+      {prevImgRef.current && (
+        <img src={prevImgRef.current} alt=""
+          style={{ position:'absolute', inset:0, width:'100%', height:'100%',
+            objectFit:'cover', objectPosition:'center', filter:'brightness(0.55)' }} />
+      )}
+      {theme?.images[bgImgIdx] && (
+        <img key={`${activeIdx}-${bgImgIdx}`} src={theme.images[bgImgIdx]} alt={theme.name}
           onLoad={() => setImgLoaded(true)}
           style={{ position:'absolute', inset:0, width:'100%', height:'100%',
             objectFit:'cover', objectPosition:'center', filter:'brightness(0.55)',
-            opacity: imgLoaded ? 1 : 0, transition:'opacity 0.75s ease' }} />
+            opacity: imgLoaded ? 1 : 0, transition:'opacity 1s ease' }} />
       )}
 
       {/* Vignette */}
       <div style={{ position:'absolute', inset:0, pointerEvents:'none', zIndex:5,
         background:'linear-gradient(to bottom, rgba(17,17,17,0.65) 0%, rgba(17,17,17,0) 25%, rgba(17,17,17,0) 45%, rgba(17,17,17,0.75) 80%, rgba(17,17,17,0.96) 100%)' }} />
 
+      {/* Mobile swipe arrow hints */}
+      {activeIdx > 0 && (
+        <div onClick={() => go(-1)}
+          style={{ position:'absolute', left:0, top:0, bottom:0, width:'52px', zIndex:20,
+            display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer' }}>
+          <svg width="22" height="22" viewBox="0 0 32 32" fill="none" style={{ opacity:0.45 }}>
+            <path d="M20 4 L8 16 L20 28" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
+      )}
+      {activeIdx < total - 1 && (
+        <div onClick={() => go(1)}
+          style={{ position:'absolute', right:0, top:0, bottom:0, width:'52px', zIndex:20,
+            display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer' }}>
+          <svg width="22" height="22" viewBox="0 0 32 32" fill="none" style={{ opacity:0.45 }}>
+            <path d="M12 4 L24 16 L12 28" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
+      )}
+
       {/* Center content */}
       {theme && (
         <div style={{ position:'absolute', inset:0, zIndex:15,
           display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
-          textAlign:'center', padding:'0 24px' }}>
+          textAlign:'center', padding:'0 64px' }}>
           <p style={{ fontSize:'11px', letterSpacing:'4px', textTransform:'uppercase',
             color:'rgba(255,255,255,0.38)', marginBottom:'16px' }}>
             {theme.count} {t('pieces',lang)}
@@ -193,11 +244,16 @@ export default function WorksHome() {
   return (
     <div style={{ position:'fixed', inset:0, background:BG, overflow:'hidden' }}>
 
-      {/* ── Full-bleed background image ── */}
-      {theme?.image && (
+      {/* ── Full-bleed background image — two-layer crossfade ── */}
+      {prevImgRef.current && (
+        <img src={prevImgRef.current} alt=""
+          style={{ position:'absolute', inset:0, width:'100%', height:'100%',
+            objectFit:'cover', objectPosition:'center center', filter:'brightness(0.58)' }} />
+      )}
+      {theme?.images[bgImgIdx] && (
         <img
-          key={theme.name}
-          src={theme.image}
+          key={`${activeIdx}-${bgImgIdx}`}
+          src={theme.images[bgImgIdx]}
           alt={theme.name}
           onLoad={() => setImgLoaded(true)}
           style={{
@@ -205,7 +261,7 @@ export default function WorksHome() {
             objectFit:'cover', objectPosition:'center center',
             filter:'brightness(0.58)',
             opacity: imgLoaded ? 1 : 0,
-            transition:'opacity 0.75s ease',
+            transition:'opacity 1s ease',
           }}
         />
       )}
