@@ -177,13 +177,13 @@ export default function WorksHome() {
           style={{ position:'absolute', right:'60px', top:'52px', bottom:'calc(62px + env(safe-area-inset-bottom, 0px))', width:'52px', zIndex:20, cursor:'pointer' }} />
       )}
 
-      {/* Logo watermark — large, faint, lower-left of info section */}
+      {/* Logo watermark — large, faint, lower-right of info section */}
       <div style={{
-        position:'absolute', left:'-20px',
+        position:'absolute', right:'-30px',
         bottom:'calc(62px + env(safe-area-inset-bottom, 0px))',
         zIndex:8, pointerEvents:'none', opacity:0.08,
       }}>
-        <img src={LOGO_URL} alt="" style={{ height:'500px', width:'auto', display:'block' }} />
+        <img src={LOGO_URL} alt="" style={{ height:'500px', width:'auto', maxWidth:'none', display:'block' }} />
       </div>
 
       {/* Right-side thumbnail strip */}
