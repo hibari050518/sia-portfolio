@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import OpeningAnimation from '../components/OpeningAnimation'
 
-const DURATION = 1400  // ms to count 0→100
+const DURATION = 2600  // ms — longer so logo animation gets to breathe
 
 export default function LoadingPage() {
   const navigate = useNavigate()
@@ -34,13 +35,18 @@ export default function LoadingPage() {
   return (
     <div style={{
       position:'fixed', inset:0, background:'#111',
-      display:'flex', alignItems:'center', justifyContent:'center',
+      display:'flex', flexDirection:'column',
+      alignItems:'center', justifyContent:'center',
       opacity: leaving ? 0 : 1,
       transition: leaving ? 'opacity 0.48s ease' : 'none',
       zIndex:999,
     }}>
+      {/* Logo animation */}
+      <OpeningAnimation style={{ width:'min(520px,60vw)', marginBottom:'-44px' }} />
+
+      {/* Percentage counter */}
       <span style={{
-        fontFamily:'var(--serif)', fontSize:'clamp(48px, 8vw, 96px)',
+        fontFamily:'var(--serif)', fontSize:'clamp(36px, 5vw, 64px)',
         fontWeight:300, fontStyle:'italic',
         color:'rgba(255,255,255,0.18)',
         letterSpacing:'0.04em',
