@@ -168,6 +168,26 @@ export default function FlashSeries() {
         left:0, right:0, display:'flex', flexDirection:'column', zIndex:1,
       }}>
 
+        {/* Background image — behind cards + info, fades in from bottom */}
+        <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'62%', zIndex:0, pointerEvents:'none' }}>
+          <div style={{
+            position:'absolute', inset:0,
+            backgroundImage:`url("https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/%E8%A1%8C%E5%8B%95%E7%89%88%E8%83%8C%E6%99%AF%20(2).jpg")`,
+            backgroundSize:'cover', backgroundPosition:'center 20%',
+            opacity:0.50,
+          }}/>
+          {/* Top fade into card bg */}
+          <div style={{
+            position:'absolute', top:0, left:0, right:0, height:'52%', pointerEvents:'none',
+            background:'linear-gradient(to bottom, #0c0c0e 0%, transparent 100%)',
+          }}/>
+          {/* Bottom fade */}
+          <div style={{
+            position:'absolute', bottom:0, left:0, right:0, height:'30%', pointerEvents:'none',
+            background:'linear-gradient(to top, rgba(12,12,14,0.65) 0%, transparent 100%)',
+          }}/>
+        </div>
+
         {/* Breadcrumb */}
         <div style={{ padding:'10px 18px 4px', flexShrink:0,
           display:'flex', alignItems:'center', gap:'8px' }}>
@@ -363,57 +383,30 @@ export default function FlashSeries() {
 
         {/* Bottom: dots + counter + CTA */}
         {activeItem && (
-          <div style={{ padding:'14px 20px 14px', flexShrink:0, position:'relative', overflow:'hidden' }}>
-
-            {/* Background image */}
-            <div style={{
-              position:'absolute', inset:0, zIndex:0,
-              backgroundImage:`url("https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/%E8%A1%8C%E5%8B%95%E7%89%88%E8%83%8C%E6%99%AF%20(2).jpg")`,
-              backgroundSize:'cover', backgroundPosition:'center 30%',
-              opacity:0.52,
-            }}/>
-            {/* Overlay: dim slightly for readability */}
-            <div style={{
-              position:'absolute', inset:0, zIndex:1, pointerEvents:'none',
-              background:'rgba(12,12,14,0.28)',
-            }}/>
-            {/* Top fade: smooth transition from card area above */}
-            <div style={{
-              position:'absolute', top:0, left:0, right:0, height:'44px', zIndex:2, pointerEvents:'none',
-              background:'linear-gradient(to bottom, #0c0c0e 0%, transparent 100%)',
-            }}/>
-            {/* Bottom fade */}
-            <div style={{
-              position:'absolute', bottom:0, left:0, right:0, height:'32px', zIndex:2, pointerEvents:'none',
-              background:'linear-gradient(to top, rgba(12,12,14,0.70) 0%, transparent 100%)',
-            }}/>
-
-            {/* Content */}
-            <div style={{ position:'relative', zIndex:2,
-              display:'flex', flexDirection:'column', alignItems:'center', gap:'8px', textAlign:'center' }}>
-              {total > 1 && (
-                <div style={{ display:'flex', gap:'4px', alignItems:'center' }}>
-                  {seriesItems.map((_, i) => (
-                    <div key={i} onClick={() => setActiveIdx(i)} style={{
-                      width: i === activeIdx ? '20px' : '4px', height:'2px',
-                      borderRadius:'1px', cursor:'pointer',
-                      background: i === activeIdx ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.14)',
-                      transition:'all 0.35s ease',
-                    }} />
-                  ))}
-                </div>
-              )}
-              <span style={{ fontSize:'10px', letterSpacing:'2px', color:'rgba(255,255,255,0.28)' }}>
-                {String(activeIdx+1).padStart(2,'0')} / {String(total).padStart(2,'0')}
-              </span>
-              <button
-                onClick={() => navigate(`/flash/${encodeURIComponent(decoded)}/${activeItem.id}`)}
-                style={{ background:'none', border:'1px solid rgba(255,255,255,0.28)',
-                  color:'rgba(255,255,255,0.65)', fontSize:'11px', letterSpacing:'3px',
-                  textTransform:'uppercase', padding:'9px 28px', cursor:'pointer' }}>
-                {t('viewDesign',lang)} →
-              </button>
-            </div>
+          <div style={{ padding:'14px 20px 14px', flexShrink:0, position:'relative', zIndex:1,
+            display:'flex', flexDirection:'column', alignItems:'center', gap:'8px', textAlign:'center' }}>
+            {total > 1 && (
+              <div style={{ display:'flex', gap:'4px', alignItems:'center' }}>
+                {seriesItems.map((_, i) => (
+                  <div key={i} onClick={() => setActiveIdx(i)} style={{
+                    width: i === activeIdx ? '20px' : '4px', height:'2px',
+                    borderRadius:'1px', cursor:'pointer',
+                    background: i === activeIdx ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.14)',
+                    transition:'all 0.35s ease',
+                  }} />
+                ))}
+              </div>
+            )}
+            <span style={{ fontSize:'10px', letterSpacing:'2px', color:'rgba(255,255,255,0.28)' }}>
+              {String(activeIdx+1).padStart(2,'0')} / {String(total).padStart(2,'0')}
+            </span>
+            <button
+              onClick={() => navigate(`/flash/${encodeURIComponent(decoded)}/${activeItem.id}`)}
+              style={{ background:'none', border:'1px solid rgba(255,255,255,0.28)',
+                color:'rgba(255,255,255,0.65)', fontSize:'11px', letterSpacing:'3px',
+                textTransform:'uppercase', padding:'9px 28px', cursor:'pointer' }}>
+              {t('viewDesign',lang)} →
+            </button>
           </div>
         )}
       </div>
