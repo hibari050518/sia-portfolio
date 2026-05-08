@@ -51,25 +51,37 @@ const SWAP_INTERVAL = 4000
 // y 從 55vh 往下；x 靠近中心收窄、往下漸寬
 // op 亮度分三層：1.0 亮星 / 0.5 中等 / 0.22 暗淡遠星
 const PARTICLES = [
-  // 文字正下方，窄而稀（y:55-63）
+  // logo 周圍（y:2-18）稀疏散佈
+  { x: 15, y:  4, sz: 2, dur: '18s',   d: '1.2s',  op: 0.40 },
+  { x: 38, y:  8, sz: 2, dur: '20s',   d: '3.5s',  op: 0.45 },
+  { x: 62, y:  5, sz: 2, dur: '17s',   d: '0.8s',  op: 0.38 },
+  { x: 84, y: 12, sz: 2, dur: '21s',   d: '2.6s',  op: 0.42 },
+  { x: 22, y: 16, sz: 3, dur: '16s',   d: '4.0s',  op: 0.50 },
+  { x: 72, y: 20, sz: 2, dur: '19s',   d: '1.8s',  op: 0.44 },
+  // 文字區（y:25-50）
+  { x:  8, y: 28, sz: 2, dur: '17s',   d: '0.4s',  op: 0.48 },
+  { x: 48, y: 32, sz: 3, dur: '15.5s', d: '2.0s',  op: 0.55 },
+  { x: 90, y: 36, sz: 2, dur: '18s',   d: '5.2s',  op: 0.40 },
+  { x: 32, y: 42, sz: 2, dur: '20s',   d: '1.5s',  op: 0.52 },
+  { x: 68, y: 46, sz: 3, dur: '16s',   d: '3.2s',  op: 0.58 },
+  { x: 14, y: 50, sz: 2, dur: '19s',   d: '0.6s',  op: 0.45 },
+  // 中下段（y:55-75）漸密
   { x: 46, y: 55, sz: 3, dur: '16.5s', d: '0.0s',  op: 0.5  },
   { x: 50, y: 60, sz: 4, dur: '18.0s', d: '3.2s',  op: 1.0  },
   { x: 57, y: 63, sz: 3, dur: '15.5s', d: '1.8s',  op: 0.22 },
-  // 中段，漸寬（y:65-75）
   { x: 36, y: 65, sz: 4, dur: '19.2s', d: '0.8s',  op: 0.22 },
   { x: 52, y: 68, sz: 3, dur: '16.8s', d: '4.5s',  op: 1.0  },
   { x: 60, y: 67, sz: 4, dur: '17.6s', d: '2.0s',  op: 0.5  },
   { x: 40, y: 72, sz: 3, dur: '20.0s', d: '1.2s',  op: 0.22 },
   { x: 56, y: 74, sz: 4, dur: '15.8s', d: '5.0s',  op: 0.5  },
   { x: 68, y: 72, sz: 3, dur: '18.4s', d: '0.4s',  op: 1.0  },
-  // 下段，更寬（y:76-85）
+  // 下段（y:76-93）
   { x: 24, y: 77, sz: 4, dur: '17.2s', d: '3.6s',  op: 0.22 },
   { x: 42, y: 79, sz: 5, dur: '19.5s', d: '1.5s',  op: 0.5  },
   { x: 58, y: 78, sz: 4, dur: '16.2s', d: '0.6s',  op: 1.0  },
   { x: 74, y: 77, sz: 3, dur: '18.8s', d: '2.8s',  op: 0.22 },
   { x: 34, y: 84, sz: 3, dur: '17.8s', d: '4.2s',  op: 0.5  },
   { x: 62, y: 83, sz: 4, dur: '16.6s', d: '1.0s',  op: 0.22 },
-  // 最底，最寬（y:87-93）
   { x: 18, y: 88, sz: 3, dur: '19.0s', d: '2.2s',  op: 0.22 },
   { x: 44, y: 91, sz: 3, dur: '17.4s', d: '0.3s',  op: 1.0  },
   { x: 56, y: 90, sz: 4, dur: '15.8s', d: '3.8s',  op: 0.5  },
@@ -150,18 +162,34 @@ function NavLink({ to, label }) {
   )
 }
 
-// Section 1 の星點（全螢幕散布）
+// Section 1 星點：上半稀疏、下半密集往底部堆積
 const S1_PARTICLES = [
-  { x: 12, y: 12, sz: 2, dur: '19s', d: '0.5s',  op: 0.55 },
-  { x: 28, y:  8, sz: 3, dur: '17s', d: '2.1s',  op: 0.50 },
-  { x: 48, y: 22, sz: 2, dur: '21s', d: '0.9s',  op: 0.65 },
-  { x: 65, y: 14, sz: 2, dur: '16s', d: '3.4s',  op: 0.52 },
-  { x: 82, y: 28, sz: 3, dur: '18s', d: '1.2s',  op: 0.48 },
-  { x: 20, y: 38, sz: 2, dur: '20s', d: '4.0s',  op: 0.58 },
-  { x: 55, y: 44, sz: 3, dur: '15s', d: '0.3s',  op: 0.70 },
-  { x: 78, y: 50, sz: 2, dur: '22s', d: '2.6s',  op: 0.48 },
-  { x: 35, y: 58, sz: 2, dur: '17s', d: '1.7s',  op: 0.60 },
-  { x: 70, y: 62, sz: 3, dur: '19s', d: '3.8s',  op: 0.50 },
+  // 上半（y 0-40）稀疏
+  { x: 12, y:  8, sz: 2, dur: '19s', d: '0.5s',  op: 0.50 },
+  { x: 30, y: 12, sz: 3, dur: '17s', d: '2.1s',  op: 0.45 },
+  { x: 52, y:  6, sz: 2, dur: '21s', d: '0.9s',  op: 0.55 },
+  { x: 72, y: 18, sz: 2, dur: '16s', d: '3.4s',  op: 0.48 },
+  { x: 88, y: 30, sz: 3, dur: '18s', d: '1.2s',  op: 0.42 },
+  { x: 18, y: 35, sz: 2, dur: '20s', d: '4.0s',  op: 0.52 },
+  // 中段（y 40-60）漸密
+  { x: 42, y: 42, sz: 3, dur: '15s', d: '0.3s',  op: 0.65 },
+  { x: 62, y: 46, sz: 2, dur: '22s', d: '2.6s',  op: 0.55 },
+  { x: 80, y: 50, sz: 2, dur: '17s', d: '1.7s',  op: 0.58 },
+  { x: 25, y: 54, sz: 3, dur: '19s', d: '3.8s',  op: 0.60 },
+  { x: 55, y: 58, sz: 2, dur: '16s', d: '0.6s',  op: 0.62 },
+  { x: 90, y: 56, sz: 3, dur: '18s', d: '5.0s',  op: 0.50 },
+  // 下半（y 60-85）密集
+  { x:  8, y: 63, sz: 2, dur: '20s', d: '1.4s',  op: 0.55 },
+  { x: 35, y: 67, sz: 3, dur: '15s', d: '2.8s',  op: 0.70 },
+  { x: 58, y: 65, sz: 2, dur: '18s', d: '0.2s',  op: 0.65 },
+  { x: 74, y: 70, sz: 3, dur: '17s', d: '4.2s',  op: 0.60 },
+  { x: 20, y: 74, sz: 2, dur: '21s', d: '1.0s',  op: 0.68 },
+  { x: 46, y: 77, sz: 3, dur: '16s', d: '3.0s',  op: 0.72 },
+  { x: 82, y: 75, sz: 2, dur: '19s', d: '0.7s',  op: 0.58 },
+  { x: 12, y: 82, sz: 3, dur: '17s', d: '2.4s',  op: 0.65 },
+  { x: 38, y: 85, sz: 2, dur: '20s', d: '1.6s',  op: 0.70 },
+  { x: 65, y: 82, sz: 3, dur: '15s', d: '4.8s',  op: 0.62 },
+  { x: 88, y: 86, sz: 2, dur: '18s', d: '0.9s',  op: 0.55 },
 ]
 
 function HomeMobile() {
@@ -304,26 +332,26 @@ function HomeMobile() {
           {/* 滾動指示器：SCROLL DOWN 在線上方 */}
           <div style={{
             position:'absolute', zIndex:3,
-            bottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 44px)',
+            bottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 90px)',
             left:'50%', transform:'translateX(-50%)',
-            display:'flex', flexDirection:'column', alignItems:'center', gap:'8px',
+            display:'flex', flexDirection:'column', alignItems:'center', gap:'10px',
             opacity: scrollY < 18 ? 1 : 0, transition:'opacity 0.4s ease',
             pointerEvents:'none',
           }}>
             <span style={{
-              fontSize:'8px', letterSpacing:'3.5px', textTransform:'uppercase',
-              color:'rgba(255,255,255,0.32)', marginBottom:'2px',
+              fontSize:'10px', letterSpacing:'4px', textTransform:'uppercase',
+              color:'rgba(255,255,255,0.38)', marginBottom:'2px',
             }}>scroll down</span>
-            <div style={{ width:'1px', height:'44px', position:'relative', overflow:'hidden',
-              background:'rgba(255,255,255,0.08)' }}>
+            <div style={{ width:'1px', height:'72px', position:'relative', overflow:'hidden',
+              background:'rgba(255,255,255,0.10)' }}>
               <div style={{
-                position:'absolute', left:0, right:0, height:'22px',
-                background:'linear-gradient(to bottom, transparent, rgba(255,255,255,0.55), transparent)',
+                position:'absolute', left:0, right:0, height:'28px',
+                background:'linear-gradient(to bottom, transparent, rgba(255,255,255,0.60), transparent)',
                 animation:'scrollFlow 1.65s ease-in-out infinite',
               }} />
             </div>
-            <svg width="12" height="7" viewBox="0 0 12 7" fill="none">
-              <path d="M1 1 L6 5.5 L11 1" stroke="rgba(255,255,255,0.28)" strokeWidth="1.2"
+            <svg width="13" height="8" viewBox="0 0 13 8" fill="none">
+              <path d="M1 1 L6.5 6.5 L12 1" stroke="rgba(255,255,255,0.32)" strokeWidth="1.2"
                 strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
@@ -332,7 +360,7 @@ function HomeMobile() {
         {/* ── Section 2：深色 + 星點 + LOGO 帶出文字 ── */}
         <div style={{ background:'#111', position:'relative', overflow:'hidden',
           minHeight:'100vh',
-          paddingTop:'6vh', paddingLeft:'40px', paddingRight:'40px',
+          paddingTop:'1vh', paddingLeft:'40px', paddingRight:'40px',
           paddingBottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 48px)',
           display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'flex-start', textAlign:'center',
         }}>
