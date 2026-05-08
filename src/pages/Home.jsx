@@ -221,7 +221,7 @@ function HomeMobile() {
   }, [])
 
   // scroll-based sequential reveal for section 2
-  const r0 = scrollY > 80    // logo
+  const r0 = scrollY > 40    // logo
   const r1 = scrollY > 220   // spiritual tattoo artist
   const r2 = scrollY > 360   // quote
   const r3 = scrollY > 460   // tagline
@@ -364,7 +364,7 @@ function HomeMobile() {
         {/* ── Section 2：深色 + 星點 + LOGO 帶出文字 ── */}
         <div style={{ background:'#111', position:'relative',
           minHeight:'fit-content',
-          paddingTop:'1vh', paddingLeft:'40px', paddingRight:'40px',
+          paddingTop:'0', paddingLeft:'40px', paddingRight:'40px',
           paddingBottom:'calc(env(safe-area-inset-bottom, 0px) + 140px)',
           display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'flex-start', textAlign:'center',
         }}>
@@ -436,7 +436,7 @@ function HomeMobile() {
           {lang === 'en' && <div style={{ marginBottom:'5vh' }} />}
 
           {/* CTA */}
-          <Link to="/works" style={{
+          <Link to="/loading?to=/works" style={{
             display:'inline-block', padding:'16px 52px',
             border:'1px solid rgba(255,255,255,0.22)',
             fontSize:'11px', letterSpacing:'4.5px', textTransform:'uppercase',
@@ -638,7 +638,7 @@ export default function Home() {
           alignItems:'center', justifyContent:'center', textAlign:'center',
           padding:'0 28%',
         }}>
-          <OpeningAnimation style={{ width:'min(580px,44vw)', marginBottom:'40px' }} />
+          <OpeningAnimation style={{ width:'min(580px,44vw)', marginBottom:'24px' }} />
 
           <FadeUp delay={1100}>
             <p style={{
@@ -675,7 +675,7 @@ export default function Home() {
           </FadeUp>
 
           <FadeUp delay={1800}>
-            <Link to="/works" style={{
+            <Link to="/loading?to=/works" style={{
               display:'inline-block', padding:'14px 48px',
               border:'1px solid rgba(255,255,255,0.28)',
               fontSize:'13px', letterSpacing:'5px', textTransform:'uppercase',
