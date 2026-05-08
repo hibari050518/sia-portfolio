@@ -160,7 +160,7 @@ export default function WorksTheme() {
                 style={{
                   position:'absolute', left:`${leftPct}%`, width:'80%',
                   top:'4px', bottom:'4px', overflow:'hidden', cursor:'pointer',
-                  transition:'left 0.42s cubic-bezier(0.22,1,0.36,1)',
+                  transition:'left 0.55s cubic-bezier(0.34,1.56,0.64,1)',
                 }}>
                 {work.image_url
                   ? <img src={work.image_url} alt={work.title}
@@ -348,8 +348,8 @@ export default function WorksTheme() {
                 opacity: Math.abs(offset) > 2 ? 0 : 1,
                 zIndex: isCenter ? 2 : 1,
                 transition:[
-                  'left 0.52s cubic-bezier(0.22,1,0.36,1)',
-                  'height 0.52s cubic-bezier(0.22,1,0.36,1)',
+                  'left 0.55s cubic-bezier(0.34,1.56,0.64,1)',
+                  'height 0.55s cubic-bezier(0.34,1.56,0.64,1)',
                   'opacity 0.35s ease',
                 ].join(', '),
               }}

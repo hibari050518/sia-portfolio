@@ -152,16 +152,16 @@ function NavLink({ to, label }) {
 
 // Section 1 の星點（全螢幕散布）
 const S1_PARTICLES = [
-  { x: 12, y: 12, sz: 2, dur: '19s', d: '0.5s',  op: 0.30 },
-  { x: 28, y:  8, sz: 3, dur: '17s', d: '2.1s',  op: 0.18 },
-  { x: 48, y: 22, sz: 2, dur: '21s', d: '0.9s',  op: 0.45 },
-  { x: 65, y: 14, sz: 2, dur: '16s', d: '3.4s',  op: 0.25 },
-  { x: 82, y: 28, sz: 3, dur: '18s', d: '1.2s',  op: 0.18 },
-  { x: 20, y: 38, sz: 2, dur: '20s', d: '4.0s',  op: 0.30 },
-  { x: 55, y: 44, sz: 3, dur: '15s', d: '0.3s',  op: 0.50 },
-  { x: 78, y: 50, sz: 2, dur: '22s', d: '2.6s',  op: 0.20 },
-  { x: 35, y: 58, sz: 2, dur: '17s', d: '1.7s',  op: 0.35 },
-  { x: 70, y: 62, sz: 3, dur: '19s', d: '3.8s',  op: 0.22 },
+  { x: 12, y: 12, sz: 2, dur: '19s', d: '0.5s',  op: 0.55 },
+  { x: 28, y:  8, sz: 3, dur: '17s', d: '2.1s',  op: 0.50 },
+  { x: 48, y: 22, sz: 2, dur: '21s', d: '0.9s',  op: 0.65 },
+  { x: 65, y: 14, sz: 2, dur: '16s', d: '3.4s',  op: 0.52 },
+  { x: 82, y: 28, sz: 3, dur: '18s', d: '1.2s',  op: 0.48 },
+  { x: 20, y: 38, sz: 2, dur: '20s', d: '4.0s',  op: 0.58 },
+  { x: 55, y: 44, sz: 3, dur: '15s', d: '0.3s',  op: 0.70 },
+  { x: 78, y: 50, sz: 2, dur: '22s', d: '2.6s',  op: 0.48 },
+  { x: 35, y: 58, sz: 2, dur: '17s', d: '1.7s',  op: 0.60 },
+  { x: 70, y: 62, sz: 3, dur: '19s', d: '3.8s',  op: 0.50 },
 ]
 
 function HomeMobile() {
@@ -169,8 +169,10 @@ function HomeMobile() {
   const [bgIdx,    setBgIdx]    = useState(0)
   const [imgLoaded, setImgLoaded] = useState(false)
   const [scrollY,  setScrollY]  = useState(0)
-  const prevImgRef = useRef(null)
-  const scrollRef  = useRef(null)
+  const [s2Phase,  setS2Phase]  = useState(0)
+  const prevImgRef  = useRef(null)
+  const scrollRef   = useRef(null)
+  const section2Ref = useRef(null)
 
   useEffect(() => {
     if (ALL_IMGS.length < 2) return
@@ -192,13 +194,28 @@ function HomeMobile() {
     return () => el.removeEventListener('scroll', onScroll)
   }, [])
 
-  // s2y = raw scroll depth (section 2 visible once scrollY > 0; max ~450px on iPhone)
-  const s2y = scrollY
-  const r0  = s2y > 40   // logo in section 2
-  const r1  = s2y > 130  // spiritual tattoo artist
-  const r2  = s2y > 220  // quote
-  const r3  = s2y > 310  // tagline
-  const r4  = s2y > 380  // CTA
+  // IntersectionObserver：section 2 進入畫面後依序帶出文字，像翻開篇章
+  useEffect(() => {
+    const el = section2Ref.current
+    if (!el) return
+    const obs = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && s2Phase === 0) {
+        setTimeout(() => setS2Phase(1), 150)   // logo
+        setTimeout(() => setS2Phase(2), 850)   // spiritual tattoo artist
+        setTimeout(() => setS2Phase(3), 1650)  // quote
+        setTimeout(() => setS2Phase(4), 2500)  // tagline
+        setTimeout(() => setS2Phase(5), 3300)  // CTA
+      }
+    }, { threshold: 0.12 })
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [s2Phase])
+
+  const r0 = s2Phase >= 1
+  const r1 = s2Phase >= 2
+  const r2 = s2Phase >= 3
+  const r3 = s2Phase >= 4
+  const r4 = s2Phase >= 5
 
   const langOpacity = scrollY < 150
     ? 1
@@ -324,7 +341,7 @@ function HomeMobile() {
         </div>
 
         {/* ── Section 2：深色 + 星點 + LOGO 帶出文字 ── */}
-        <div style={{ background:'#111', position:'relative', overflow:'hidden',
+        <div ref={section2Ref} style={{ background:'#111', position:'relative', overflow:'hidden',
           paddingTop:'44px', paddingLeft:'40px', paddingRight:'40px',
           paddingBottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 24px)',
           display:'flex', flexDirection:'column', alignItems:'center', textAlign:'center',
@@ -333,7 +350,7 @@ function HomeMobile() {
           <div style={{ position:'absolute', inset:0, pointerEvents:'none' }}>
             {PARTICLES.map((p, i) => (
               <div key={i} style={{
-                position:'absolute', left:`${p.x}vw`, top:`${p.y}vh`,
+                position:'absolute', left:`${p.x}%`, top:`${p.y}%`,
                 width:`${p.sz}px`, height:`${p.sz}px`, borderRadius:'50%',
                 background:`radial-gradient(circle, rgba(255,255,255,${(0.9*p.op).toFixed(2)}) 0%, rgba(255,255,255,${(0.25*p.op).toFixed(2)}) 60%, transparent 100%)`,
                 boxShadow:`0 0 ${p.sz*2}px ${p.sz}px rgba(255,255,255,${(0.15*p.op).toFixed(2)})`,
