@@ -150,8 +150,6 @@ function NavLink({ to, label }) {
   )
 }
 
-const LOGO_URL = 'https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/Sia_logo_%E6%96%87%E5%AD%97%EF%BC%88%E7%99%BD%EF%BC%89.png'
-
 function HomeMobile({ lang }) {
   const [bgLoaded, setBgLoaded] = useState(false)
   const bgSrc = ALL_IMGS[0]
