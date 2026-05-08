@@ -7,6 +7,7 @@ import WorkDetail from './pages/WorkDetail'
 import FlashHome from './pages/FlashHome'
 import FlashSeries from './pages/FlashSeries'
 import FlashDetail from './pages/FlashDetail'
+import LoadingPage from './pages/LoadingPage'
 import { LangProvider } from './context/LangContext'
 import './styles/global.css'
 
@@ -24,6 +25,7 @@ function Layout() {
         <Route path="/flash"               element={<FlashHome />} />
         <Route path="/flash/:series"       element={<FlashSeries />} />
         <Route path="/flash/:series/:id"   element={<FlashDetail />} />
+        <Route path="/loading"             element={<LoadingPage />} />
       </Routes>
     </>
   )
