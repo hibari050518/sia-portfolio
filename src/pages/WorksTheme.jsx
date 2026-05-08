@@ -92,6 +92,7 @@ export default function WorksTheme() {
 
   const isMobile = useIsMobile()
   const swipe    = useTouchSwipe(() => go(1), () => go(-1))
+  const [hinted, setHinted] = useState(false)
 
   const handleHover = (i) => {
     if (i === activeIdx) return
@@ -110,6 +111,13 @@ export default function WorksTheme() {
     return () => window.removeEventListener('keydown', handler)
   }, [activeIdx, themeWorks, decoded, navigate])
 
+  useEffect(() => {
+    if (total < 2) return
+    const t1 = setTimeout(() => setHinted(true), 1400)
+    const t2 = setTimeout(() => setHinted(false), 2250)
+    return () => { clearTimeout(t1); clearTimeout(t2) }
+  }, [total])
+
   if (loading) return (
     <div style={{ position:'fixed', inset:0, background:BG, display:'flex',
       alignItems:'center', justifyContent:'center' }}>
@@ -117,12 +125,37 @@ export default function WorksTheme() {
     </div>
   )
 
-  /* ── Mobile layout: peek carousel ── */
+  /* ── Mobile layout: card swipe ── */
   if (isMobile) return (
     <div style={{ position:'fixed', inset:0, background:BG, overflow:'hidden' }}>
+      <style>{`
+        @keyframes swipeNudgeW {
+          0%   { transform: translateY(-52%); }
+          28%  { transform: translateY(-52%) translateX(-22px); }
+          58%  { transform: translateY(-52%) translateX(10px); }
+          80%  { transform: translateY(-52%) translateX(-4px); }
+          100% { transform: translateY(-52%); }
+        }
+        @keyframes arrowLeftW {
+          0%, 100% { opacity: 0.16; transform: translateY(-50%) translateX(0); }
+          50%       { opacity: 0.50; transform: translateY(-50%) translateX(-6px); }
+        }
+        @keyframes arrowRightW {
+          0%, 100% { opacity: 0.16; transform: translateY(-50%) translateX(0); }
+          50%       { opacity: 0.50; transform: translateY(-50%) translateX(6px); }
+        }
+      `}</style>
+
+      {/* Nav bar 半透明黑色底 */}
+      <div style={{
+        position:'absolute', top:0, left:0, right:0, zIndex:34,
+        height:'calc(env(safe-area-inset-top, 0px) + 58px)',
+        background:'linear-gradient(to bottom, rgba(0,0,0,0.48) 0%, rgba(0,0,0,0.18) 72%, transparent 100%)',
+        pointerEvents:'none',
+      }} />
+
       <MobileTopBar />
 
-      {/* Content area between nav bars */}
       <div style={{
         position:'absolute', top:'52px', bottom:'calc(62px + env(safe-area-inset-bottom, 0px))',
         left:0, right:0, display:'flex', flexDirection:'column',
@@ -142,16 +175,32 @@ export default function WorksTheme() {
           </span>
         </div>
 
-        {/* 選牌輪播：中間牌在最前，左右露出側邊壓在後方 */}
+        {/* Card spread */}
         <div style={{ flex:1, position:'relative', overflow:'hidden' }}
           onTouchStart={swipe.onTouchStart} onTouchEnd={swipe.onTouchEnd}>
 
+          {/* Left/Right swipe arrows */}
+          {activeIdx > 0 && total > 1 && (
+            <div style={{
+              position:'absolute', left:'3%', top:'50%', zIndex:15, pointerEvents:'none',
+              fontSize:'26px', color:'rgba(255,255,255,0.22)', lineHeight:1,
+              animation:'arrowLeftW 2.4s ease-in-out infinite',
+            }}>‹</div>
+          )}
+          {activeIdx < total - 1 && total > 1 && (
+            <div style={{
+              position:'absolute', right:'3%', top:'50%', zIndex:15, pointerEvents:'none',
+              fontSize:'26px', color:'rgba(255,255,255,0.22)', lineHeight:1,
+              animation:'arrowRightW 2.4s ease-in-out 0.3s infinite',
+            }}>›</div>
+          )}
+
           {themeWorks.map((work, i) => {
-            const offset = i - activeIdx
+            const offset   = i - activeIdx
             if (Math.abs(offset) > 1) return null
             const isCenter = offset === 0
-            // 中間牌：left=14%，寬72%；步距=58 → 側牌露14%在外
-            const leftPct = 14 + offset * 58
+            const leftPct  = 14 + offset * 58
+            const rotation = offset * 14
 
             return (
               <div key={work.id}
@@ -161,53 +210,59 @@ export default function WorksTheme() {
                 }}
                 style={{
                   position:'absolute', left:`${leftPct}%`, width:'72%',
-                  height:'min(52vh, calc(72vw * 1.3))',
+                  height:'min(52vh, calc(72vw * 1.32))',
                   top:'50%',
-                  transform: isCenter ? 'translateY(-50%)' : 'translateY(-50%) scale(0.90)',
-                  transformOrigin:'center center',
+                  transform: isCenter ? 'translateY(-52%)' : `translateY(-52%) scale(0.86) rotate(${rotation}deg)`,
+                  transformOrigin:'50% 88%',
                   overflow:'hidden', cursor:'pointer',
+                  borderRadius:'12px',
+                  border:`1px solid rgba(255,255,255,${isCenter ? 0.18 : 0.06})`,
+                  boxShadow: isCenter ? '0 20px 70px rgba(0,0,0,0.80)' : 'none',
+                  opacity: isCenter ? 1 : 0.32,
                   zIndex: isCenter ? 2 : 1,
-                  transition:[
+                  animation: isCenter && hinted ? 'swipeNudgeW 0.82s ease-out forwards' : 'none',
+                  transition: isCenter && hinted ? 'none' : [
                     'left 0.65s cubic-bezier(0.25,0.1,0.25,1)',
                     'transform 0.65s cubic-bezier(0.25,0.1,0.25,1)',
+                    'opacity 0.4s ease',
                   ].join(', '),
                 }}>
+
                 {work.image_url
                   ? <img src={work.image_url} alt={work.title}
                       style={{ width:'100%', height:'100%', objectFit:'cover',
-                        filter:`brightness(${isCenter ? 0.85 : 0.30})`,
+                        filter:`brightness(${isCenter ? 0.82 : 0.20})`,
                         transition:'filter 0.55s ease' }} />
                   : <div style={{ width:'100%', height:'100%', background:'rgba(255,255,255,0.04)' }} />
                 }
-                {/* 側牌：上下暗化 */}
+
+                {/* Side card: edge fade */}
                 {!isCenter && <>
-                  <div style={{ position:'absolute', top:0, left:0, right:0, height:'30%',
-                    background:`linear-gradient(to bottom,${BG},transparent)`, pointerEvents:'none' }}/>
-                  <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'30%',
-                    background:`linear-gradient(to top,${BG},transparent)`, pointerEvents:'none' }}/>
+                  <div style={{ position:'absolute', top:0, left:0, right:0, height:'45%',
+                    background:`linear-gradient(to bottom, ${BG}, transparent)`, pointerEvents:'none' }}/>
+                  <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'45%',
+                    background:`linear-gradient(to top, ${BG}, transparent)`, pointerEvents:'none' }}/>
                 </>}
-                {/* 中間牌：左右輕暈 */}
+
+                {/* Center card: subtle side fade */}
                 {isCenter && <>
-                  <div style={{ position:'absolute', top:0, left:0, bottom:0, width:'15%',
-                    background:`linear-gradient(to right, rgba(17,17,17,0.50), transparent)`, pointerEvents:'none' }}/>
-                  <div style={{ position:'absolute', top:0, right:0, bottom:0, width:'15%',
-                    background:`linear-gradient(to left, rgba(17,17,17,0.50), transparent)`, pointerEvents:'none' }}/>
+                  <div style={{ position:'absolute', top:0, left:0, bottom:0, width:'12%',
+                    background:`linear-gradient(to right, rgba(17,17,17,0.40), transparent)`, pointerEvents:'none' }}/>
+                  <div style={{ position:'absolute', top:0, right:0, bottom:0, width:'12%',
+                    background:`linear-gradient(to left, rgba(17,17,17,0.40), transparent)`, pointerEvents:'none' }}/>
                 </>}
               </div>
             )
           })}
 
-          {/* 左右輕觸區 — 點側牌換牌 */}
           {activeIdx > 0 && (
             <div onClick={() => go(-1)} style={{
-              position:'absolute', left:0, top:0, bottom:0, width:'14%', zIndex:10,
-              cursor:'pointer',
+              position:'absolute', left:0, top:0, bottom:0, width:'14%', zIndex:10, cursor:'pointer',
             }} />
           )}
           {activeIdx < total - 1 && (
             <div onClick={() => go(1)} style={{
-              position:'absolute', right:0, top:0, bottom:0, width:'14%', zIndex:10,
-              cursor:'pointer',
+              position:'absolute', right:0, top:0, bottom:0, width:'14%', zIndex:10, cursor:'pointer',
             }} />
           )}
         </div>
@@ -216,7 +271,6 @@ export default function WorksTheme() {
         {themeWorks[activeIdx] && (
           <div style={{ padding:'10px 18px 10px', flexShrink:0,
             display:'flex', flexDirection:'column', alignItems:'center', gap:'7px', textAlign:'center' }}>
-            {/* Progress dot bar */}
             {total > 1 && (
               <div style={{ display:'flex', gap:'4px', alignItems:'center', marginBottom:'2px' }}>
                 {themeWorks.map((_, i) => (

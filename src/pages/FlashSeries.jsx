@@ -89,6 +89,7 @@ export default function FlashSeries() {
 
   const isMobile = useIsMobile()
   const swipe    = useTouchSwipe(() => go(1), () => go(-1))
+  const [hinted, setHinted] = useState(false)
 
   const handleHover = (i) => {
     if (i === activeIdx) return
@@ -107,6 +108,13 @@ export default function FlashSeries() {
     return () => window.removeEventListener('keydown', handler)
   }, [activeIdx, seriesItems, decoded, navigate])
 
+  useEffect(() => {
+    if (total < 2) return
+    const t1 = setTimeout(() => setHinted(true), 1400)
+    const t2 = setTimeout(() => setHinted(false), 2250)
+    return () => { clearTimeout(t1); clearTimeout(t2) }
+  }, [total])
+
   if (loading) return (
     <div style={{ position:'fixed', inset:0, background:BG, display:'flex',
       alignItems:'center', justifyContent:'center' }}>
@@ -120,7 +128,30 @@ export default function FlashSeries() {
   /* ── Mobile layout: tarot card draw ── */
   if (isMobile) return (
     <div style={{ position:'fixed', inset:0, background:'#0c0c0e', overflow:'hidden' }}>
-      <MobileTopBar />
+      <style>{`
+        @keyframes swipeNudgeF {
+          0%   { transform: translateY(-52%); }
+          28%  { transform: translateY(-52%) translateX(-22px); }
+          58%  { transform: translateY(-52%) translateX(10px); }
+          80%  { transform: translateY(-52%) translateX(-4px); }
+          100% { transform: translateY(-52%); }
+        }
+        @keyframes arrowLeftF {
+          0%, 100% { opacity: 0.16; transform: translateY(-50%) translateX(0); }
+          50%       { opacity: 0.50; transform: translateY(-50%) translateX(-6px); }
+        }
+        @keyframes arrowRightF {
+          0%, 100% { opacity: 0.16; transform: translateY(-50%) translateX(0); }
+          50%       { opacity: 0.50; transform: translateY(-50%) translateX(6px); }
+        }
+        @keyframes starFloat {
+          0%   { transform: translate(0,0) scale(1); opacity:0; }
+          10%  { opacity: 0.7; }
+          50%  { transform: translate(6px,-12vh) scale(0.85); opacity:0.5; }
+          90%  { opacity: 0.08; }
+          100% { transform: translate(-4px,-22vh) scale(0.6); opacity:0; }
+        }
+      `}</style>
 
       {/* Ambient glow */}
       <div style={{ position:'absolute', top:'38%', left:'50%',
@@ -129,7 +160,8 @@ export default function FlashSeries() {
         background:'radial-gradient(ellipse, rgba(255,255,255,0.026) 0%, transparent 65%)',
         pointerEvents:'none', zIndex:0 }} />
 
-      {/* Content area */}
+      <MobileTopBar />
+
       <div style={{
         position:'absolute', top:'52px',
         bottom:'calc(62px + env(safe-area-inset-bottom, 0px))',
@@ -155,6 +187,46 @@ export default function FlashSeries() {
         <div style={{ flex:1, position:'relative', overflow:'hidden' }}
           onTouchStart={swipe.onTouchStart} onTouchEnd={swipe.onTouchEnd}>
 
+          {/* Floating star particles (bottom area) */}
+          {[
+            {x:12, y:78, sz:1.2, dur:'4.4s', d:'0s'},
+            {x:26, y:84, sz:0.9, dur:'3.8s', d:'0.8s'},
+            {x:44, y:90, sz:1.4, dur:'5.2s', d:'1.5s'},
+            {x:56, y:82, sz:1.0, dur:'4.8s', d:'0.3s'},
+            {x:70, y:88, sz:1.3, dur:'3.6s', d:'2.0s'},
+            {x:83, y:80, sz:0.8, dur:'5.0s', d:'1.1s'},
+            {x:36, y:93, sz:1.1, dur:'4.2s', d:'2.4s'},
+            {x:64, y:95, sz:0.7, dur:'4.6s', d:'0.6s'},
+            {x:20, y:96, sz:0.6, dur:'5.5s', d:'1.8s'},
+            {x:78, y:92, sz:1.0, dur:'3.9s', d:'3.0s'},
+          ].map((p, i) => (
+            <div key={i} style={{
+              position:'absolute', left:`${p.x}%`, top:`${p.y}%`,
+              width:`${p.sz}px`, height:`${p.sz}px`, borderRadius:'50%',
+              background:`radial-gradient(circle, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.2) 60%, transparent 100%)`,
+              boxShadow:`0 0 ${p.sz*3}px ${p.sz*1.5}px rgba(255,255,255,0.12)`,
+              animation:`starFloat ${p.dur} ease-in-out infinite`,
+              animationDelay: p.d,
+              pointerEvents:'none', zIndex:0,
+            }} />
+          ))}
+
+          {/* Left/Right swipe arrows */}
+          {activeIdx > 0 && total > 1 && (
+            <div style={{
+              position:'absolute', left:'3%', top:'46%', zIndex:15, pointerEvents:'none',
+              fontSize:'28px', color:'rgba(255,255,255,0.22)', lineHeight:1,
+              animation:'arrowLeftF 2.4s ease-in-out infinite',
+            }}>‹</div>
+          )}
+          {activeIdx < total - 1 && total > 1 && (
+            <div style={{
+              position:'absolute', right:'3%', top:'46%', zIndex:15, pointerEvents:'none',
+              fontSize:'28px', color:'rgba(255,255,255,0.22)', lineHeight:1,
+              animation:'arrowRightF 2.4s ease-in-out 0.3s infinite',
+            }}>›</div>
+          )}
+
           {seriesItems.map((item, i) => {
             const offset      = i - activeIdx
             if (Math.abs(offset) > 1) return null
@@ -173,26 +245,25 @@ export default function FlashSeries() {
                   position:'absolute', left:`${leftPct}%`, width:'72%',
                   height:'min(56vh, calc(72vw * 1.46))',
                   top:'50%',
-                  transform: isCenter
-                    ? 'translateY(-52%)'
-                    : `translateY(-52%) scale(0.86) rotate(${rotation}deg)`,
+                  transform: isCenter ? 'translateY(-52%)' : `translateY(-52%) scale(0.86) rotate(${rotation}deg)`,
                   transformOrigin:'50% 88%',
                   overflow:'hidden',
                   cursor:'pointer',
+                  borderRadius:'14px',
                   border:`1px solid rgba(255,255,255,${isCenter ? 0.22 : 0.06})`,
                   boxShadow: isCenter
                     ? '0 24px 80px rgba(0,0,0,0.90)'
                     : '0 8px 30px rgba(0,0,0,0.55)',
                   opacity: isCenter ? 1 : 0.28,
                   zIndex: isCenter ? 2 : 1,
-                  transition:[
+                  animation: isCenter && hinted ? 'swipeNudgeF 0.82s ease-out forwards' : 'none',
+                  transition: isCenter && hinted ? 'none' : [
                     'left 0.65s cubic-bezier(0.25,0.1,0.25,1)',
                     'transform 0.65s cubic-bezier(0.25,0.1,0.25,1)',
                     'opacity 0.4s ease',
                   ].join(', '),
                 }}>
 
-                {/* Image */}
                 {item.image_url
                   ? <img src={item.image_url} alt={item.title}
                       style={{ width:'100%', height:'100%', objectFit:'cover',
@@ -205,7 +276,7 @@ export default function FlashSeries() {
                     </div>
                 }
 
-                {/* Side card: subtle diamond back pattern */}
+                {/* Side card: diamond back pattern */}
                 {!isCenter && (
                   <div style={{ position:'absolute', inset:0, pointerEvents:'none',
                     background:`repeating-linear-gradient(45deg,
@@ -243,7 +314,7 @@ export default function FlashSeries() {
                     borderBottom:'1px solid rgba(255,255,255,0.30)',
                     borderRight:'1px solid rgba(255,255,255,0.30)' }} />
 
-                  {/* Status badge — top center of card */}
+                  {/* Status badge */}
                   <div style={{ position:'absolute', top:'18px', left:0, right:0,
                     display:'flex', justifyContent:'center', pointerEvents:'none' }}>
                     <span style={{ fontSize:'9px', letterSpacing:'2.5px',
@@ -255,7 +326,7 @@ export default function FlashSeries() {
                     </span>
                   </div>
 
-                  {/* Card title — bottom of card */}
+                  {/* Card title at bottom */}
                   <div style={{ position:'absolute', bottom:0, left:0, right:0,
                     padding:'36px 16px 22px', pointerEvents:'none',
                     background:'linear-gradient(to top, rgba(12,12,14,0.96) 28%, rgba(12,12,14,0.55) 65%, transparent 100%)' }}>
@@ -271,7 +342,6 @@ export default function FlashSeries() {
             )
           })}
 
-          {/* Tap zones */}
           {activeIdx > 0 && (
             <div onClick={() => go(-1)} style={{
               position:'absolute', left:0, top:0, bottom:0, width:'14%',
@@ -312,8 +382,7 @@ export default function FlashSeries() {
               onClick={() => navigate(`/flash/${encodeURIComponent(decoded)}/${activeItem.id}`)}
               style={{ background:'none', border:'1px solid rgba(255,255,255,0.18)',
                 color:'rgba(255,255,255,0.48)', fontSize:'11px', letterSpacing:'3px',
-                textTransform:'uppercase', padding:'9px 28px', cursor:'pointer',
-                transition:'border-color 0.25s, color 0.25s' }}>
+                textTransform:'uppercase', padding:'9px 28px', cursor:'pointer' }}>
               {t('viewDesign',lang)} →
             </button>
           </div>
