@@ -174,8 +174,8 @@ export default function FlashDetail() {
         overflowY:'auto',
         WebkitOverflowScrolling:'touch',
       }}>
-        {/* Image section — 52vh */}
-        <div style={{ position:'relative', height:'52vh', overflow:'hidden', flexShrink:0 }}
+        {/* Image section — 65vh */}
+        <div style={{ position:'relative', height:'65vh', overflow:'hidden', flexShrink:0 }}
           onTouchStart={imgSwipe.onTouchStart} onTouchEnd={imgSwipe.onTouchEnd}>
           {activeImg && (
             <img
@@ -221,11 +221,11 @@ export default function FlashDetail() {
         </div>
 
         {/* Content section */}
-        <div style={{ padding:'28px 24px 40px', background:BG }}>
+        <div style={{ padding:'36px 28px 56px', background:BG }}>
 
           {/* Series + status row */}
-          <div style={{ display:'flex', alignItems:'center', marginBottom:'20px', gap:'12px' }}>
-            <span style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase',
+          <div style={{ display:'flex', alignItems:'center', marginBottom:'24px', gap:'12px' }}>
+            <span style={{ fontSize:'11px', letterSpacing:'3px', textTransform:'uppercase',
               color:'var(--ocean)', opacity:0.85, flexShrink:0 }}>
               {decoded}
             </span>
@@ -240,29 +240,29 @@ export default function FlashDetail() {
 
           {/* Title */}
           <h1 style={{ fontFamily:'var(--serif)', fontWeight:300, fontStyle:'italic',
-            fontSize:'clamp(22px, 6vw, 36px)', color:'rgba(255,255,255,0.92)',
-            lineHeight:1.25, marginBottom:'24px' }}>
+            fontSize:'clamp(24px, 7vw, 40px)', color:'rgba(255,255,255,0.92)',
+            lineHeight:1.3, marginBottom:'32px' }}>
             {item.title}
           </h1>
 
           {/* Description */}
           {item.description && (
-            <p style={{ fontSize:'14px', lineHeight:2.0, color:'rgba(255,255,255,0.52)',
-              fontStyle:'italic', marginBottom:'28px',
-              borderLeft:'1px solid rgba(255,255,255,0.10)', paddingLeft:'16px' }}>
+            <p style={{ fontSize:'14px', lineHeight:2.2, color:'rgba(255,255,255,0.50)',
+              fontStyle:'italic', marginBottom:'40px',
+              borderLeft:'1px solid rgba(255,255,255,0.10)', paddingLeft:'18px' }}>
               {item.description}
             </p>
           )}
 
           {/* Details */}
-          <div style={{ display:'flex', flexDirection:'column', marginBottom:'28px' }}>
+          <div style={{ display:'flex', flexDirection:'column', marginBottom:'40px' }}>
             {[
               { label:'BODY',  value: item.body_part },
               { label:'SIZE',  value: formatSize(item.size_suggestion, lang) },
               { label:'PRICE', value: item.price_range },
             ].filter(d => d.value).map(d => (
-              <div key={d.label} style={{ display:'flex', alignItems:'baseline', gap:'14px',
-                borderBottom:'1px solid rgba(255,255,255,0.06)', padding:'14px 0' }}>
+              <div key={d.label} style={{ display:'flex', alignItems:'baseline', gap:'16px',
+                borderBottom:'1px solid rgba(255,255,255,0.06)', padding:'17px 0' }}>
                 <span style={{ fontSize:'11px', letterSpacing:'1.5px',
                   color:'rgba(255,255,255,0.22)', width:'52px', flexShrink:0 }}>{d.label}</span>
                 <span style={{ fontSize:'13px',

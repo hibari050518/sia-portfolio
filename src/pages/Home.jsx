@@ -159,25 +159,29 @@ function HomeMobile({ lang }) {
 
   useEffect(() => {
     if (ALL_IMGS.length < 2) return
-    const t = setInterval(() => {
+    const timer = setInterval(() => {
       setBgIdx(prev => {
         prevImgRef.current = ALL_IMGS[prev]
         return (prev + 1) % ALL_IMGS.length
       })
       setImgLoaded(false)
     }, SWAP_INTERVAL)
-    return () => clearInterval(t)
+    return () => clearInterval(timer)
   }, [])
 
   const handleScroll = useCallback(() => {
     if (scrollRef.current) setScrollY(scrollRef.current.scrollTop)
   }, [])
 
-  const vh = typeof window !== 'undefined' ? window.innerHeight : 800
-  const contentReveal = scrollY > vh * 0.22
+  const vh  = typeof window !== 'undefined' ? window.innerHeight : 800
+  const s2y = Math.max(0, scrollY - vh)   // 滾入第二屏的深度
+  const r1  = s2y > 30
+  const r2  = s2y > 120
+  const r3  = s2y > 210
+  const r4  = s2y > 300
 
   return (
-    <div style={{ position:'fixed', inset:0, background:BG }}>
+    <div style={{ position:'fixed', inset:0, background:'#111' }}>
       <style>{`
         @keyframes mParticleDrift {
           0%   { transform:translate(0,0) scale(1); opacity:0; }
@@ -187,114 +191,136 @@ function HomeMobile({ lang }) {
           90%  { opacity:0.08; }
           100% { transform:translate(4px,-26vh) scale(0.6); opacity:0; }
         }
-        @keyframes scrollPulse {
-          0%, 100% { transform: translateY(0); opacity: 0.28; }
-          50%       { transform: translateY(5px); opacity: 0.60; }
+        @keyframes scrollFlow {
+          0%   { top: -28px; }
+          100% { top: 56px;  }
         }
         .m-scroll::-webkit-scrollbar { display: none; }
       `}</style>
 
-      {/* ── 固定背景圖層 ── */}
-      {prevImgRef.current && (
-        <img src={prevImgRef.current} alt=""
-          style={{ position:'absolute', inset:0, width:'100%', height:'100%',
-            objectFit:'cover', objectPosition:'center 30%', filter:'brightness(0.42)' }} />
-      )}
-      <img key={bgIdx} src={ALL_IMGS[bgIdx]} alt=""
-        onLoad={() => setImgLoaded(true)}
-        style={{ position:'absolute', inset:0, width:'100%', height:'100%',
-          objectFit:'cover', objectPosition:'center 30%', filter:'brightness(0.42)',
-          opacity: imgLoaded ? 1 : 0, transition:'opacity 1.2s ease' }} />
-
-      {/* 漸層遮罩 */}
-      <div style={{ position:'absolute', inset:0, pointerEvents:'none',
-        background:'linear-gradient(to bottom, rgba(17,17,17,0.35) 0%, rgba(17,17,17,0) 38%, rgba(17,17,17,0) 52%, rgba(17,17,17,0.9) 100%)' }} />
-
-      {/* 星點 */}
-      <div style={{ position:'absolute', inset:0, pointerEvents:'none', zIndex:9 }}>
-        {PARTICLES.map((p, i) => (
-          <div key={i} style={{
-            position:'absolute', left:`${p.x}vw`, top:`${p.y}vh`,
-            width:`${p.sz}px`, height:`${p.sz}px`, borderRadius:'50%',
-            background:`radial-gradient(circle, rgba(255,255,255,${(0.9*p.op).toFixed(2)}) 0%, rgba(255,255,255,${(0.25*p.op).toFixed(2)}) 60%, transparent 100%)`,
-            boxShadow:`0 0 ${p.sz*2}px ${p.sz}px rgba(255,255,255,${(0.15*p.op).toFixed(2)})`,
-            animation:`mParticleDrift ${p.dur} ease-in-out infinite`,
-            animationDelay:p.d, pointerEvents:'none',
-          }} />
-        ))}
-      </div>
-
-      {/* ── LOGO：置頂固定，始終可見 ── */}
-      <div style={{ position:'absolute', top:0, left:0, right:0, zIndex:30,
-        display:'flex', justifyContent:'center', pointerEvents:'none',
-        paddingTop:'calc(env(safe-area-inset-top, 0px) + 22px)' }}>
-        <img src={LOGO_URL} alt="SIA TATTOOIST"
-          style={{ width:'108px', maxWidth:'42vw',
-            opacity:0.68, filter:'drop-shadow(0 2px 14px rgba(0,0,0,0.55))' }}
-          onError={e => { e.currentTarget.style.display='none' }}
-        />
-      </div>
-
-      {/* ── 可滾動覆蓋層 ── */}
       <div ref={scrollRef} onScroll={handleScroll}
         className="m-scroll"
         style={{ position:'absolute', inset:0, overflowY:'scroll', zIndex:20,
-          WebkitOverflowScrolling:'touch',
-          scrollbarWidth:'none', msOverflowStyle:'none',
+          WebkitOverflowScrolling:'touch', scrollbarWidth:'none', msOverflowStyle:'none',
           overscrollBehaviorY:'contain' }}>
 
-        {/* 第一屏：佔位 + 滾動提示 */}
-        <div style={{ height:'100vh', position:'relative', pointerEvents:'none' }}>
+        {/* ── 第一屏：作品幻燈片 ── */}
+        <div style={{ height:'100vh', position:'relative', overflow:'hidden' }}>
+          {prevImgRef.current && (
+            <img src={prevImgRef.current} alt=""
+              style={{ position:'absolute', inset:0, width:'100%', height:'100%',
+                objectFit:'cover', objectPosition:'center 30%', filter:'brightness(0.48)' }} />
+          )}
+          <img key={bgIdx} src={ALL_IMGS[bgIdx]} alt=""
+            onLoad={() => setImgLoaded(true)}
+            style={{ position:'absolute', inset:0, width:'100%', height:'100%',
+              objectFit:'cover', objectPosition:'center 30%', filter:'brightness(0.48)',
+              opacity: imgLoaded ? 1 : 0, transition:'opacity 1.4s ease' }} />
+
+          {/* Logo */}
+          <div style={{ position:'absolute', top:0, left:0, right:0,
+            display:'flex', justifyContent:'center',
+            paddingTop:'calc(env(safe-area-inset-top, 0px) + 28px)' }}>
+            <img src={LOGO_URL} alt="SIA TATTOOIST"
+              style={{ width:'108px', maxWidth:'40vw',
+                opacity:0.60, filter:'drop-shadow(0 2px 10px rgba(0,0,0,0.4))' }}
+              onError={e => { e.currentTarget.style.display='none' }} />
+          </div>
+
+          {/* 底部漸層 → 融入第二屏深色背景 */}
+          <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'45%',
+            background:'linear-gradient(to bottom, transparent 0%, #111 100%)',
+            pointerEvents:'none' }} />
+
+          {/* 滾動指示器：流動光線 + 箭頭 */}
           <div style={{
             position:'absolute',
-            bottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 32px)',
-            left:0, right:0,
-            display:'flex', flexDirection:'column', alignItems:'center', gap:'8px',
-            opacity: scrollY < 15 ? 1 : 0, transition:'opacity 0.35s ease',
+            bottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 44px)',
+            left:'50%', transform:'translateX(-50%)',
+            display:'flex', flexDirection:'column', alignItems:'center', gap:'10px',
+            opacity: scrollY < 18 ? 1 : 0, transition:'opacity 0.4s ease',
+            pointerEvents:'none',
           }}>
-            <span style={{ fontSize:'9px', letterSpacing:'4px', textTransform:'uppercase',
-              color:'rgba(255,255,255,0.30)',
-              animation:'scrollPulse 2.2s ease-in-out infinite' }}>scroll</span>
-            <svg width="14" height="9" viewBox="0 0 14 9" fill="none"
-              style={{ animation:'scrollPulse 2.2s ease-in-out infinite 0.35s' }}>
-              <path d="M1 1 L7 7.5 L13 1" stroke="rgba(255,255,255,0.30)" strokeWidth="1.3"
+            <div style={{ width:'1px', height:'56px', position:'relative', overflow:'hidden',
+              background:'rgba(255,255,255,0.08)' }}>
+              <div style={{
+                position:'absolute', left:0, right:0, height:'28px',
+                background:'linear-gradient(to bottom, transparent, rgba(255,255,255,0.55), transparent)',
+                animation:'scrollFlow 1.65s ease-in-out infinite',
+              }} />
+            </div>
+            <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+              <path d="M1 1 L6 6.5 L11 1" stroke="rgba(255,255,255,0.32)" strokeWidth="1.2"
                 strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
         </div>
 
-        {/* 第二屏：文字 + 按鈕（scroll 才顯現） */}
-        <div style={{
+        {/* ── 第二屏：純深色 + 星點 + 逐一揭示文字 ── */}
+        <div style={{ background:'#111', position:'relative', overflow:'hidden',
           minHeight:'100vh',
-          display:'flex', flexDirection:'column',
-          alignItems:'center', justifyContent:'center',
-          textAlign:'center', padding:'40px 32px',
-          paddingBottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 48px)',
-          opacity: contentReveal ? 1 : 0,
-          transform: contentReveal ? 'translateY(0)' : 'translateY(26px)',
-          transition:'opacity 0.7s ease, transform 0.7s ease',
+          paddingTop:'72px', paddingLeft:'40px', paddingRight:'40px',
+          paddingBottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 80px)',
+          display:'flex', flexDirection:'column', alignItems:'center', textAlign:'center',
         }}>
-          <p style={{ fontSize:'11px', letterSpacing:'3px', textTransform:'uppercase',
-            color:'var(--ocean)', marginBottom:'22px' }}>
-            Spiritual Tattoo Artist
-          </p>
-          <p style={{ fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
-            fontSize:'15.5px', lineHeight:2.1,
-            color:'rgba(255,255,255,0.65)', marginBottom:'16px' }}>
+          {/* 星點 */}
+          <div style={{ position:'absolute', inset:0, pointerEvents:'none' }}>
+            {PARTICLES.map((p, i) => (
+              <div key={i} style={{
+                position:'absolute', left:`${p.x}vw`, top:`${p.y}vh`,
+                width:`${p.sz}px`, height:`${p.sz}px`, borderRadius:'50%',
+                background:`radial-gradient(circle, rgba(255,255,255,${(0.9*p.op).toFixed(2)}) 0%, rgba(255,255,255,${(0.25*p.op).toFixed(2)}) 60%, transparent 100%)`,
+                boxShadow:`0 0 ${p.sz*2}px ${p.sz}px rgba(255,255,255,${(0.15*p.op).toFixed(2)})`,
+                animation:`mParticleDrift ${p.dur} ease-in-out infinite`,
+                animationDelay:p.d,
+              }} />
+            ))}
+          </div>
+
+          {/* 標語 */}
+          <p style={{
+            fontSize:'11px', letterSpacing:'4px', textTransform:'uppercase',
+            color:'var(--ocean)', marginBottom:'44px',
+            opacity: r1 ? 1 : 0,
+            transform: r1 ? 'translateY(0)' : 'translateY(20px)',
+            transition:'opacity 0.95s ease, transform 0.95s ease',
+          }}>Spiritual Tattoo Artist</p>
+
+          {/* 英文引言 */}
+          <p style={{
+            fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
+            fontSize:'18px', lineHeight:2.3, letterSpacing:'0.2px',
+            color:'rgba(255,255,255,0.58)', marginBottom:'28px',
+            opacity: r2 ? 1 : 0,
+            transform: r2 ? 'translateY(0)' : 'translateY(20px)',
+            transition:'opacity 0.95s ease, transform 0.95s ease',
+          }}>
             A tattoo,<br />composed from the voice of your soul.
           </p>
+
+          {/* 中/韓語副標 */}
           {lang !== 'en' && (
-            <p style={{ fontSize:'11px', letterSpacing: lang === 'ko' ? '1px' : '2px',
-              color:'rgba(255,255,255,0.40)', marginBottom:'38px' }}>
+            <p style={{
+              fontSize:'11px', letterSpacing: lang === 'ko' ? '1px' : '2px',
+              color:'rgba(255,255,255,0.30)', marginBottom:'60px',
+              opacity: r3 ? 1 : 0,
+              transform: r3 ? 'translateY(0)' : 'translateY(16px)',
+              transition:'opacity 0.95s ease, transform 0.95s ease',
+            }}>
               {t('tagline', lang)}
             </p>
           )}
-          {lang === 'en' && <div style={{ marginBottom:'38px' }} />}
+          {lang === 'en' && <div style={{ marginBottom:'60px' }} />}
+
+          {/* CTA */}
           <Link to="/works" style={{
-            display:'inline-block', padding:'13px 36px',
-            border:'1px solid rgba(255,255,255,0.32)',
-            fontSize:'11px', letterSpacing:'4px', textTransform:'uppercase',
-            color:'rgba(255,255,255,0.75)', textDecoration:'none',
+            display:'inline-block', padding:'16px 52px',
+            border:'1px solid rgba(255,255,255,0.22)',
+            fontSize:'11px', letterSpacing:'4.5px', textTransform:'uppercase',
+            color:'rgba(255,255,255,0.65)', textDecoration:'none',
+            opacity: r4 ? 1 : 0,
+            transform: r4 ? 'translateY(0)' : 'translateY(16px)',
+            transition:'opacity 0.95s ease, transform 0.95s ease',
           }}>
             {t('browseWorks', lang)}
           </Link>
