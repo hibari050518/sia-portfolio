@@ -127,7 +127,7 @@ export default function OpeningAnimation({ style, className }) {
     const svg = wrap.querySelector('svg')
     if (!svg) return
 
-    const STATE = { speed: 1.35, silk: 135, orn: 26, ink: '#f5f0ea' }
+    const STATE = { speed: 1.35, silk: 135, orn: 100, ink: '#f5f0ea' }
     const spread_val = 0.50
     const T = {
       s:    { dur: 0.95, delay: 0.30 },
@@ -190,7 +190,7 @@ export default function OpeningAnimation({ style, className }) {
         if (isSpark) {
           const sizeMul = p.tier === 'hero' ? 1.05 : 0.78
           const armBase = (11.0 + p.depth * 6.0) * sizeMul
-          const sw = p.tier === 'hero' ? 0.52 : 0.38
+          const sw = p.tier === 'hero' ? 2.6 : 1.9
           const x = p.x, y = p.y, gap = armBase * 0.45
           const rayDList = []
           for (let i = 0; i < 4; i++) {
