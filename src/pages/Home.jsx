@@ -332,9 +332,9 @@ function HomeMobile() {
           {/* 滾動指示器：SCROLL DOWN 在線上方 */}
           <div style={{
             position:'absolute', zIndex:3,
-            bottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 90px)',
+            bottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 20px)',
             left:'50%', transform:'translateX(-50%)',
-            display:'flex', flexDirection:'column', alignItems:'center', gap:'10px',
+            display:'flex', flexDirection:'column', alignItems:'center', gap:'18px',
             opacity: scrollY < 18 ? 1 : 0, transition:'opacity 0.4s ease',
             pointerEvents:'none',
           }}>
@@ -342,7 +342,7 @@ function HomeMobile() {
               fontSize:'10px', letterSpacing:'4px', textTransform:'uppercase',
               color:'rgba(255,255,255,0.38)', marginBottom:'2px',
             }}>scroll down</span>
-            <div style={{ width:'1px', height:'110px', position:'relative', overflow:'hidden',
+            <div style={{ width:'1px', height:'160px', position:'relative', overflow:'hidden',
               background:'rgba(255,255,255,0.10)' }}>
               <div style={{
                 position:'absolute', left:0, right:0, height:'32px',
@@ -354,8 +354,8 @@ function HomeMobile() {
         </div>
 
         {/* ── Section 2：深色 + 星點 + LOGO 帶出文字 ── */}
-        <div style={{ background:'#111', position:'relative', overflow:'hidden',
-          minHeight:'80vh',
+        <div style={{ background:'#111', position:'relative',
+          minHeight:'fit-content',
           paddingTop:'1vh', paddingLeft:'40px', paddingRight:'40px',
           paddingBottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 48px)',
           display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'flex-start', textAlign:'center',
