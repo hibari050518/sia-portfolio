@@ -167,7 +167,7 @@ export default function WorksTheme() {
             position:'absolute', inset:0,
             backgroundImage:`url("https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/%E8%A1%8C%E5%8B%95%E7%89%88%E8%83%8C%E6%99%AF.jpg")`,
             backgroundSize:'cover', backgroundPosition:'center 20%',
-            opacity:0.50,
+            opacity:0.32,
           }}/>
           {/* Top fade into card bg */}
           <div style={{
@@ -197,7 +197,7 @@ export default function WorksTheme() {
         </div>
 
         {/* Card spread */}
-        <div style={{ flex:1, position:'relative', overflow:'hidden', paddingTop:'4px' }}
+        <div style={{ flex:1, position:'relative', paddingTop:'4px' }}
           onTouchStart={swipe.onTouchStart} onTouchEnd={swipe.onTouchEnd}>
 
           {/* Left/Right swipe arrows — no frame, overlapping card edge */}

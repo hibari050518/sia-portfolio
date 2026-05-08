@@ -28,6 +28,7 @@ function LangSwitcher() {
 }
 
 const BG = '#111'
+const LOGO_URL = 'https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/Sia_logo_%E6%96%87%E5%AD%97%EF%BC%88%E7%99%BD%EF%BC%89.png'
 
 function NavLink({ to, zh, en }) {
   const [hov, setHov] = useState(false)
@@ -169,45 +170,64 @@ export default function WorksHome() {
       {/* Swipe areas */}
       {activeIdx > 0 && (
         <div onClick={() => go(-1)}
-          style={{ position:'absolute', left:0, top:0, bottom:0, width:'52px', zIndex:20, cursor:'pointer' }} />
+          style={{ position:'absolute', left:0, top:'52px', bottom:'calc(62px + env(safe-area-inset-bottom, 0px))', width:'52px', zIndex:20, cursor:'pointer' }} />
       )}
       {activeIdx < total - 1 && (
         <div onClick={() => go(1)}
-          style={{ position:'absolute', right:0, top:0, bottom:0, width:'52px', zIndex:20, cursor:'pointer' }} />
+          style={{ position:'absolute', right:'60px', top:'52px', bottom:'calc(62px + env(safe-area-inset-bottom, 0px))', width:'52px', zIndex:20, cursor:'pointer' }} />
       )}
 
-      {/* Bottom info section — title, count, button, thumbnails */}
+      {/* Logo overlay — centered on photo */}
+      <div style={{
+        position:'absolute', left:'50%', top:'38%', transform:'translate(-50%,-50%)',
+        zIndex:12, pointerEvents:'none', opacity:0.20,
+      }}>
+        <img src={LOGO_URL} alt="" style={{ height:'52px', objectFit:'contain' }} />
+      </div>
+
+      {/* Right-side thumbnail strip */}
+      {total > 1 && (
+        <div style={{
+          position:'absolute', right:'14px',
+          top:'calc(52px + 20px)',
+          bottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 150px)',
+          zIndex:20,
+          display:'flex', flexDirection:'column', justifyContent:'center',
+          alignItems:'center', gap:'6px',
+        }}>
+          {themeData.map((th, i) => {
+            const isActive = i === activeIdx
+            return (
+              <div key={th.name}
+                onClick={() => { setImgLoaded(false); setActiveIdx(i) }}
+                style={{
+                  width: isActive ? '40px' : '28px',
+                  height: isActive ? '40px' : '28px',
+                  overflow:'hidden', flexShrink:0, cursor:'pointer',
+                  border: isActive ? '1.5px solid rgba(255,255,255,0.72)' : '1px solid rgba(255,255,255,0.18)',
+                  opacity: isActive ? 1 : 0.42,
+                  transition:'all 0.38s cubic-bezier(0.22,1,0.36,1)',
+                }}>
+                {th.image
+                  ? <img src={th.image} alt={th.name}
+                      style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'center top' }} />
+                  : <div style={{ width:'100%', height:'100%', background:'rgba(255,255,255,0.06)' }} />
+                }
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      {/* Bottom info — counter, title, count, button */}
       {theme && (
         <div style={{
           position:'absolute', zIndex:20,
           bottom:'calc(62px + env(safe-area-inset-bottom, 0px))',
           left:0, right:0,
           display:'flex', flexDirection:'column', alignItems:'center',
-          gap:'8px', padding:'14px 32px 18px', textAlign:'center',
+          gap:'7px', padding:'12px 48px 16px', textAlign:'center',
         }}>
-          {/* Thumbnail strip */}
-          {total > 1 && (
-            <div style={{ display:'flex', gap:'5px', alignItems:'flex-end', marginBottom:'4px' }}>
-              {themeData.map((th, i) => {
-                const isActive = i === activeIdx
-                return (
-                  <div key={th.name}
-                    onClick={() => { setImgLoaded(false); setActiveIdx(i) }}
-                    style={{ width: isActive ? '38px' : '26px', height: isActive ? '38px' : '26px',
-                      overflow:'hidden', flexShrink:0, cursor:'pointer',
-                      border: isActive ? '1.5px solid rgba(255,255,255,0.70)' : '1px solid rgba(255,255,255,0.18)',
-                      opacity: isActive ? 1 : 0.45,
-                      transition:'all 0.38s cubic-bezier(0.22,1,0.36,1)' }}>
-                    {th.image
-                      ? <img src={th.image} alt={th.name}
-                          style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'center top' }} />
-                      : <div style={{ width:'100%', height:'100%', background:'rgba(255,255,255,0.06)' }} />
-                    }
-                  </div>
-                )
-              })}
-            </div>
-          )}
           <span style={{ fontSize:'10px', letterSpacing:'2px', color:'rgba(255,255,255,0.30)' }}>
             {String(activeIdx+1).padStart(2,'0')} / {String(total).padStart(2,'0')}
           </span>

@@ -23,21 +23,12 @@ export function MobileTopBar() {
       padding: '0 18px',
       zIndex: 200,
     }}>
-      <Link to="/" style={{ display:'flex', alignItems:'center' }}>
-        <img
-          src={LOGO_URL}
-          alt="SIA TATTOOIST"
-          style={{ height: '20px', objectFit: 'contain', display: 'block' }}
-          onError={e => {
-            e.currentTarget.style.display = 'none'
-            e.currentTarget.nextElementSibling.style.display = 'block'
-          }}
-        />
+      <Link to="/" style={{ display:'flex', alignItems:'center', textDecoration:'none' }}>
         <span style={{
-          display: 'none',
-          fontSize: '11px', letterSpacing: '4px',
+          fontSize: '12px', letterSpacing: '4px',
           color: 'rgba(255,255,255,0.88)', fontFamily: 'var(--serif)',
-        }}>SIA</span>
+          fontStyle: 'italic', fontWeight: 300,
+        }}>SIA TATTOOIST</span>
       </Link>
 
       <div style={{ display:'flex', gap:'14px', alignItems:'center' }}>

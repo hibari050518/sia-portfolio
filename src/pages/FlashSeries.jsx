@@ -174,7 +174,7 @@ export default function FlashSeries() {
             position:'absolute', inset:0,
             backgroundImage:`url("https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/%E8%A1%8C%E5%8B%95%E7%89%88%E8%83%8C%E6%99%AF%20(2).jpg")`,
             backgroundSize:'cover', backgroundPosition:'center 20%',
-            opacity:0.50,
+            opacity:0.32,
           }}/>
           {/* Top fade into card bg */}
           <div style={{
