@@ -45,7 +45,7 @@ const RIGHT_IMGS = ALL_IMGS.filter((_, i) => i % 2 === 1)
 
 const BG = '#111'
 const BREATH_CYCLE  = 4400
-const SWAP_INTERVAL = 7000
+const SWAP_INTERVAL = 4000
 
 // 海面透視：從文字中心以下鋪開，越往下越寬越密（近大遠小的反向透視）
 // y 從 55vh 往下；x 靠近中心收窄、往下漸寬
@@ -151,62 +151,123 @@ function NavLink({ to, label }) {
 }
 
 function HomeMobile({ lang }) {
-  const [bgLoaded, setBgLoaded] = useState(false)
-  const bgSrc = ALL_IMGS[0]
+  const [bgIdx,    setBgIdx]    = useState(0)
+  const [imgLoaded, setImgLoaded] = useState(false)
+  const [navIn,    setNavIn]    = useState(false)
+  const prevImgRef = useRef(null)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setNavIn(true), 400)
+    return () => clearTimeout(timer)
+  }, [])
+
+  useEffect(() => {
+    if (ALL_IMGS.length < 2) return
+    const t = setInterval(() => {
+      setBgIdx(prev => {
+        prevImgRef.current = ALL_IMGS[prev]
+        return (prev + 1) % ALL_IMGS.length
+      })
+      setImgLoaded(false)
+    }, SWAP_INTERVAL)
+    return () => clearInterval(t)
+  }, [])
 
   return (
     <div style={{ position:'fixed', inset:0, background:BG, overflow:'hidden' }}>
-      {/* 全幅背景圖 */}
+      <style>{`
+        @keyframes mParticleDrift {
+          0%   { transform:translate(0,0) scale(1); opacity:0; }
+          8%   { opacity:0.75; }
+          35%  { transform:translate(9px,-8vh) scale(0.92); opacity:0.65; }
+          65%  { transform:translate(-6px,-18vh) scale(0.78); opacity:0.35; }
+          90%  { opacity:0.08; }
+          100% { transform:translate(4px,-26vh) scale(0.6); opacity:0; }
+        }
+      `}</style>
+
+      {/* 底圖：前一張（防止切換閃黑） */}
+      {prevImgRef.current && (
+        <img src={prevImgRef.current} alt=""
+          style={{ position:'absolute', inset:0, width:'100%', height:'100%',
+            objectFit:'cover', objectPosition:'center 30%', filter:'brightness(0.42)' }} />
+      )}
+
+      {/* 上層圖：當前圖，淡入 */}
       <img
-        src={bgSrc}
+        key={bgIdx}
+        src={ALL_IMGS[bgIdx]}
         alt=""
-        onLoad={() => setBgLoaded(true)}
+        onLoad={() => setImgLoaded(true)}
         style={{
           position:'absolute', inset:0, width:'100%', height:'100%',
           objectFit:'cover', objectPosition:'center 30%',
-          filter:'brightness(0.6)',
-          opacity: bgLoaded ? 1 : 0,
+          filter:'brightness(0.42)',
+          opacity: imgLoaded ? 1 : 0,
           transition:'opacity 1.2s ease',
         }}
       />
 
-      {/* 漸層遮罩：上下均有，讓中央內容清晰 */}
+      {/* 漸層遮罩 */}
       <div style={{
         position:'absolute', inset:0, pointerEvents:'none',
-        background:'linear-gradient(to bottom, rgba(17,17,17,0.5) 0%, transparent 30%, transparent 55%, rgba(17,17,17,0.85) 100%)',
+        background:'linear-gradient(to bottom, rgba(17,17,17,0.45) 0%, rgba(17,17,17,0) 32%, rgba(17,17,17,0) 50%, rgba(17,17,17,0.88) 100%)',
       }} />
+
+      {/* 海面光點 */}
+      <div style={{
+        position:'absolute', inset:0, pointerEvents:'none', zIndex:9,
+        opacity: navIn ? 1 : 0, transition:'opacity 3s ease 1s',
+      }}>
+        {PARTICLES.map((p, i) => (
+          <div key={i} style={{
+            position:'absolute',
+            left:`${p.x}vw`, top:`${p.y}vh`,
+            width:`${p.sz}px`, height:`${p.sz}px`,
+            borderRadius:'50%',
+            background:`radial-gradient(circle, rgba(255,255,255,${(0.9*p.op).toFixed(2)}) 0%, rgba(255,255,255,${(0.25*p.op).toFixed(2)}) 60%, transparent 100%)`,
+            boxShadow:`0 0 ${p.sz*2}px ${p.sz}px rgba(255,255,255,${(0.15*p.op).toFixed(2)})`,
+            animation:`mParticleDrift ${p.dur} ease-in-out infinite`,
+            animationDelay:p.d,
+            pointerEvents:'none',
+          }} />
+        ))}
+      </div>
 
       {/* 中央內容 */}
       <div style={{
-        position:'absolute', inset:0,
+        position:'absolute', inset:0, zIndex:10,
         display:'flex', flexDirection:'column',
         alignItems:'center', justifyContent:'center',
-        padding:'0 32px 80px',
-        textAlign:'center',
+        textAlign:'center', padding:'0 32px 72px',
+        opacity: navIn ? 1 : 0, transition:'opacity 1s ease 0.5s',
       }}>
-        {/* Logo 圖片 */}
         <img
           src={LOGO_URL}
           alt="SIA TATTOOIST"
-          style={{ width:'160px', maxWidth:'60vw', marginBottom:'20px', filter:'drop-shadow(0 2px 20px rgba(0,0,0,0.6))' }}
-          onError={e => { e.currentTarget.style.display='none'; e.currentTarget.nextElementSibling.style.display='block' }}
+          style={{ width:'140px', maxWidth:'55vw', marginBottom:'26px',
+            filter:'drop-shadow(0 2px 22px rgba(0,0,0,0.75))' }}
+          onError={e => {
+            e.currentTarget.style.display='none'
+            e.currentTarget.nextElementSibling.style.display='block'
+          }}
         />
         <span style={{
           display:'none', fontFamily:'var(--serif)',
           fontSize:'16px', letterSpacing:'5px', color:'rgba(255,255,255,0.88)',
-          marginBottom:'20px',
+          marginBottom:'26px',
         }}>SIA TATTOOIST</span>
 
         <p style={{
           fontSize:'11px', letterSpacing:'3px', textTransform:'uppercase',
-          color:'var(--ocean)', marginBottom:'16px',
+          color:'var(--ocean)', marginBottom:'20px',
         }}>Spiritual Tattoo Artist</p>
 
         <p style={{
           fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
-          fontSize:'15px', lineHeight:1.85,
-          color:'rgba(255,255,255,0.65)',
-          marginBottom:'32px',
+          fontSize:'15px', lineHeight:2,
+          color:'rgba(255,255,255,0.62)',
+          marginBottom:'16px',
         }}>
           A tattoo,<br />composed from the voice of your soul.
         </p>
@@ -214,11 +275,12 @@ function HomeMobile({ lang }) {
         {lang !== 'en' && (
           <p style={{
             fontSize:'11px', letterSpacing: lang === 'ko' ? '1px' : '2px',
-            color:'rgba(255,255,255,0.45)', marginBottom:'28px',
+            color:'rgba(255,255,255,0.42)', marginBottom:'32px',
           }}>
             {t('tagline', lang)}
           </p>
         )}
+        {lang === 'en' && <div style={{ marginBottom:'32px' }} />}
 
         <Link to="/works" style={{
           display:'inline-block', padding:'13px 36px',
@@ -230,7 +292,6 @@ function HomeMobile({ lang }) {
         </Link>
       </div>
 
-      {/* 底部 Tab Bar */}
       <MobileTabBar />
     </div>
   )

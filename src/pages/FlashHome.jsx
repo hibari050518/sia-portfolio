@@ -66,7 +66,7 @@ function ArrowBtn({ dir, onClick, disabled }) {
   )
 }
 
-const BG_CYCLE_MS = 5000
+const BG_CYCLE_MS = 3000
 
 export default function FlashHome() {
   const { flash, loading } = useFlash()
