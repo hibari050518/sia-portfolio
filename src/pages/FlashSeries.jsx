@@ -169,7 +169,7 @@ export default function FlashSeries() {
       }}>
 
         {/* Background image — behind cards + info, fades in from bottom */}
-        <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'62%', zIndex:0, pointerEvents:'none' }}>
+        <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'76%', zIndex:0, pointerEvents:'none' }}>
           <div style={{
             position:'absolute', inset:0,
             backgroundImage:`url("https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/%E8%A1%8C%E5%8B%95%E7%89%88%E8%83%8C%E6%99%AF%20(2).jpg")`,
@@ -268,7 +268,7 @@ export default function FlashSeries() {
                 }}
                 style={{
                   position:'absolute', left:`${leftPct}%`, width:'72%',
-                  height:'min(48vh, calc(72vw * 1.38))',
+                  height:'min(54vh, calc(72vw * 1.50))',
                   top:'50%',
                   transform: isCenter ? 'translateY(-52%)' : `translateY(-52%) scale(0.86) rotate(${rotation}deg)`,
                   transformOrigin:'50% 88%',

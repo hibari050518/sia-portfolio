@@ -25,9 +25,9 @@ export function MobileTopBar() {
     }}>
       <Link to="/" style={{ display:'flex', alignItems:'center', textDecoration:'none' }}>
         <span style={{
-          fontSize: '12px', letterSpacing: '4px',
+          fontSize: '13px', letterSpacing: '4px',
           color: 'rgba(255,255,255,0.88)', fontFamily: 'var(--serif)',
-          fontStyle: 'italic', fontWeight: 300,
+          fontWeight: 300,
         }}>SIA TATTOOIST</span>
       </Link>
 

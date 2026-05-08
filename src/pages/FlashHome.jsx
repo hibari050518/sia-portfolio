@@ -9,6 +9,7 @@ import { useTouchSwipe } from '../hooks/useTouchSwipe'
 import { MobileTopBar, MobileTabBar } from '../components/MobileNav'
 
 const BG = '#111'
+const LOGO_URL = 'https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/Sia_logo_%E6%96%87%E5%AD%97%EF%BC%88%E7%99%BD%EF%BC%89.png'
 
 function LangSwitcher() {
   const { lang, setLang } = useLang()
@@ -163,88 +164,96 @@ export default function FlashHome() {
             animation: imgLoaded ? `kenBurns ${BG_CYCLE_MS}ms ease-out forwards` : 'none' }} />
       )}
 
-      {/* Vignette */}
+      {/* Vignette — stronger at bottom */}
       <div style={{ position:'absolute', inset:0, pointerEvents:'none', zIndex:5,
-        background:'linear-gradient(to bottom, rgba(17,17,17,0.65) 0%, rgba(17,17,17,0) 25%, rgba(17,17,17,0) 45%, rgba(17,17,17,0.75) 80%, rgba(17,17,17,0.96) 100%)' }} />
+        background:'linear-gradient(to bottom, rgba(17,17,17,0.60) 0%, rgba(17,17,17,0) 22%, rgba(17,17,17,0) 42%, rgba(17,17,17,0.82) 72%, rgba(17,17,17,0.97) 100%)' }} />
 
-      {/* Mobile swipe arrow hints */}
+      {/* Swipe areas */}
       {activeIdx > 0 && (
         <div onClick={() => go(-1)}
-          style={{ position:'absolute', left:0, top:0, bottom:0, width:'52px', zIndex:20,
-            display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer' }}>
-          <svg width="22" height="22" viewBox="0 0 32 32" fill="none" style={{ opacity:0.45 }}>
-            <path d="M20 4 L8 16 L20 28" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </div>
+          style={{ position:'absolute', left:0, top:'52px', bottom:'calc(62px + env(safe-area-inset-bottom, 0px))', width:'52px', zIndex:20, cursor:'pointer' }} />
       )}
       {activeIdx < total - 1 && (
         <div onClick={() => go(1)}
-          style={{ position:'absolute', right:0, top:0, bottom:0, width:'52px', zIndex:20,
-            display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer' }}>
-          <svg width="22" height="22" viewBox="0 0 32 32" fill="none" style={{ opacity:0.45 }}>
-            <path d="M12 4 L24 16 L12 28" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
+          style={{ position:'absolute', right:'60px', top:'52px', bottom:'calc(62px + env(safe-area-inset-bottom, 0px))', width:'52px', zIndex:20, cursor:'pointer' }} />
+      )}
+
+      {/* Logo watermark — bottom-right */}
+      <div style={{
+        position:'absolute', right:'-16px',
+        bottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 8px)',
+        zIndex:8, pointerEvents:'none', opacity:0.13,
+      }}>
+        <img src={LOGO_URL} alt="" style={{ height:'96px', objectFit:'contain' }} />
+      </div>
+
+      {/* Right-side thumbnail strip */}
+      {total > 1 && (
+        <div style={{
+          position:'absolute', right:'14px',
+          top:'calc(52px + 20px)',
+          bottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 150px)',
+          zIndex:20,
+          display:'flex', flexDirection:'column', justifyContent:'center',
+          alignItems:'center', gap:'6px',
+        }}>
+          {seriesData.map((s, i) => {
+            const isActive = i === activeIdx
+            return (
+              <div key={s.name}
+                onClick={() => { setImgLoaded(false); setActiveIdx(i) }}
+                style={{
+                  width: isActive ? '40px' : '28px',
+                  height: isActive ? '40px' : '28px',
+                  overflow:'hidden', flexShrink:0, cursor:'pointer',
+                  border: isActive ? '1.5px solid rgba(255,255,255,0.72)' : '1px solid rgba(255,255,255,0.18)',
+                  opacity: isActive ? 1 : 0.42,
+                  transition:'all 0.38s cubic-bezier(0.22,1,0.36,1)',
+                }}>
+                {s.image
+                  ? <img src={s.image} alt={s.name}
+                      style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'center top' }} />
+                  : <div style={{ width:'100%', height:'100%', background:'rgba(255,255,255,0.06)' }} />
+                }
+              </div>
+            )
+          })}
         </div>
       )}
 
-      {/* Center content */}
+      {/* Bottom info — counter, title, counts, button */}
       {series && (
-        <div style={{ position:'absolute', inset:0, zIndex:15,
-          display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
-          textAlign:'center', padding:'0 64px' }}>
-          <p style={{ fontSize:'11px', letterSpacing:'4px', textTransform:'uppercase',
-            color:'rgba(255,255,255,0.38)', marginBottom:'10px' }}>
-            {series.count} {t('flashCount',lang)}
-          </p>
-          {series.availCount > 0 && (
-            <p style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase',
-              color:'var(--ocean)', marginBottom:'12px', opacity:0.9 }}>
-              {series.availCount} {t('available',lang)}
-            </p>
-          )}
-          <h1 style={{ fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
-            fontSize:'38px', color:'rgba(255,255,255,0.92)', lineHeight:1.15, marginBottom:'30px' }}>
+        <div style={{
+          position:'absolute', zIndex:20,
+          bottom:'calc(62px + env(safe-area-inset-bottom, 0px))',
+          left:0, right:0,
+          display:'flex', flexDirection:'column', alignItems:'center',
+          gap:'7px', padding:'12px 48px 16px', textAlign:'center',
+        }}>
+          <span style={{ fontSize:'10px', letterSpacing:'2px', color:'rgba(255,255,255,0.30)' }}>
+            {String(activeIdx+1).padStart(2,'0')} / {String(total).padStart(2,'0')}
+          </span>
+          <h2 style={{ fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
+            fontSize:'28px', color:'rgba(255,255,255,0.92)', lineHeight:1.2, margin:'2px 0 0' }}>
             {getSeriesName(flash, series.name, lang)}
-          </h1>
+          </h2>
+          <p style={{ fontSize:'11px', letterSpacing:'3px', textTransform:'uppercase',
+            color:'rgba(255,255,255,0.35)', margin:0 }}>
+            {series.count} {t('flashCount',lang)}
+            {series.availCount > 0 && (
+              <span style={{ color:'var(--ocean)', marginLeft:'8px' }}>
+                · {series.availCount} {t('available',lang)}
+              </span>
+            )}
+          </p>
           <button onClick={() => navigate(`/flash/${encodeURIComponent(series.name)}`)}
             style={{ background:'none', border:'1px solid rgba(255,255,255,0.28)',
               color:'rgba(255,255,255,0.65)', fontSize:'11px', letterSpacing:'3px',
-              textTransform:'uppercase', padding:'11px 28px', cursor:'pointer' }}>
+              textTransform:'uppercase', padding:'10px 28px', cursor:'pointer', marginTop:'4px' }}>
             {t('exploreFlash',lang)} →
           </button>
         </div>
       )}
-
-      {/* Counter + thumbnails above tab bar */}
-      <div style={{ position:'absolute', zIndex:20,
-        bottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 16px)',
-        left:0, right:0, display:'flex', flexDirection:'column', alignItems:'center', gap:'10px' }}>
-        <span style={{ fontSize:'11px', letterSpacing:'2px', color:'rgba(255,255,255,0.28)' }}>
-          {total > 0 ? `${String(activeIdx+1).padStart(2,'0')} / ${String(total).padStart(2,'0')}` : ''}
-        </span>
-        {total > 1 && (
-          <div style={{ display:'flex', gap:'5px', alignItems:'flex-end' }}>
-            {seriesData.map((s, i) => {
-              const isActive = i === activeIdx
-              return (
-                <div key={s.name}
-                  onClick={() => { setImgLoaded(false); setActiveIdx(i) }}
-                  style={{ width: isActive ? '42px' : '30px', height: isActive ? '42px' : '30px',
-                    overflow:'hidden', flexShrink:0, cursor:'pointer',
-                    border: isActive ? '1.5px solid rgba(255,255,255,0.70)' : '1px solid rgba(255,255,255,0.18)',
-                    opacity: isActive ? 1 : 0.45,
-                    transition:'all 0.38s cubic-bezier(0.22,1,0.36,1)' }}>
-                  {s.image
-                    ? <img src={s.image} alt={s.name}
-                        style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'center top' }} />
-                    : <div style={{ width:'100%', height:'100%', background:'rgba(255,255,255,0.06)' }} />
-                  }
-                </div>
-              )
-            })}
-          </div>
-        )}
-      </div>
 
       <MobileTabBar />
     </div>
