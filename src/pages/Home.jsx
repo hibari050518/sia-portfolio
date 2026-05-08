@@ -658,4 +658,32 @@ export default function Home() {
                 e.currentTarget.style.background='rgba(255,255,255,0.08)'
                 e.currentTarget.style.borderColor='rgba(255,255,255,0.65)'
                 e.currentTarget.style.color='#fff'
-       
+              }}
+              onMouseLeave={e => {
+                setBtnHov(false)
+                e.currentTarget.style.animation = 'btnPulse 3.5s ease-in-out infinite'
+                e.currentTarget.style.background='transparent'
+                e.currentTarget.style.borderColor='rgba(255,255,255,0.28)'
+                e.currentTarget.style.color='rgba(255,255,255,0.8)'
+              }}>
+              {t('browseWorks', lang)}
+            </Link>
+          </FadeUp>
+        </div>
+
+        {/* 底部 */}
+        <div style={{
+          padding:'24px 44px', display:'flex', justifyContent:'flex-end',
+          opacity: navIn ? 1 : 0, transition:'opacity 0.8s ease 1.2s',
+        }}>
+          <span style={{ fontSize:'12px', letterSpacing:'3px', color:'rgba(255,255,255,0.2)' }}>
+            © SIA TATTOOIST
+          </span>
+        </div>
+      </div>
+
+      {/* 游標漂浮粒子容器 */}
+      <div ref={cursorContainerRef} style={{ position:'fixed', inset:0, pointerEvents:'none', zIndex:50 }} />
+    </div>
+  )
+}
