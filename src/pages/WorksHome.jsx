@@ -240,7 +240,7 @@ export default function WorksHome() {
           <button onClick={() => navigate(`/works/${encodeURIComponent(theme.name)}`)}
             style={{ background:'none', border:'1px solid rgba(255,255,255,0.28)',
               color:'rgba(255,255,255,0.65)', fontSize:'11px', letterSpacing:'3px',
-              textTransform:'uppercase', padding:'10px 28px', cursor:'pointer', marginTop:'4px' }}>
+              textTransform:'uppercase', padding:'8px 22px', cursor:'pointer', marginTop:'4px' }}>
             {t('viewWorks',lang)} →
           </button>
         </div>

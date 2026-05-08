@@ -637,6 +637,7 @@ export default function Home() {
           flex:1, display:'flex', flexDirection:'column',
           alignItems:'center', justifyContent:'center', textAlign:'center',
           padding:'0 28%',
+          paddingBottom:'72px',
         }}>
           <OpeningAnimation style={{ width:'min(580px,44vw)', marginBottom:'-28px' }} />
 
