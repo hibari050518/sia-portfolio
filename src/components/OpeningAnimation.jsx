@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 const ANIM_CSS = `
 @property --ink-bloom{syntax:"<number>";inherits:false;initial-value:0}
 
-.oa-wrap { --ink: #f5f0ea; opacity: 0.82; }
+.oa-wrap { --ink: #f5f0ea; opacity: 0.68; }
 .oa-stage { position:relative; width:100%; aspect-ratio:870.82/419.42; }
 .oa-logo  { width:100%; height:100%; display:block; overflow:visible; }
 

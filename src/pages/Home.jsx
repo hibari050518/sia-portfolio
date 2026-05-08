@@ -638,14 +638,14 @@ export default function Home() {
         <div style={{
           flex:1, display:'flex', flexDirection:'column',
           alignItems:'center', justifyContent:'center', textAlign:'center',
-          padding:'0 36%',
+          padding:'0 28%',
         }}>
-          <OpeningAnimation style={{ width:'min(440px,34vw)', marginBottom:'28px' }} />
+          <OpeningAnimation style={{ width:'min(580px,44vw)', marginBottom:'36px' }} />
 
           <FadeUp delay={1100}>
             <p style={{
-              fontSize:'14px', letterSpacing:'5px', textTransform:'uppercase',
-              color:'var(--ocean)', marginBottom:'20px', opacity:0.95,
+              fontSize:'15px', letterSpacing:'5px', textTransform:'uppercase',
+              color:'var(--ocean)', marginBottom:'22px', opacity:0.95,
               animation:'textGlow 3.5s ease-in-out infinite',
               animationDelay:'2.5s',
             }}>
@@ -656,7 +656,7 @@ export default function Home() {
           <FadeUp delay={1350}>
             <p style={{
               fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
-              fontSize:'clamp(15px, 1.6vw, 20px)', lineHeight:1.8,
+              fontSize:'clamp(16px, 1.75vw, 22px)', lineHeight:1.85,
               color:'rgba(255,255,255,0.72)',
               marginBottom:'12px',
             }}>
@@ -678,9 +678,9 @@ export default function Home() {
 
           <FadeUp delay={1800}>
             <Link to="/works" style={{
-              display:'inline-block', padding:'13px 40px',
+              display:'inline-block', padding:'14px 48px',
               border:'1px solid rgba(255,255,255,0.28)',
-              fontSize:'12px', letterSpacing:'5px', textTransform:'uppercase',
+              fontSize:'13px', letterSpacing:'5px', textTransform:'uppercase',
               color:'rgba(255,255,255,0.8)', transition:'background 0.3s ease, color 0.3s ease',
               animation: 'btnPulse 3.5s ease-in-out infinite',
               animationDelay: '-2.5s',
