@@ -204,7 +204,7 @@ export default function FlashSeries() {
         </div>
 
         {/* Card spread */}
-        <div style={{ flex:1, position:'relative', overflow:'hidden' }}
+        <div style={{ flex:1, position:'relative', overflow:'hidden', paddingTop:'10px' }}
           onTouchStart={swipe.onTouchStart} onTouchEnd={swipe.onTouchEnd}>
 
           {/* Floating star particles — below card, high z-index so visible */}
@@ -277,8 +277,8 @@ export default function FlashSeries() {
                   borderRadius:'14px',
                   border:`1px solid rgba(255,255,255,${isCenter ? 0.22 : 0.06})`,
                   boxShadow: isCenter
-                    ? '0 8px 40px 4px rgba(0,0,0,0.70), 0 24px 80px rgba(0,0,0,0.90), 0 0 0 1px rgba(255,255,255,0.08)'
-                    : '0 8px 30px rgba(0,0,0,0.55)',
+                    ? '0 0 40px 8px rgba(0,0,0,0.60), 0 0 0 1px rgba(255,255,255,0.08)'
+                    : 'none',
                   opacity: isCenter ? 1 : 0.28,
                   zIndex: isCenter ? 2 : 1,
                   animation: isCenter && hinted ? 'swipeNudgeF 0.82s ease-out forwards' : 'none',

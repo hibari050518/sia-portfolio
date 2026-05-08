@@ -180,12 +180,13 @@ export default function FlashHome() {
 
       {/* Logo watermark — bottom-right */}
       <div style={{
-        position:'absolute', right:'-16px',
-        bottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 8px)',
-        zIndex:8, pointerEvents:'none', opacity:0.13,
-      }}>
-        <img src={LOGO_URL} alt="" style={{ height:'96px', objectFit:'contain' }} />
-      </div>
+        position:'absolute', right:'18px',
+        bottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 20px)',
+        zIndex:8, pointerEvents:'none',
+        fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
+        fontSize:'80px', letterSpacing:'2px',
+        color:'rgba(255,255,255,0.07)', lineHeight:1,
+      }}>Sia</div>
 
       {/* Right-side thumbnail strip */}
       {total > 1 && (
