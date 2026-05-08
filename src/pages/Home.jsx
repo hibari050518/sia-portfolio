@@ -224,6 +224,11 @@ function HomeMobile() {
   return (
     <div style={{ position:'fixed', inset:0, background:'#111' }}>
       <style>{`
+        @keyframes mLogoReveal {
+          0%   { transform: scale(0.78); opacity: 0; }
+          55%  { transform: scale(1.08); }
+          100% { transform: scale(1);   opacity: 0.56; }
+        }
         @keyframes mParticleDrift {
           0%   { transform:translate(0,0) scale(1); opacity:0; }
           8%   { opacity:0.75; }
@@ -303,7 +308,10 @@ function HomeMobile() {
             top:'34%', transform:'translateY(-50%)' }}>
             <img src={LOGO_URL} alt="SIA TATTOOIST"
               style={{ width:'152px', maxWidth:'54vw',
-                opacity:0.68, filter:'drop-shadow(0 2px 12px rgba(0,0,0,0.5))' }}
+                opacity:0,
+                filter:'drop-shadow(0 2px 12px rgba(0,0,0,0.5))',
+                animation:'mLogoReveal 1.8s cubic-bezier(0.22,1,0.36,1) 0.3s forwards',
+              }}
               onError={e => { e.currentTarget.style.display='none' }} />
           </div>
 
@@ -342,9 +350,10 @@ function HomeMobile() {
 
         {/* ── Section 2：深色 + 星點 + LOGO 帶出文字 ── */}
         <div ref={section2Ref} style={{ background:'#111', position:'relative', overflow:'hidden',
-          paddingTop:'44px', paddingLeft:'40px', paddingRight:'40px',
+          minHeight:'calc(100dvh - 62px)',
+          paddingTop:'48px', paddingLeft:'40px', paddingRight:'40px',
           paddingBottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 24px)',
-          display:'flex', flexDirection:'column', alignItems:'center', textAlign:'center',
+          display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', textAlign:'center',
         }}>
           {/* 星點 */}
           <div style={{ position:'absolute', inset:0, pointerEvents:'none' }}>
