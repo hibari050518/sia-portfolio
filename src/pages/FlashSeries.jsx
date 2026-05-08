@@ -167,7 +167,7 @@ export default function FlashSeries() {
                 {item.image_url
                   ? <img src={item.image_url} alt={item.title}
                       style={{ width:'100%', height:'100%', objectFit:'cover',
-                        filter:`brightness(${offset === 0 ? 0.82 : 0.35})`,
+                        filter:`brightness(${offset === 0 ? 0.82 : 0.50})`,
                         transition:'filter 0.4s ease' }} />
                   : <div style={{ width:'100%', height:'100%', background:'rgba(255,255,255,0.04)' }} />
                 }
@@ -180,18 +180,31 @@ export default function FlashSeries() {
             )
           })}
 
-          {/* Edge fade overlays */}
-          <div style={{ position:'absolute', top:0, left:0, bottom:0, width:'12%', zIndex:5,
+          {/* Edge fade overlays — narrower so peek cards are visible */}
+          <div style={{ position:'absolute', top:0, left:0, bottom:0, width:'7%', zIndex:5,
             background:`linear-gradient(to right, ${BG}, transparent)`, pointerEvents:'none' }} />
-          <div style={{ position:'absolute', top:0, right:0, bottom:0, width:'12%', zIndex:5,
+          <div style={{ position:'absolute', top:0, right:0, bottom:0, width:'7%', zIndex:5,
             background:`linear-gradient(to left, ${BG}, transparent)`, pointerEvents:'none' }} />
         </div>
 
         {/* Info section */}
         {activeItem && (
-          <div style={{ padding:'12px 18px 10px', flexShrink:0,
-            display:'flex', flexDirection:'column', alignItems:'center', gap:'8px', textAlign:'center' }}>
-            <span style={{ fontSize:'11px', letterSpacing:'2px', color:'rgba(255,255,255,0.28)' }}>
+          <div style={{ padding:'10px 18px 10px', flexShrink:0,
+            display:'flex', flexDirection:'column', alignItems:'center', gap:'7px', textAlign:'center' }}>
+            {/* Progress dot bar */}
+            {total > 1 && (
+              <div style={{ display:'flex', gap:'4px', alignItems:'center', marginBottom:'2px' }}>
+                {seriesItems.map((_, i) => (
+                  <div key={i} onClick={() => setActiveIdx(i)} style={{
+                    width: i === activeIdx ? '18px' : '4px', height:'2px',
+                    borderRadius:'1px', cursor:'pointer',
+                    background: i === activeIdx ? 'rgba(255,255,255,0.60)' : 'rgba(255,255,255,0.18)',
+                    transition:'all 0.35s ease',
+                  }} />
+                ))}
+              </div>
+            )}
+            <span style={{ fontSize:'10px', letterSpacing:'2px', color:'rgba(255,255,255,0.25)' }}>
               {String(activeIdx+1).padStart(2,'0')} / {String(total).padStart(2,'0')}
             </span>
             {/* Status badge */}

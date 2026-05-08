@@ -153,13 +153,9 @@ function NavLink({ to, label }) {
 function HomeMobile({ lang }) {
   const [bgIdx,    setBgIdx]    = useState(0)
   const [imgLoaded, setImgLoaded] = useState(false)
-  const [navIn,    setNavIn]    = useState(false)
+  const [scrollY,  setScrollY]  = useState(0)
   const prevImgRef = useRef(null)
-
-  useEffect(() => {
-    const timer = setTimeout(() => setNavIn(true), 400)
-    return () => clearTimeout(timer)
-  }, [])
+  const scrollRef  = useRef(null)
 
   useEffect(() => {
     if (ALL_IMGS.length < 2) return
@@ -173,8 +169,15 @@ function HomeMobile({ lang }) {
     return () => clearInterval(t)
   }, [])
 
+  const handleScroll = useCallback(() => {
+    if (scrollRef.current) setScrollY(scrollRef.current.scrollTop)
+  }, [])
+
+  const vh = typeof window !== 'undefined' ? window.innerHeight : 800
+  const contentReveal = scrollY > vh * 0.22
+
   return (
-    <div style={{ position:'fixed', inset:0, background:BG, overflow:'hidden' }}>
+    <div style={{ position:'fixed', inset:0, background:BG }}>
       <style>{`
         @keyframes mParticleDrift {
           0%   { transform:translate(0,0) scale(1); opacity:0; }
@@ -184,112 +187,118 @@ function HomeMobile({ lang }) {
           90%  { opacity:0.08; }
           100% { transform:translate(4px,-26vh) scale(0.6); opacity:0; }
         }
+        @keyframes scrollPulse {
+          0%, 100% { transform: translateY(0); opacity: 0.28; }
+          50%       { transform: translateY(5px); opacity: 0.60; }
+        }
+        .m-scroll::-webkit-scrollbar { display: none; }
       `}</style>
 
-      {/* 底圖：前一張（防止切換閃黑） */}
+      {/* ── 固定背景圖層 ── */}
       {prevImgRef.current && (
         <img src={prevImgRef.current} alt=""
           style={{ position:'absolute', inset:0, width:'100%', height:'100%',
             objectFit:'cover', objectPosition:'center 30%', filter:'brightness(0.42)' }} />
       )}
-
-      {/* 上層圖：當前圖，淡入 */}
-      <img
-        key={bgIdx}
-        src={ALL_IMGS[bgIdx]}
-        alt=""
+      <img key={bgIdx} src={ALL_IMGS[bgIdx]} alt=""
         onLoad={() => setImgLoaded(true)}
-        style={{
-          position:'absolute', inset:0, width:'100%', height:'100%',
-          objectFit:'cover', objectPosition:'center 30%',
-          filter:'brightness(0.42)',
-          opacity: imgLoaded ? 1 : 0,
-          transition:'opacity 1.2s ease',
-        }}
-      />
+        style={{ position:'absolute', inset:0, width:'100%', height:'100%',
+          objectFit:'cover', objectPosition:'center 30%', filter:'brightness(0.42)',
+          opacity: imgLoaded ? 1 : 0, transition:'opacity 1.2s ease' }} />
 
       {/* 漸層遮罩 */}
-      <div style={{
-        position:'absolute', inset:0, pointerEvents:'none',
-        background:'linear-gradient(to bottom, rgba(17,17,17,0.45) 0%, rgba(17,17,17,0) 32%, rgba(17,17,17,0) 50%, rgba(17,17,17,0.88) 100%)',
-      }} />
+      <div style={{ position:'absolute', inset:0, pointerEvents:'none',
+        background:'linear-gradient(to bottom, rgba(17,17,17,0.35) 0%, rgba(17,17,17,0) 38%, rgba(17,17,17,0) 52%, rgba(17,17,17,0.9) 100%)' }} />
 
-      {/* 海面光點 */}
-      <div style={{
-        position:'absolute', inset:0, pointerEvents:'none', zIndex:9,
-        opacity: navIn ? 1 : 0, transition:'opacity 3s ease 1s',
-      }}>
+      {/* 星點 */}
+      <div style={{ position:'absolute', inset:0, pointerEvents:'none', zIndex:9 }}>
         {PARTICLES.map((p, i) => (
           <div key={i} style={{
-            position:'absolute',
-            left:`${p.x}vw`, top:`${p.y}vh`,
-            width:`${p.sz}px`, height:`${p.sz}px`,
-            borderRadius:'50%',
+            position:'absolute', left:`${p.x}vw`, top:`${p.y}vh`,
+            width:`${p.sz}px`, height:`${p.sz}px`, borderRadius:'50%',
             background:`radial-gradient(circle, rgba(255,255,255,${(0.9*p.op).toFixed(2)}) 0%, rgba(255,255,255,${(0.25*p.op).toFixed(2)}) 60%, transparent 100%)`,
             boxShadow:`0 0 ${p.sz*2}px ${p.sz}px rgba(255,255,255,${(0.15*p.op).toFixed(2)})`,
             animation:`mParticleDrift ${p.dur} ease-in-out infinite`,
-            animationDelay:p.d,
-            pointerEvents:'none',
+            animationDelay:p.d, pointerEvents:'none',
           }} />
         ))}
       </div>
 
-      {/* 中央內容 */}
-      <div style={{
-        position:'absolute', inset:0, zIndex:10,
-        display:'flex', flexDirection:'column',
-        alignItems:'center', justifyContent:'center',
-        textAlign:'center', padding:'0 32px 72px',
-        opacity: navIn ? 1 : 0, transition:'opacity 1s ease 0.5s',
-      }}>
-        <img
-          src={LOGO_URL}
-          alt="SIA TATTOOIST"
-          style={{ width:'140px', maxWidth:'55vw', marginBottom:'26px',
-            filter:'drop-shadow(0 2px 22px rgba(0,0,0,0.75))' }}
-          onError={e => {
-            e.currentTarget.style.display='none'
-            e.currentTarget.nextElementSibling.style.display='block'
-          }}
+      {/* ── LOGO：置頂固定，始終可見 ── */}
+      <div style={{ position:'absolute', top:0, left:0, right:0, zIndex:30,
+        display:'flex', justifyContent:'center', pointerEvents:'none',
+        paddingTop:'calc(env(safe-area-inset-top, 0px) + 22px)' }}>
+        <img src={LOGO_URL} alt="SIA TATTOOIST"
+          style={{ width:'108px', maxWidth:'42vw',
+            opacity:0.68, filter:'drop-shadow(0 2px 14px rgba(0,0,0,0.55))' }}
+          onError={e => { e.currentTarget.style.display='none' }}
         />
-        <span style={{
-          display:'none', fontFamily:'var(--serif)',
-          fontSize:'16px', letterSpacing:'5px', color:'rgba(255,255,255,0.88)',
-          marginBottom:'26px',
-        }}>SIA TATTOOIST</span>
+      </div>
 
-        <p style={{
-          fontSize:'11px', letterSpacing:'3px', textTransform:'uppercase',
-          color:'var(--ocean)', marginBottom:'20px',
-        }}>Spiritual Tattoo Artist</p>
+      {/* ── 可滾動覆蓋層 ── */}
+      <div ref={scrollRef} onScroll={handleScroll}
+        className="m-scroll"
+        style={{ position:'absolute', inset:0, overflowY:'scroll', zIndex:20,
+          WebkitOverflowScrolling:'touch',
+          scrollbarWidth:'none', msOverflowStyle:'none',
+          overscrollBehaviorY:'contain' }}>
 
-        <p style={{
-          fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
-          fontSize:'15px', lineHeight:2,
-          color:'rgba(255,255,255,0.62)',
-          marginBottom:'16px',
-        }}>
-          A tattoo,<br />composed from the voice of your soul.
-        </p>
-
-        {lang !== 'en' && (
-          <p style={{
-            fontSize:'11px', letterSpacing: lang === 'ko' ? '1px' : '2px',
-            color:'rgba(255,255,255,0.42)', marginBottom:'32px',
+        {/* 第一屏：佔位 + 滾動提示 */}
+        <div style={{ height:'100vh', position:'relative', pointerEvents:'none' }}>
+          <div style={{
+            position:'absolute',
+            bottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 32px)',
+            left:0, right:0,
+            display:'flex', flexDirection:'column', alignItems:'center', gap:'8px',
+            opacity: scrollY < 15 ? 1 : 0, transition:'opacity 0.35s ease',
           }}>
-            {t('tagline', lang)}
-          </p>
-        )}
-        {lang === 'en' && <div style={{ marginBottom:'32px' }} />}
+            <span style={{ fontSize:'9px', letterSpacing:'4px', textTransform:'uppercase',
+              color:'rgba(255,255,255,0.30)',
+              animation:'scrollPulse 2.2s ease-in-out infinite' }}>scroll</span>
+            <svg width="14" height="9" viewBox="0 0 14 9" fill="none"
+              style={{ animation:'scrollPulse 2.2s ease-in-out infinite 0.35s' }}>
+              <path d="M1 1 L7 7.5 L13 1" stroke="rgba(255,255,255,0.30)" strokeWidth="1.3"
+                strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+        </div>
 
-        <Link to="/works" style={{
-          display:'inline-block', padding:'13px 36px',
-          border:'1px solid rgba(255,255,255,0.35)',
-          fontSize:'11px', letterSpacing:'4px', textTransform:'uppercase',
-          color:'rgba(255,255,255,0.78)',
+        {/* 第二屏：文字 + 按鈕（scroll 才顯現） */}
+        <div style={{
+          minHeight:'100vh',
+          display:'flex', flexDirection:'column',
+          alignItems:'center', justifyContent:'center',
+          textAlign:'center', padding:'40px 32px',
+          paddingBottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 48px)',
+          opacity: contentReveal ? 1 : 0,
+          transform: contentReveal ? 'translateY(0)' : 'translateY(26px)',
+          transition:'opacity 0.7s ease, transform 0.7s ease',
         }}>
-          {t('browseWorks', lang)}
-        </Link>
+          <p style={{ fontSize:'11px', letterSpacing:'3px', textTransform:'uppercase',
+            color:'var(--ocean)', marginBottom:'22px' }}>
+            Spiritual Tattoo Artist
+          </p>
+          <p style={{ fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
+            fontSize:'15.5px', lineHeight:2.1,
+            color:'rgba(255,255,255,0.65)', marginBottom:'16px' }}>
+            A tattoo,<br />composed from the voice of your soul.
+          </p>
+          {lang !== 'en' && (
+            <p style={{ fontSize:'11px', letterSpacing: lang === 'ko' ? '1px' : '2px',
+              color:'rgba(255,255,255,0.40)', marginBottom:'38px' }}>
+              {t('tagline', lang)}
+            </p>
+          )}
+          {lang === 'en' && <div style={{ marginBottom:'38px' }} />}
+          <Link to="/works" style={{
+            display:'inline-block', padding:'13px 36px',
+            border:'1px solid rgba(255,255,255,0.32)',
+            fontSize:'11px', letterSpacing:'4px', textTransform:'uppercase',
+            color:'rgba(255,255,255,0.75)', textDecoration:'none',
+          }}>
+            {t('browseWorks', lang)}
+          </Link>
+        </div>
       </div>
 
       <MobileTabBar />

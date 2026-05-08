@@ -66,7 +66,8 @@ function ArrowBtn({ dir, onClick, disabled }) {
   )
 }
 
-const BG_CYCLE_MS = 3000
+const BG_CYCLE_MS  = 3000
+const KB_STYLE     = `@keyframes kenBurns{0%{transform:scale(1)}100%{transform:scale(1.065) translate(0,-0.4%)}}`
 
 export default function FlashHome() {
   const { flash, loading } = useFlash()
@@ -143,10 +144,11 @@ export default function FlashHome() {
   if (isMobile) return (
     <div style={{ position:'fixed', inset:0, background:BG, overflow:'hidden' }}
       onTouchStart={swipe.onTouchStart} onTouchEnd={swipe.onTouchEnd}>
+      <style>{KB_STYLE}</style>
 
       <MobileTopBar />
 
-      {/* BG image — two-layer crossfade */}
+      {/* BG image — two-layer crossfade + Ken Burns */}
       {prevImgRef.current && (
         <img src={prevImgRef.current} alt=""
           style={{ position:'absolute', inset:0, width:'100%', height:'100%',
@@ -157,7 +159,8 @@ export default function FlashHome() {
           onLoad={() => setImgLoaded(true)}
           style={{ position:'absolute', inset:0, width:'100%', height:'100%',
             objectFit:'cover', objectPosition:'center', filter:'brightness(0.52)',
-            opacity: imgLoaded ? 1 : 0, transition:'opacity 1s ease' }} />
+            opacity: imgLoaded ? 1 : 0, transition:'opacity 1s ease',
+            animation: imgLoaded ? `kenBurns ${BG_CYCLE_MS}ms ease-out forwards` : 'none' }} />
       )}
 
       {/* Vignette */}
@@ -250,8 +253,9 @@ export default function FlashHome() {
   /* ── Desktop layout ── */
   return (
     <div style={{ position:'fixed', inset:0, background:BG, overflow:'hidden' }}>
+      <style>{KB_STYLE}</style>
 
-      {/* ── Full-bleed background image — two-layer crossfade ── */}
+      {/* ── Full-bleed background image — two-layer crossfade + Ken Burns ── */}
       {prevImgRef.current && (
         <img src={prevImgRef.current} alt=""
           style={{ position:'absolute', inset:0, width:'100%', height:'100%',
@@ -269,6 +273,7 @@ export default function FlashHome() {
             filter:'brightness(0.52)',
             opacity: imgLoaded ? 1 : 0,
             transition:'opacity 1s ease',
+            animation: imgLoaded ? `kenBurns ${BG_CYCLE_MS}ms ease-out forwards` : 'none',
           }}
         />
       )}
