@@ -637,9 +637,8 @@ export default function Home() {
           flex:1, display:'flex', flexDirection:'column',
           alignItems:'center', justifyContent:'center', textAlign:'center',
           padding:'0 28%',
-          paddingBottom:'120px',
         }}>
-          <OpeningAnimation style={{ width:'min(580px,44vw)', marginBottom:'-59px' }} />
+          <OpeningAnimation style={{ width:'min(580px,44vw)', marginBottom:'-28px' }} />
 
           <FadeUp delay={1100}>
             <p style={{
