@@ -179,27 +179,23 @@ export default function WorksTheme() {
         <div style={{ flex:1, position:'relative', overflow:'hidden', paddingTop:'4px' }}
           onTouchStart={swipe.onTouchStart} onTouchEnd={swipe.onTouchEnd}>
 
-          {/* Left/Right swipe arrows */}
+          {/* Left/Right swipe arrows — no frame, overlapping card edge */}
           {activeIdx > 0 && total > 1 && (
             <div style={{
-              position:'absolute', left:'2%', top:'46%', zIndex:15, pointerEvents:'none',
-              width:'28px', height:'52px', borderRadius:'6px',
-              background:'rgba(255,255,255,0.07)', border:'1px solid rgba(255,255,255,0.13)',
+              position:'absolute', left:'calc(14% - 18px)', top:'46%', zIndex:15, pointerEvents:'none',
               display:'flex', alignItems:'center', justifyContent:'center',
               animation:'arrowLeftW 2.2s ease-in-out infinite',
             }}>
-              <span style={{ fontSize:'20px', color:'rgba(255,255,255,0.58)', lineHeight:1 }}>‹</span>
+              <span style={{ fontSize:'34px', color:'rgba(255,255,255,0.70)', lineHeight:1 }}>‹</span>
             </div>
           )}
           {activeIdx < total - 1 && total > 1 && (
             <div style={{
-              position:'absolute', right:'2%', top:'46%', zIndex:15, pointerEvents:'none',
-              width:'28px', height:'52px', borderRadius:'6px',
-              background:'rgba(255,255,255,0.07)', border:'1px solid rgba(255,255,255,0.13)',
+              position:'absolute', right:'calc(14% - 18px)', top:'46%', zIndex:15, pointerEvents:'none',
               display:'flex', alignItems:'center', justifyContent:'center',
               animation:'arrowRightW 2.2s ease-in-out 0.3s infinite',
             }}>
-              <span style={{ fontSize:'20px', color:'rgba(255,255,255,0.58)', lineHeight:1 }}>›</span>
+              <span style={{ fontSize:'34px', color:'rgba(255,255,255,0.70)', lineHeight:1 }}>›</span>
             </div>
           )}
 
@@ -210,7 +206,7 @@ export default function WorksTheme() {
           ].map((s, si) => (
             <div key={`stack-${si}`} style={{
               position:'absolute', left:'14%', width:'72%',
-              height:'min(52vh, calc(72vw * 1.32))',
+              height:'min(46vh, calc(72vw * 1.28))',
               top:'52%',
               transform:`translateY(-52%) translateY(${s.dy}px) rotate(${s.rot}deg)`,
               transformOrigin:'50% 100%',
@@ -237,7 +233,7 @@ export default function WorksTheme() {
                 }}
                 style={{
                   position:'absolute', left:`${leftPct}%`, width:'72%',
-                  height:'min(52vh, calc(72vw * 1.32))',
+                  height:'min(46vh, calc(72vw * 1.28))',
                   top:'52%',
                   transform: isCenter ? 'translateY(-52%)' : `translateY(-52%) scale(0.86) rotate(${rotation}deg)`,
                   transformOrigin:'50% 88%',

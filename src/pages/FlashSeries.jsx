@@ -212,27 +212,23 @@ export default function FlashSeries() {
             }} />
           ))}
 
-          {/* Left/Right swipe arrows */}
+          {/* Left/Right swipe arrows — no frame, overlapping card edge */}
           {activeIdx > 0 && total > 1 && (
             <div style={{
-              position:'absolute', left:'2%', top:'44%', zIndex:15, pointerEvents:'none',
-              width:'28px', height:'52px', borderRadius:'6px',
-              background:'rgba(255,255,255,0.07)', border:'1px solid rgba(255,255,255,0.14)',
+              position:'absolute', left:'calc(14% - 18px)', top:'44%', zIndex:15, pointerEvents:'none',
               display:'flex', alignItems:'center', justifyContent:'center',
               animation:'arrowLeftF 2.2s ease-in-out infinite',
             }}>
-              <span style={{ fontSize:'20px', color:'rgba(255,255,255,0.60)', lineHeight:1 }}>‹</span>
+              <span style={{ fontSize:'34px', color:'rgba(255,255,255,0.72)', lineHeight:1 }}>‹</span>
             </div>
           )}
           {activeIdx < total - 1 && total > 1 && (
             <div style={{
-              position:'absolute', right:'2%', top:'44%', zIndex:15, pointerEvents:'none',
-              width:'28px', height:'52px', borderRadius:'6px',
-              background:'rgba(255,255,255,0.07)', border:'1px solid rgba(255,255,255,0.14)',
+              position:'absolute', right:'calc(14% - 18px)', top:'44%', zIndex:15, pointerEvents:'none',
               display:'flex', alignItems:'center', justifyContent:'center',
               animation:'arrowRightF 2.2s ease-in-out 0.3s infinite',
             }}>
-              <span style={{ fontSize:'20px', color:'rgba(255,255,255,0.60)', lineHeight:1 }}>›</span>
+              <span style={{ fontSize:'34px', color:'rgba(255,255,255,0.72)', lineHeight:1 }}>›</span>
             </div>
           )}
 
@@ -252,7 +248,7 @@ export default function FlashSeries() {
                 }}
                 style={{
                   position:'absolute', left:`${leftPct}%`, width:'72%',
-                  height:'min(56vh, calc(72vw * 1.46))',
+                  height:'min(48vh, calc(72vw * 1.38))',
                   top:'50%',
                   transform: isCenter ? 'translateY(-52%)' : `translateY(-52%) scale(0.86) rotate(${rotation}deg)`,
                   transformOrigin:'50% 88%',
@@ -261,7 +257,7 @@ export default function FlashSeries() {
                   borderRadius:'14px',
                   border:`1px solid rgba(255,255,255,${isCenter ? 0.22 : 0.06})`,
                   boxShadow: isCenter
-                    ? '0 24px 80px rgba(0,0,0,0.90)'
+                    ? '0 8px 40px 4px rgba(0,0,0,0.70), 0 24px 80px rgba(0,0,0,0.90), 0 0 0 1px rgba(255,255,255,0.08)'
                     : '0 8px 30px rgba(0,0,0,0.55)',
                   opacity: isCenter ? 1 : 0.28,
                   zIndex: isCenter ? 2 : 1,
