@@ -193,11 +193,11 @@ function HomeMobile() {
   }, [])
 
   // scroll-based sequential reveal for section 2
-  const r0 = scrollY > 250   // logo
-  const r1 = scrollY > 430   // spiritual tattoo artist
-  const r2 = scrollY > 620   // quote
-  const r3 = scrollY > 790   // tagline
-  const r4 = scrollY > 960   // CTA
+  const r0 = scrollY > 80    // logo — fires as photo tail comes into view
+  const r1 = scrollY > 280   // spiritual tattoo artist
+  const r2 = scrollY > 450   // quote
+  const r3 = scrollY > 600   // tagline
+  const r4 = scrollY > 730   // CTA
 
   const langOpacity = scrollY < 150
     ? 1
@@ -331,8 +331,8 @@ function HomeMobile() {
 
         {/* ── Section 2：深色 + 星點 + LOGO 帶出文字 ── */}
         <div style={{ background:'#111', position:'relative', overflow:'hidden',
-          minHeight:'170vh',
-          paddingTop:'28vh', paddingLeft:'40px', paddingRight:'40px',
+          minHeight:'100vh',
+          paddingTop:'6vh', paddingLeft:'40px', paddingRight:'40px',
           paddingBottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 48px)',
           display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'flex-start', textAlign:'center',
         }}>
@@ -353,7 +353,7 @@ function HomeMobile() {
           {/* LOGO 再次出現，帶出文字序列 */}
           <img src={LOGO_URL} alt="SIA TATTOOIST"
             style={{
-              width:'54vw', maxWidth:'220px', marginBottom:'14vh',
+              width:'54vw', maxWidth:'220px', marginBottom:'5vh',
               opacity: r0 ? 0.88 : 0,
               transform: r0 ? 'translateY(0)' : 'translateY(22px)',
               transition:'opacity 1.3s ease, transform 1.3s ease',
@@ -365,7 +365,7 @@ function HomeMobile() {
           {/* 標語 */}
           <p style={{
             fontSize:'11px', letterSpacing:'4.5px', textTransform:'uppercase',
-            color:'var(--ocean)', marginBottom:'12vh',
+            color:'var(--ocean)', marginBottom:'4vh',
             opacity: r1 ? 1 : 0,
             transform: r1 ? 'translateY(0)' : 'translateY(18px)',
             transition:'opacity 0.95s ease, transform 0.95s ease',
@@ -375,7 +375,7 @@ function HomeMobile() {
           <p style={{
             fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
             fontSize:'19px', lineHeight:2.4, letterSpacing:'0.3px',
-            color:'rgba(255,255,255,0.58)', marginBottom:'10vh',
+            color:'rgba(255,255,255,0.58)', marginBottom:'4vh',
             opacity: r2 ? 1 : 0,
             transform: r2 ? 'translateY(0)' : 'translateY(18px)',
             transition:'opacity 0.95s ease, transform 0.95s ease',
@@ -387,7 +387,7 @@ function HomeMobile() {
           {lang !== 'en' && (
             <p style={{
               fontSize:'11px', letterSpacing: lang === 'ko' ? '1px' : '2px',
-              color:'rgba(255,255,255,0.30)', marginBottom:'14vh',
+              color:'rgba(255,255,255,0.30)', marginBottom:'5vh',
               opacity: r3 ? 1 : 0,
               transform: r3 ? 'translateY(0)' : 'translateY(14px)',
               transition:'opacity 0.95s ease, transform 0.95s ease',
@@ -395,7 +395,7 @@ function HomeMobile() {
               {t('tagline', lang)}
             </p>
           )}
-          {lang === 'en' && <div style={{ marginBottom:'14vh' }} />}
+          {lang === 'en' && <div style={{ marginBottom:'5vh' }} />}
 
           {/* CTA */}
           <Link to="/works" style={{
