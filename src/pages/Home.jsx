@@ -355,9 +355,9 @@ function HomeMobile() {
 
         {/* ── Section 2：深色 + 星點 + LOGO 帶出文字 ── */}
         <div style={{ background:'#111', position:'relative',
-          minHeight:'100vh',
+          minHeight:'fit-content',
           paddingTop:'1vh', paddingLeft:'40px', paddingRight:'40px',
-          paddingBottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 48px)',
+          paddingBottom:'calc(env(safe-area-inset-bottom, 0px) + 80px)',
           display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'flex-start', textAlign:'center',
         }}>
           {/* 底部質感背景 */}
