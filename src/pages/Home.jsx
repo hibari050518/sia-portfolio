@@ -436,7 +436,7 @@ function HomeMobile() {
           {lang === 'en' && <div style={{ marginBottom:'5vh' }} />}
 
           {/* CTA */}
-          <Link to="/loading?to=/works" style={{
+          <Link to="/works" style={{
             display:'inline-block', padding:'16px 52px',
             border:'1px solid rgba(255,255,255,0.22)',
             fontSize:'11px', letterSpacing:'4.5px', textTransform:'uppercase',
@@ -638,7 +638,7 @@ export default function Home() {
           alignItems:'center', justifyContent:'center', textAlign:'center',
           padding:'0 28%',
         }}>
-          <OpeningAnimation style={{ width:'min(580px,44vw)', marginBottom:'-49px' }} />
+          <OpeningAnimation style={{ width:'min(580px,44vw)', marginBottom:'-59px' }} />
 
           <FadeUp delay={1100}>
             <p style={{
@@ -675,7 +675,7 @@ export default function Home() {
           </FadeUp>
 
           <FadeUp delay={1800}>
-            <Link to="/loading?to=/works" style={{
+            <Link to="/works" style={{
               display:'inline-block', padding:'14px 48px',
               border:'1px solid rgba(255,255,255,0.28)',
               fontSize:'13px', letterSpacing:'5px', textTransform:'uppercase',
