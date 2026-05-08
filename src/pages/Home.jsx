@@ -342,28 +342,32 @@ function HomeMobile() {
               fontSize:'10px', letterSpacing:'4px', textTransform:'uppercase',
               color:'rgba(255,255,255,0.38)', marginBottom:'2px',
             }}>scroll down</span>
-            <div style={{ width:'1px', height:'72px', position:'relative', overflow:'hidden',
+            <div style={{ width:'1px', height:'110px', position:'relative', overflow:'hidden',
               background:'rgba(255,255,255,0.10)' }}>
               <div style={{
-                position:'absolute', left:0, right:0, height:'28px',
+                position:'absolute', left:0, right:0, height:'32px',
                 background:'linear-gradient(to bottom, transparent, rgba(255,255,255,0.60), transparent)',
                 animation:'scrollFlow 1.65s ease-in-out infinite',
               }} />
             </div>
-            <svg width="13" height="8" viewBox="0 0 13 8" fill="none">
-              <path d="M1 1 L6.5 6.5 L12 1" stroke="rgba(255,255,255,0.32)" strokeWidth="1.2"
-                strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
           </div>
         </div>
 
         {/* ── Section 2：深色 + 星點 + LOGO 帶出文字 ── */}
         <div style={{ background:'#111', position:'relative', overflow:'hidden',
-          minHeight:'100vh',
+          minHeight:'80vh',
           paddingTop:'1vh', paddingLeft:'40px', paddingRight:'40px',
           paddingBottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 48px)',
           display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'flex-start', textAlign:'center',
         }}>
+          {/* 底部質感背景 */}
+          <div style={{ position:'absolute', inset:0, pointerEvents:'none',
+            backgroundImage:"url('https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/%E8%A1%8C%E5%8B%95%E7%89%88%E8%83%8C%E6%99%AF.jpg')",
+            backgroundSize:'cover', backgroundPosition:'center bottom',
+            opacity:0.18,
+            maskImage:'linear-gradient(to bottom, transparent 0%, black 40%, black 100%)',
+            WebkitMaskImage:'linear-gradient(to bottom, transparent 0%, black 40%, black 100%)',
+          }} />
           {/* 星點 */}
           <div style={{ position:'absolute', inset:0, pointerEvents:'none' }}>
             {PARTICLES.map((p, i) => (
