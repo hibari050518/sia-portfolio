@@ -184,21 +184,25 @@ function HomeMobile() {
     return () => clearInterval(timer)
   }, [])
 
-  const handleScroll = useCallback(() => {
-    if (scrollRef.current) setScrollY(scrollRef.current.scrollTop)
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    const onScroll = () => setScrollY(el.scrollTop)
+    el.addEventListener('scroll', onScroll, { passive: true })
+    return () => el.removeEventListener('scroll', onScroll)
   }, [])
 
-  const vh  = typeof window !== 'undefined' ? window.innerHeight : 800
-  const s2y = Math.max(0, scrollY - vh)
-  const r0  = s2y > 5    // logo in section 2
-  const r1  = s2y > 80   // spiritual tattoo artist
-  const r2  = s2y > 155  // quote
-  const r3  = s2y > 230  // tagline
-  const r4  = s2y > 315  // CTA
+  // s2y = raw scroll depth (section 2 visible once scrollY > 0; max ~450px on iPhone)
+  const s2y = scrollY
+  const r0  = s2y > 40   // logo in section 2
+  const r1  = s2y > 130  // spiritual tattoo artist
+  const r2  = s2y > 220  // quote
+  const r3  = s2y > 310  // tagline
+  const r4  = s2y > 380  // CTA
 
-  const langOpacity = scrollY < vh * 0.72
+  const langOpacity = scrollY < 150
     ? 1
-    : Math.max(0, 1 - (scrollY - vh * 0.72) / (vh * 0.28))
+    : Math.max(0, 1 - (scrollY - 150) / 70)
 
   return (
     <div style={{ position:'fixed', inset:0, background:'#111' }}>
@@ -240,7 +244,7 @@ function HomeMobile() {
         ))}
       </div>
 
-      <div ref={scrollRef} onScroll={handleScroll}
+      <div ref={scrollRef}
         className="m-scroll"
         style={{ position:'absolute', inset:0, overflowY:'scroll', zIndex:20,
           WebkitOverflowScrolling:'touch', scrollbarWidth:'none', msOverflowStyle:'none',
@@ -276,13 +280,13 @@ function HomeMobile() {
             ))}
           </div>
 
-          {/* LOGO — 固定於頂部 */}
-          <div style={{ position:'absolute', top:0, left:0, right:0, zIndex:3,
+          {/* LOGO — 置中偏上 */}
+          <div style={{ position:'absolute', left:0, right:0, zIndex:3,
             display:'flex', justifyContent:'center',
-            paddingTop:'calc(env(safe-area-inset-top, 0px) + 28px)' }}>
+            top:'34%', transform:'translateY(-50%)' }}>
             <img src={LOGO_URL} alt="SIA TATTOOIST"
-              style={{ width:'132px', maxWidth:'48vw',
-                opacity:0.62, filter:'drop-shadow(0 2px 12px rgba(0,0,0,0.5))' }}
+              style={{ width:'152px', maxWidth:'54vw',
+                opacity:0.68, filter:'drop-shadow(0 2px 12px rgba(0,0,0,0.5))' }}
               onError={e => { e.currentTarget.style.display='none' }} />
           </div>
 
