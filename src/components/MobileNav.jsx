@@ -107,8 +107,13 @@ export function MobileTabBar() {
       </Link>
 
       <a href={WIX_URL} target="_blank" rel="noreferrer" style={tabStyle(false)}>
-        <span style={{ fontSize:'10px', letterSpacing:'2.5px', textTransform:'uppercase',
-          color: WARM, fontFamily:'inherit' }}>{t('appointments', lang)}</span>
+        <span style={{
+          fontSize: lang === 'zh' ? '9px' : '10px',
+          letterSpacing: lang === 'zh' ? '1.5px' : '2.5px',
+          textTransform:'uppercase',
+          color: WARM, fontFamily:'inherit',
+          whiteSpace:'nowrap',
+        }}>{t('bookingTab', lang)}</span>
       </a>
     </div>
   )

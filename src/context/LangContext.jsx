@@ -44,7 +44,8 @@ export function getSeriesName(flash, seriesName, lang) {
 const UI = {
   works:        { zh:'作品',    en:'Works',       ko:'작품'     },
   flash:        { zh:'認領圖',  en:'Flash',        ko:'플래시'   },
-  appointments: { zh:'預約請前往主站 ↗', en:'Appointments ↗', ko:'예약 ↗' },
+  appointments: { zh:'預約前往主站', en:'Appointments', ko:'예약' },
+  bookingTab:   { zh:'預約前往主站', en:'Book',          ko:'예약' },
   viewWorks:    { zh:'查看作品', en:'View Works',  ko:'작품 보기' },
   readStory:    { zh:'閱讀故事', en:'Read Story',  ko:'스토리 읽기' },
   backWorks:    { zh:'作品集',   en:'Works',       ko:'작품집'   },
