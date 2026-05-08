@@ -172,6 +172,7 @@ function HomeMobile() {
   const prevImgRef = useRef(null)
   const scrollRef  = useRef(null)
 
+  // Auto-cycle slideshow
   useEffect(() => {
     if (ALL_IMGS.length < 2) return
     const timer = setInterval(() => {
@@ -184,18 +185,30 @@ function HomeMobile() {
     return () => clearInterval(timer)
   }, [])
 
+  // Manual slide navigation
+  const goSlide = (dir) => {
+    setBgIdx(prev => {
+      prevImgRef.current = ALL_IMGS[prev]
+      setImgLoaded(false)
+      return (prev + dir + ALL_IMGS.length) % ALL_IMGS.length
+    })
+  }
+
   const handleScroll = useCallback(() => {
     if (scrollRef.current) setScrollY(scrollRef.current.scrollTop)
   }, [])
 
   const vh  = typeof window !== 'undefined' ? window.innerHeight : 800
-  // section 2 is minHeight: calc(100vh + 400px), so max scrollTop = vh + 400
-  // s2y tracks how deep into section 2 we've scrolled
   const s2y = Math.max(0, scrollY - vh)
   const r1  = s2y > 15
-  const r2  = s2y > 90
-  const r3  = s2y > 175
-  const r4  = s2y > 265
+  const r2  = s2y > 80
+  const r3  = s2y > 155
+  const r4  = s2y > 295
+
+  // Language switcher fades out as section 1 approaches its end
+  const langOpacity = scrollY < vh * 0.72
+    ? 1
+    : Math.max(0, 1 - (scrollY - vh * 0.72) / (vh * 0.28))
 
   return (
     <div style={{ position:'fixed', inset:0, background:'#111' }}>
@@ -219,12 +232,14 @@ function HomeMobile() {
         .m-scroll::-webkit-scrollbar { display: none; }
       `}</style>
 
-      {/* 語言切換器：固定右上角，不隨 scroll 移動 */}
+      {/* 語言切換器：隨 scroll 接近第二屏時淡出 */}
       <div style={{
         position:'absolute', top:0, right:0, zIndex:35,
         paddingTop:'calc(env(safe-area-inset-top, 0px) + 18px)',
         paddingRight:'22px',
         display:'flex', gap:'14px', alignItems:'center',
+        opacity: langOpacity, transition:'opacity 0.3s ease',
+        pointerEvents: langOpacity < 0.05 ? 'none' : 'auto',
       }}>
         {[['zh','中'],['en','EN'],['ko','한']].map(([l, label]) => (
           <span key={l} onClick={() => setLang(l)} style={{
@@ -243,13 +258,11 @@ function HomeMobile() {
 
         {/* ── 第一屏：作品幻燈片 ── */}
         <div style={{ height:'100vh', position:'relative', overflow:'hidden' }}>
-          {/* 底層：前一張圖（crossfade 用） */}
           {prevImgRef.current && (
             <img src={prevImgRef.current} alt=""
               style={{ position:'absolute', inset:0, width:'100%', height:'100%',
                 objectFit:'cover', objectPosition:'center 30%', filter:'brightness(0.48)' }} />
           )}
-          {/* 上層：當前圖 + Ken Burns 呼吸動態 */}
           <img key={bgIdx} src={ALL_IMGS[bgIdx]} alt=""
             onLoad={() => setImgLoaded(true)}
             style={{ position:'absolute', inset:0, width:'100%', height:'100%',
@@ -273,54 +286,82 @@ function HomeMobile() {
             ))}
           </div>
 
-          {/* Logo */}
-          <div style={{ position:'absolute', top:0, left:0, right:0, zIndex:3,
+          {/* Logo - 開始往下滑後出現於中央 */}
+          <div style={{
+            position:'absolute', top:'38%', left:0, right:0, zIndex:3,
             display:'flex', justifyContent:'center',
-            paddingTop:'calc(env(safe-area-inset-top, 0px) + 28px)' }}>
+            opacity: scrollY > 32 ? 1 : 0,
+            transform: scrollY > 32 ? 'translateY(0)' : 'translateY(14px)',
+            transition:'opacity 0.9s ease, transform 0.9s ease',
+          }}>
             <img src={LOGO_URL} alt="SIA TATTOOIST"
               style={{ width:'132px', maxWidth:'48vw',
-                opacity:0.62, filter:'drop-shadow(0 2px 12px rgba(0,0,0,0.5))' }}
+                filter:'drop-shadow(0 2px 18px rgba(0,0,0,0.7))' }}
               onError={e => { e.currentTarget.style.display='none' }} />
           </div>
 
-          {/* 底部漸層 → 融入第二屏深色背景 */}
-          <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'45%', zIndex:2,
-            background:'linear-gradient(to bottom, transparent 0%, #111 100%)',
+          {/* 左右手動箭頭（滑動後才顯示） */}
+          <div onClick={() => goSlide(-1)} style={{
+            position:'absolute', left:0, top:0, width:'28%', height:'100%', zIndex:4,
+            display:'flex', alignItems:'center', paddingLeft:'18px', cursor:'pointer',
+            opacity: scrollY > 32 ? 1 : 0, transition:'opacity 0.5s ease',
+          }}>
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none"
+              style={{ filter:'drop-shadow(0 0 5px rgba(0,0,0,0.9))' }}>
+              <path d="M14 3.5 L7 11 L14 18.5" stroke="rgba(255,255,255,0.40)" strokeWidth="1.3"
+                strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          <div onClick={() => goSlide(1)} style={{
+            position:'absolute', right:0, top:0, width:'28%', height:'100%', zIndex:4,
+            display:'flex', alignItems:'center', justifyContent:'flex-end',
+            paddingRight:'18px', cursor:'pointer',
+            opacity: scrollY > 32 ? 1 : 0, transition:'opacity 0.5s ease',
+          }}>
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none"
+              style={{ filter:'drop-shadow(0 0 5px rgba(0,0,0,0.9))' }}>
+              <path d="M8 3.5 L15 11 L8 18.5" stroke="rgba(255,255,255,0.40)" strokeWidth="1.3"
+                strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+
+          {/* 底部漸層 → 融入第二屏深色背景（更高更柔） */}
+          <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'58%', zIndex:2,
+            background:'linear-gradient(to bottom, transparent 0%, rgba(17,17,17,0.6) 45%, #111 100%)',
             pointerEvents:'none' }} />
 
-          {/* 滾動指示器：流動光線 + 箭頭 + SCROLL DOWN */}
+          {/* 滾動指示器：SCROLL DOWN 在線的上方 */}
           <div style={{
             position:'absolute', zIndex:3,
-            bottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 36px)',
+            bottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 44px)',
             left:'50%', transform:'translateX(-50%)',
             display:'flex', flexDirection:'column', alignItems:'center', gap:'8px',
             opacity: scrollY < 18 ? 1 : 0, transition:'opacity 0.4s ease',
             pointerEvents:'none',
           }}>
-            <div style={{ width:'1px', height:'48px', position:'relative', overflow:'hidden',
+            <span style={{
+              fontSize:'8px', letterSpacing:'3.5px', textTransform:'uppercase',
+              color:'rgba(255,255,255,0.32)', marginBottom:'2px',
+            }}>scroll down</span>
+            <div style={{ width:'1px', height:'44px', position:'relative', overflow:'hidden',
               background:'rgba(255,255,255,0.08)' }}>
               <div style={{
-                position:'absolute', left:0, right:0, height:'24px',
+                position:'absolute', left:0, right:0, height:'22px',
                 background:'linear-gradient(to bottom, transparent, rgba(255,255,255,0.55), transparent)',
                 animation:'scrollFlow 1.65s ease-in-out infinite',
               }} />
             </div>
             <svg width="12" height="7" viewBox="0 0 12 7" fill="none">
-              <path d="M1 1 L6 5.5 L11 1" stroke="rgba(255,255,255,0.30)" strokeWidth="1.2"
+              <path d="M1 1 L6 5.5 L11 1" stroke="rgba(255,255,255,0.28)" strokeWidth="1.2"
                 strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            <span style={{
-              fontSize:'8px', letterSpacing:'3px', textTransform:'uppercase',
-              color:'rgba(255,255,255,0.28)', marginTop:'2px',
-            }}>scroll down</span>
           </div>
         </div>
 
         {/* ── 第二屏：純深色 + 星點 + 逐一揭示文字 ── */}
         <div style={{ background:'#111', position:'relative', overflow:'hidden',
-          minHeight:'calc(100vh + 400px)',
-          paddingTop:'80px', paddingLeft:'40px', paddingRight:'40px',
-          paddingBottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 80px)',
+          paddingTop:'58px', paddingLeft:'40px', paddingRight:'40px',
+          paddingBottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 32px)',
           display:'flex', flexDirection:'column', alignItems:'center', textAlign:'center',
         }}>
           {/* 星點 */}
@@ -340,7 +381,7 @@ function HomeMobile() {
           {/* 標語 */}
           <p style={{
             fontSize:'11px', letterSpacing:'4px', textTransform:'uppercase',
-            color:'var(--ocean)', marginBottom:'44px',
+            color:'var(--ocean)', marginBottom:'28px',
             opacity: r1 ? 1 : 0,
             transform: r1 ? 'translateY(0)' : 'translateY(20px)',
             transition:'opacity 0.95s ease, transform 0.95s ease',
@@ -349,8 +390,8 @@ function HomeMobile() {
           {/* 英文引言 */}
           <p style={{
             fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
-            fontSize:'18px', lineHeight:2.3, letterSpacing:'0.2px',
-            color:'rgba(255,255,255,0.58)', marginBottom:'28px',
+            fontSize:'18px', lineHeight:2.2, letterSpacing:'0.2px',
+            color:'rgba(255,255,255,0.58)', marginBottom:'18px',
             opacity: r2 ? 1 : 0,
             transform: r2 ? 'translateY(0)' : 'translateY(20px)',
             transition:'opacity 0.95s ease, transform 0.95s ease',
@@ -362,7 +403,7 @@ function HomeMobile() {
           {lang !== 'en' && (
             <p style={{
               fontSize:'11px', letterSpacing: lang === 'ko' ? '1px' : '2px',
-              color:'rgba(255,255,255,0.30)', marginBottom:'60px',
+              color:'rgba(255,255,255,0.30)', marginBottom:'36px',
               opacity: r3 ? 1 : 0,
               transform: r3 ? 'translateY(0)' : 'translateY(16px)',
               transition:'opacity 0.95s ease, transform 0.95s ease',
@@ -370,7 +411,7 @@ function HomeMobile() {
               {t('tagline', lang)}
             </p>
           )}
-          {lang === 'en' && <div style={{ marginBottom:'60px' }} />}
+          {lang === 'en' && <div style={{ marginBottom:'36px' }} />}
 
           {/* CTA */}
           <Link to="/works" style={{
@@ -390,274 +431,4 @@ function HomeMobile() {
       <MobileTabBar />
     </div>
   )
-}
-
-export default function Home() {
-  const { works } = useWorks()
-  const { lang }  = useLang()
-  const isMobile  = useIsMobile()
-
-  // ── 行動版直接渲染 ──
-  if (isMobile) return <HomeMobile />
-
-  const [leftIdx,  setLeftIdx]  = useState(0)
-  const [rightIdx, setRightIdx] = useState(0)
-  const [leftKey,  setLeftKey]  = useState(0)
-  const [rightKey, setRightKey] = useState(0)
-  const [leftVert,  setLeftVert]  = useState('center')
-  const [rightVert, setRightVert] = useState('bottom')
-  const [navIn,    setNavIn]    = useState(false)
-  const [btnHov,    setBtnHov]   = useState(false)
-
-  const cursorContainerRef = useRef(null)
-  const lastSpawnRef = useRef(0)
-  const prevPosRef   = useRef({ x: 0, y: 0 })
-  const onMouseMove = useCallback((e) => {
-    const now = Date.now()
-    if (now - lastSpawnRef.current < 130) return
-    lastSpawnRef.current = now
-    const container = cursorContainerRef.current
-    if (!container) return
-    const dx = e.clientX - prevPosRef.current.x
-    const dy = e.clientY - prevPosRef.current.y
-    const speed = Math.sqrt(dx * dx + dy * dy)
-    prevPosRef.current = { x: e.clientX, y: e.clientY }
-    if (speed < 3) return
-    const nx = dx / speed
-    const ny = dy / speed
-    const offset = 18 + Math.random() * 28
-    const spawnX = e.clientX - nx * offset + (Math.random() - 0.5) * 18
-    const spawnY = e.clientY - ny * offset + (Math.random() - 0.5) * 18
-    const sz  = 2.5 + Math.random() * 4
-    const dur = 3.5 + Math.random() * 3
-    const el  = document.createElement('div')
-    el.style.cssText = [
-      `position:fixed`,
-      `left:${spawnX - sz / 2}px`,
-      `top:${spawnY - sz / 2}px`,
-      `width:${sz}px`,
-      `height:${sz}px`,
-      `border-radius:50%`,
-      `background:radial-gradient(circle,rgba(255,255,255,0.60) 0%,rgba(200,235,245,0.20) 55%,transparent 100%)`,
-      `box-shadow:0 0 ${sz*2}px ${sz*0.8}px rgba(200,235,245,0.18)`,
-      `animation:trailDrift ${dur}s ease-out forwards`,
-      `pointer-events:none`,
-      `z-index:55`,
-    ].join(';')
-    container.appendChild(el)
-    setTimeout(() => el.remove(), dur * 1000)
-  }, [])
-
-  const VERT = ['top', 'center', 'bottom']
-
-  useEffect(() => {
-    const t = setTimeout(() => setNavIn(true), 600)
-    return () => clearTimeout(t)
-  }, [])
-
-  useEffect(() => {
-    if (LEFT_IMGS.length < 2) return
-    const t = setInterval(() => {
-      setLeftIdx(i  => (i + 1) % LEFT_IMGS.length)
-      setLeftVert(v => VERT[(VERT.indexOf(v) + 1) % VERT.length])
-      setLeftKey(k  => k + 1)
-    }, SWAP_INTERVAL)
-    return () => clearInterval(t)
-  }, [])
-
-  useEffect(() => {
-    if (RIGHT_IMGS.length < 2) return
-    const delay = setTimeout(() => {
-      const t = setInterval(() => {
-        setRightIdx(i  => (i + 1) % RIGHT_IMGS.length)
-        setRightVert(v => VERT[(VERT.indexOf(v) + 1) % VERT.length])
-        setRightKey(k  => k + 1)
-      }, SWAP_INTERVAL)
-      return () => clearInterval(t)
-    }, SWAP_INTERVAL / 2)
-    return () => clearTimeout(delay)
-  }, [])
-
-  return (
-    <div style={{ position:'fixed', inset:0, background:BG, overflow:'hidden' }}
-      onMouseMove={onMouseMove}>
-
-      <style>{`
-        @keyframes breatheImg {
-          0%,100% { transform:scale(1.0);   opacity:1;    }
-          50%      { transform:scale(1.045); opacity:0.85; }
-        }
-        @keyframes btnPulse {
-          0%,100% { opacity:0.40; border-color:rgba(255,255,255,0.28); box-shadow:0 0 0px rgba(255,255,255,0); background:transparent; }
-          50%     { opacity:1.00; border-color:rgba(255,255,255,0.95); box-shadow:0 0 32px rgba(255,255,255,0.22), inset 0 0 14px rgba(255,255,255,0.07); background:rgba(255,255,255,0.05); }
-        }
-        @keyframes trailDrift {
-          0%   { opacity: 0.50; transform: translate(0,    0)     scale(1);    }
-          15%  { opacity: 0.60; }
-          50%  { opacity: 0.35; transform: translate(0,   -8px)   scale(0.82); }
-          85%  { opacity: 0.10; transform: translate(0,  -16px)   scale(0.65); }
-          100% { opacity: 0;    transform: translate(0,  -22px)   scale(0.5);  }
-        }
-        @keyframes textBreathe {
-          0%,100% { opacity: 0.40; }
-          50%     { opacity: 1.00; }
-        }
-        @keyframes textGlow {
-          0%,100% { text-shadow: 0 0 0px rgba(90,170,191,0); }
-          50%     { text-shadow: 0 0 18px rgba(90,170,191,0.45); }
-        }
-        /* 海面光點：輕柔漂浮帶 S 曲線，像浪讓光點緩緩上移後消散 */
-        @keyframes particleDrift {
-          0%   { transform: translate(0, 0)         scale(1);    opacity: 0;    }
-          8%   { opacity: 0.75; }
-          35%  { transform: translate(9px,  -8vh)   scale(0.92); opacity: 0.65; }
-          65%  { transform: translate(-6px, -18vh)  scale(0.78); opacity: 0.35; }
-          90%  { opacity: 0.08; }
-          100% { transform: translate(4px,  -26vh)  scale(0.6);  opacity: 0;    }
-        }
-      `}</style>
-
-      {/* 側邊圖片 */}
-      <SideImage key={`L${leftKey}`}  src={LEFT_IMGS[leftIdx]}   side="left"  vertPos={leftVert} />
-      <SideImage key={`R${rightKey}`} src={RIGHT_IMGS[rightIdx]} side="right" vertPos={rightVert} />
-
-      {/* 海面光點層 — 包在 fade-in 容器裡，延遲漸入避免進場太亮 */}
-      <div style={{
-        position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 9,
-        opacity: navIn ? 1 : 0,
-        transition: 'opacity 3s ease 1.2s',
-      }}>
-        {PARTICLES.map((p, i) => (
-          <div key={i} style={{
-            position: 'fixed',
-            left: `${p.x}vw`,
-            top:  `${p.y}vh`,
-            width:  `${p.sz}px`,
-            height: `${p.sz}px`,
-            borderRadius: '50%',
-            background: `radial-gradient(circle, rgba(255,255,255,${(0.95 * p.op).toFixed(2)}) 0%, rgba(255,255,255,${(0.3 * p.op).toFixed(2)}) 60%, transparent 100%)`,
-            boxShadow: `0 0 ${p.sz * 2}px ${p.sz}px rgba(255,255,255,${(0.18 * p.op).toFixed(2)})`,
-            animation: `particleDrift ${p.dur} ease-in-out infinite`,
-            animationDelay: p.d,
-            pointerEvents: 'none',
-          }} />
-        ))}
-      </div>
-
-      {/* UI 層 */}
-      <div style={{ position:'absolute', inset:0, zIndex:10, display:'flex', flexDirection:'column' }}>
-
-        {/* 頂部導覽 */}
-        <nav style={{
-          display:'flex', justifyContent:'space-between', alignItems:'center',
-          padding:'30px 44px',
-          opacity: navIn ? 1 : 0, transition:'opacity 0.8s ease',
-        }}>
-          <span style={{ fontSize:'13px', letterSpacing:'4px', color:'rgba(255,255,255,0.85)', fontFamily:'var(--serif)' }}>
-            SIA TATTOOIST
-          </span>
-          <div style={{ display:'flex', gap:'36px', alignItems:'center' }}>
-            <NavLink to="/works" label={t('works',lang)} />
-            <NavLink to="/flash" label={t('flash',lang)} />
-            <a href={WIX_URL} target="_blank" rel="noreferrer" style={{
-              fontSize:'12px', letterSpacing:'2px',
-              color:'var(--warm)', textDecoration:'none',
-            }}>
-              {t('appointments',lang)}
-            </a>
-            <LangSwitcher />
-          </div>
-        </nav>
-
-        {/* 中央文字 */}
-        <div style={{
-          flex:1, display:'flex', flexDirection:'column',
-          alignItems:'center', justifyContent:'center', textAlign:'center',
-          padding:'0 36%',
-        }}>
-          <FadeUp delay={800}>
-            <img src={LOGO_URL} alt="SIA TATTOOIST"
-              style={{ width:'100%', maxWidth:'260px', marginBottom:'28px',
-                filter:'drop-shadow(0 2px 24px rgba(0,0,0,0.5))' }}
-              onError={e => { e.currentTarget.style.display='none' }}
-            />
-          </FadeUp>
-
-          <FadeUp delay={1100}>
-            <p style={{
-              fontSize:'14px', letterSpacing:'5px', textTransform:'uppercase',
-              color:'var(--ocean)', marginBottom:'20px', opacity:0.95,
-              animation:'textGlow 3.5s ease-in-out infinite',
-              animationDelay:'2.5s',
-            }}>
-              Spiritual Tattoo Artist
-            </p>
-          </FadeUp>
-
-          <FadeUp delay={1350}>
-            <p style={{
-              fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
-              fontSize:'clamp(15px, 1.6vw, 20px)', lineHeight:1.8,
-              color:'rgba(255,255,255,0.72)',
-              marginBottom:'12px',
-            }}>
-              A tattoo,<br />composed from the voice of your soul.
-            </p>
-          </FadeUp>
-
-          <FadeUp delay={1550}>
-            {lang !== 'en'
-              ? <p style={{
-                  fontSize:'12px', letterSpacing: lang === 'ko' ? '1px' : '2.5px',
-                  marginBottom:'44px', color:'rgba(255,255,255,0.55)',
-                }}>
-                  {t('tagline', lang)}
-                </p>
-              : <div style={{ marginBottom:'44px' }} />
-            }
-          </FadeUp>
-
-          <FadeUp delay={1800}>
-            <Link to="/works" style={{
-              display:'inline-block', padding:'13px 40px',
-              border:'1px solid rgba(255,255,255,0.28)',
-              fontSize:'12px', letterSpacing:'5px', textTransform:'uppercase',
-              color:'rgba(255,255,255,0.8)', transition:'background 0.3s ease, color 0.3s ease',
-              animation: 'btnPulse 3.5s ease-in-out infinite',
-              animationDelay: '-2.5s',
-            }}
-              onMouseEnter={e => {
-                setBtnHov(true)
-                e.currentTarget.style.animation = 'none'
-                e.currentTarget.style.background='rgba(255,255,255,0.08)'
-                e.currentTarget.style.borderColor='rgba(255,255,255,0.65)'
-                e.currentTarget.style.color='#fff'
-              }}
-              onMouseLeave={e => {
-                setBtnHov(false)
-                e.currentTarget.style.animation = 'btnPulse 3.5s ease-in-out infinite'
-                e.currentTarget.style.background='transparent'
-                e.currentTarget.style.borderColor='rgba(255,255,255,0.28)'
-                e.currentTarget.style.color='rgba(255,255,255,0.8)'
-              }}>
-              {t('browseWorks', lang)}
-            </Link>
-          </FadeUp>
-        </div>
-
-        {/* 底部 */}
-        <div style={{
-          padding:'24px 44px', display:'flex', justifyContent:'flex-end',
-          opacity: navIn ? 1 : 0, transition:'opacity 0.8s ease 1.2s',
-        }}>
-          <span style={{ fontSize:'12px', letterSpacing:'3px', color:'rgba(255,255,255,0.2)' }}>
-            © SIA TATTOOIST
-          </span>
-        </div>
-      </div>
-
-      {/* 游標漂浮粒子容器 */}
-      <div ref={cursorContainerRef} style={{ position:'fixed', inset:0, pointerEvents:'none', zIndex:50 }} />
-    </div>
-  )
-}
+}:

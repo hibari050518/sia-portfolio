@@ -149,9 +149,6 @@ export default function WorksTheme() {
           {themeWorks.map((work, i) => {
             const offset = i - activeIdx
             if (Math.abs(offset) > 1) return null
-            // center card: left=10%, width=80% → right edge at 90%
-            // prev card:   left=-70% (right edge at 10%)
-            // next card:   left=90%  (left edge at 90%)
             const leftPct = 10 + offset * 80
 
             return (
@@ -172,22 +169,54 @@ export default function WorksTheme() {
                         transition:'filter 0.4s ease' }} />
                   : <div style={{ width:'100%', height:'100%', background:'rgba(255,255,255,0.04)' }} />
                 }
-                {/* Top/bottom fades — only for adjacent cards */}
+                {/* Adjacent cards: top/bottom fades */}
                 {offset !== 0 && <>
                   <div style={{ position:'absolute', top:0, left:0, right:0, height:'18%',
                     background:`linear-gradient(to bottom,${BG},transparent)`, pointerEvents:'none' }}/>
                   <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'18%',
                     background:`linear-gradient(to top,${BG},transparent)`, pointerEvents:'none' }}/>
                 </>}
+                {/* Center card: soft left/right edge vignette */}
+                {offset === 0 && <>
+                  <div style={{ position:'absolute', top:0, left:0, bottom:0, width:'12%',
+                    background:`linear-gradient(to right, rgba(17,17,17,0.50), transparent)`, pointerEvents:'none' }}/>
+                  <div style={{ position:'absolute', top:0, right:0, bottom:0, width:'12%',
+                    background:`linear-gradient(to left, rgba(17,17,17,0.50), transparent)`, pointerEvents:'none' }}/>
+                </>}
               </div>
             )
           })}
 
-          {/* Edge fade overlays — narrower so peek cards are visible */}
+          {/* Edge fade overlays */}
           <div style={{ position:'absolute', top:0, left:0, bottom:0, width:'7%', zIndex:5,
             background:`linear-gradient(to right, ${BG}, transparent)`, pointerEvents:'none' }} />
           <div style={{ position:'absolute', top:0, right:0, bottom:0, width:'7%', zIndex:5,
             background:`linear-gradient(to left, ${BG}, transparent)`, pointerEvents:'none' }} />
+
+          {/* 左右箭頭 */}
+          {activeIdx > 0 && (
+            <div onClick={() => go(-1)} style={{
+              position:'absolute', left:0, top:0, bottom:0, width:'52px', zIndex:10,
+              display:'flex', alignItems:'center', paddingLeft:'8px', cursor:'pointer',
+            }}>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M13 3.5 L6.5 10 L13 16.5" stroke="rgba(255,255,255,0.42)" strokeWidth="1.3"
+                  strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+          )}
+          {activeIdx < total - 1 && (
+            <div onClick={() => go(1)} style={{
+              position:'absolute', right:0, top:0, bottom:0, width:'52px', zIndex:10,
+              display:'flex', alignItems:'center', justifyContent:'flex-end',
+              paddingRight:'8px', cursor:'pointer',
+            }}>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M7 3.5 L13.5 10 L7 16.5" stroke="rgba(255,255,255,0.42)" strokeWidth="1.3"
+                  strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+          )}
         </div>
 
         {/* Info section */}

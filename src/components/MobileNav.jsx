@@ -116,7 +116,7 @@ export function MobileTabBar() {
 
       <a href={WIX_URL} target="_blank" rel="noreferrer" style={tabStyle(false)}>
         <span style={{ fontSize:'10px', letterSpacing:'2.5px', textTransform:'uppercase',
-          color: WARM, fontFamily:'inherit' }}>預約 ↗</span>
+          color: WARM, fontFamily:'inherit' }}>主站預約</span>
       </a>
     </div>
   )
