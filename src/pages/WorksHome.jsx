@@ -183,7 +183,7 @@ export default function WorksHome() {
         bottom:'calc(62px + env(safe-area-inset-bottom, 0px) + 8px)',
         zIndex:8, pointerEvents:'none', opacity:0.08,
       }}>
-        <img src={LOGO_URL} alt="" style={{ height:'100px', display:'block' }} />
+        <img src={LOGO_URL} alt="" style={{ height:'500px', display:'block' }} />
       </div>
 
       {/* Right-side thumbnail strip */}

@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { useLang } from '../context/LangContext'
+import { useLang, t } from '../context/LangContext'
 import { WIX_URL } from '../config'
 
 const LOGO_URL =
@@ -52,6 +52,7 @@ export function MobileTopBar() {
 // ── 底部 Tab Bar ──────────────────────────────────
 export function MobileTabBar() {
   const { pathname } = useLocation()
+  const { lang } = useLang()
   const isWorks = pathname.startsWith('/works')
   const isFlash = pathname.startsWith('/flash')
 
@@ -88,7 +89,7 @@ export function MobileTabBar() {
       zIndex: 200,
     }}>
       <Link to="/works" style={tabStyle(isWorks)}>
-        <span style={labelStyle(isWorks)}>作品</span>
+        <span style={labelStyle(isWorks)}>{t('works', lang)}</span>
         {isWorks && (
           <div style={{ width:'3px', height:'3px', borderRadius:'50%',
             background:'rgba(255,255,255,0.55)', position:'absolute',
@@ -97,7 +98,7 @@ export function MobileTabBar() {
       </Link>
 
       <Link to="/flash" style={tabStyle(isFlash)}>
-        <span style={labelStyle(isFlash)}>認領圖</span>
+        <span style={labelStyle(isFlash)}>{t('flash', lang)}</span>
         {isFlash && (
           <div style={{ width:'3px', height:'3px', borderRadius:'50%',
             background:'rgba(255,255,255,0.55)', position:'absolute',
@@ -107,7 +108,7 @@ export function MobileTabBar() {
 
       <a href={WIX_URL} target="_blank" rel="noreferrer" style={tabStyle(false)}>
         <span style={{ fontSize:'10px', letterSpacing:'2.5px', textTransform:'uppercase',
-          color: WARM, fontFamily:'inherit' }}>主站預約</span>
+          color: WARM, fontFamily:'inherit' }}>{t('appointments', lang)}</span>
       </a>
     </div>
   )
