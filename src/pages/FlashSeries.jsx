@@ -117,41 +117,51 @@ export default function FlashSeries() {
   const activeItem = seriesItems[activeIdx]
   const isAvail    = activeItem?.status?.trim() === '可認領'
 
-  /* ── Mobile layout: peek carousel ── */
+  /* ── Mobile layout: tarot card draw ── */
   if (isMobile) return (
-    <div style={{ position:'fixed', inset:0, background:BG, overflow:'hidden' }}>
+    <div style={{ position:'fixed', inset:0, background:'#0c0c0e', overflow:'hidden' }}>
       <MobileTopBar />
 
-      {/* Content area between nav bars */}
+      {/* Ambient glow */}
+      <div style={{ position:'absolute', top:'38%', left:'50%',
+        transform:'translate(-50%,-50%)',
+        width:'130vw', height:'90vw', borderRadius:'50%',
+        background:'radial-gradient(ellipse, rgba(255,255,255,0.026) 0%, transparent 65%)',
+        pointerEvents:'none', zIndex:0 }} />
+
+      {/* Content area */}
       <div style={{
-        position:'absolute', top:'52px', bottom:'calc(62px + env(safe-area-inset-bottom, 0px))',
-        left:0, right:0, display:'flex', flexDirection:'column',
+        position:'absolute', top:'52px',
+        bottom:'calc(62px + env(safe-area-inset-bottom, 0px))',
+        left:0, right:0, display:'flex', flexDirection:'column', zIndex:1,
       }}>
+
         {/* Breadcrumb */}
-        <div style={{ padding:'10px 18px 6px', flexShrink:0,
+        <div style={{ padding:'10px 18px 4px', flexShrink:0,
           display:'flex', alignItems:'center', gap:'8px' }}>
           <Link to="/flash"
             style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase',
-              color:'rgba(255,255,255,0.32)', textDecoration:'none' }}>
+              color:'rgba(255,255,255,0.28)', textDecoration:'none' }}>
             ← {t('backFlash',lang)}
           </Link>
-          <span style={{ fontSize:'11px', color:'rgba(255,255,255,0.18)' }}>／</span>
+          <span style={{ fontSize:'11px', color:'rgba(255,255,255,0.14)' }}>／</span>
           <span style={{ fontSize:'11px', letterSpacing:'1px', textTransform:'uppercase',
-            color:'rgba(255,255,255,0.50)' }}>
+            color:'rgba(255,255,255,0.42)' }}>
             {getSeriesName(flash, decoded, lang)}
           </span>
         </div>
 
-        {/* 選牌輪播：中間牌在最前，左右露出側邊壓在後方 */}
+        {/* Card spread */}
         <div style={{ flex:1, position:'relative', overflow:'hidden' }}
           onTouchStart={swipe.onTouchStart} onTouchEnd={swipe.onTouchEnd}>
 
           {seriesItems.map((item, i) => {
-            const offset = i - activeIdx
+            const offset      = i - activeIdx
             if (Math.abs(offset) > 1) return null
-            const isCenter = offset === 0
-            const claimedDim = isCenter && item.status?.trim() !== '可認領' ? 0.55 : 1
-            const leftPct = 14 + offset * 58
+            const isCenter    = offset === 0
+            const isAvailCard = item.status?.trim() === '可認領'
+            const leftPct     = 14 + offset * 58
+            const rotation    = offset * 14
 
             return (
               <div key={item.id}
@@ -161,92 +171,149 @@ export default function FlashSeries() {
                 }}
                 style={{
                   position:'absolute', left:`${leftPct}%`, width:'72%',
-                  height:'min(52vh, calc(72vw * 1.3))',
+                  height:'min(56vh, calc(72vw * 1.46))',
                   top:'50%',
-                  transform: isCenter ? 'translateY(-50%)' : 'translateY(-50%) scale(0.90)',
-                  transformOrigin:'center center',
-                  overflow:'hidden', cursor:'pointer',
-                  opacity: claimedDim,
+                  transform: isCenter
+                    ? 'translateY(-52%)'
+                    : `translateY(-52%) scale(0.86) rotate(${rotation}deg)`,
+                  transformOrigin:'50% 88%',
+                  overflow:'hidden',
+                  cursor:'pointer',
+                  border:`1px solid rgba(255,255,255,${isCenter ? 0.22 : 0.06})`,
+                  boxShadow: isCenter
+                    ? '0 24px 80px rgba(0,0,0,0.90)'
+                    : '0 8px 30px rgba(0,0,0,0.55)',
+                  opacity: isCenter ? 1 : 0.28,
                   zIndex: isCenter ? 2 : 1,
                   transition:[
                     'left 0.65s cubic-bezier(0.25,0.1,0.25,1)',
                     'transform 0.65s cubic-bezier(0.25,0.1,0.25,1)',
-                    'opacity 0.35s ease',
+                    'opacity 0.4s ease',
                   ].join(', '),
                 }}>
+
+                {/* Image */}
                 {item.image_url
                   ? <img src={item.image_url} alt={item.title}
                       style={{ width:'100%', height:'100%', objectFit:'cover',
-                        filter:`brightness(${isCenter ? 0.85 : 0.30})`,
+                        filter:`brightness(${isCenter ? 0.80 : 0.18})`,
                         transition:'filter 0.55s ease' }} />
-                  : <div style={{ width:'100%', height:'100%', background:'rgba(255,255,255,0.04)' }} />
+                  : <div style={{ width:'100%', height:'100%',
+                      background:'rgba(255,255,255,0.02)',
+                      display:'flex', alignItems:'center', justifyContent:'center' }}>
+                      <span style={{ fontSize:'18px', color:'rgba(255,255,255,0.08)' }}>✦</span>
+                    </div>
                 }
+
+                {/* Side card: subtle diamond back pattern */}
+                {!isCenter && (
+                  <div style={{ position:'absolute', inset:0, pointerEvents:'none',
+                    background:`repeating-linear-gradient(45deg,
+                      rgba(255,255,255,0.022) 0px, rgba(255,255,255,0.022) 1px,
+                      transparent 1px, transparent 14px)`,
+                  }} />
+                )}
+
+                {/* Side card: edge fade */}
                 {!isCenter && <>
-                  <div style={{ position:'absolute', top:0, left:0, right:0, height:'30%',
-                    background:`linear-gradient(to bottom,${BG},transparent)`, pointerEvents:'none' }}/>
-                  <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'30%',
-                    background:`linear-gradient(to top,${BG},transparent)`, pointerEvents:'none' }}/>
+                  <div style={{ position:'absolute', top:0, left:0, right:0, height:'50%',
+                    background:'linear-gradient(to bottom, #0c0c0e, transparent)',
+                    pointerEvents:'none' }}/>
+                  <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'50%',
+                    background:'linear-gradient(to top, #0c0c0e, transparent)',
+                    pointerEvents:'none' }}/>
                 </>}
+
+                {/* Center card: corner marks */}
                 {isCenter && <>
-                  <div style={{ position:'absolute', top:0, left:0, bottom:0, width:'15%',
-                    background:`linear-gradient(to right, rgba(17,17,17,0.50), transparent)`, pointerEvents:'none' }}/>
-                  <div style={{ position:'absolute', top:0, right:0, bottom:0, width:'15%',
-                    background:`linear-gradient(to left, rgba(17,17,17,0.50), transparent)`, pointerEvents:'none' }}/>
+                  <div style={{ position:'absolute', top:'10px', left:'10px',
+                    width:'16px', height:'16px', pointerEvents:'none',
+                    borderTop:'1px solid rgba(255,255,255,0.30)',
+                    borderLeft:'1px solid rgba(255,255,255,0.30)' }} />
+                  <div style={{ position:'absolute', top:'10px', right:'10px',
+                    width:'16px', height:'16px', pointerEvents:'none',
+                    borderTop:'1px solid rgba(255,255,255,0.30)',
+                    borderRight:'1px solid rgba(255,255,255,0.30)' }} />
+                  <div style={{ position:'absolute', bottom:'10px', left:'10px',
+                    width:'16px', height:'16px', pointerEvents:'none',
+                    borderBottom:'1px solid rgba(255,255,255,0.30)',
+                    borderLeft:'1px solid rgba(255,255,255,0.30)' }} />
+                  <div style={{ position:'absolute', bottom:'10px', right:'10px',
+                    width:'16px', height:'16px', pointerEvents:'none',
+                    borderBottom:'1px solid rgba(255,255,255,0.30)',
+                    borderRight:'1px solid rgba(255,255,255,0.30)' }} />
+
+                  {/* Status badge — top center of card */}
+                  <div style={{ position:'absolute', top:'18px', left:0, right:0,
+                    display:'flex', justifyContent:'center', pointerEvents:'none' }}>
+                    <span style={{ fontSize:'9px', letterSpacing:'2.5px',
+                      textTransform:'uppercase', padding:'2px 10px',
+                      color: isAvailCard ? 'var(--ocean)' : 'rgba(255,255,255,0.28)',
+                      border:`1px solid ${isAvailCard ? 'var(--ocean)' : 'rgba(255,255,255,0.14)'}`,
+                      background:'rgba(12,12,14,0.65)' }}>
+                      {isAvailCard ? t('available',lang) : t('taken',lang)}
+                    </span>
+                  </div>
+
+                  {/* Card title — bottom of card */}
+                  <div style={{ position:'absolute', bottom:0, left:0, right:0,
+                    padding:'36px 16px 22px', pointerEvents:'none',
+                    background:'linear-gradient(to top, rgba(12,12,14,0.96) 28%, rgba(12,12,14,0.55) 65%, transparent 100%)' }}>
+                    <p style={{ fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
+                      fontSize:'14px', color:'rgba(255,255,255,0.80)', letterSpacing:'0.5px',
+                      textAlign:'center', margin:0 }}>
+                      {item.title}
+                    </p>
+                  </div>
                 </>}
+
               </div>
             )
           })}
 
+          {/* Tap zones */}
           {activeIdx > 0 && (
             <div onClick={() => go(-1)} style={{
-              position:'absolute', left:0, top:0, bottom:0, width:'14%', zIndex:10,
-              cursor:'pointer',
+              position:'absolute', left:0, top:0, bottom:0, width:'14%',
+              zIndex:10, cursor:'pointer',
             }} />
           )}
           {activeIdx < total - 1 && (
             <div onClick={() => go(1)} style={{
-              position:'absolute', right:0, top:0, bottom:0, width:'14%', zIndex:10,
-              cursor:'pointer',
+              position:'absolute', right:0, top:0, bottom:0, width:'14%',
+              zIndex:10, cursor:'pointer',
             }} />
           )}
         </div>
 
-        {/* Info section */}
+        {/* Bottom: dots + counter + CTA */}
         {activeItem && (
-          <div style={{ padding:'10px 18px 10px', flexShrink:0,
-            display:'flex', flexDirection:'column', alignItems:'center', gap:'7px', textAlign:'center' }}>
-            {/* Progress dot bar */}
+          <div style={{ padding:'10px 20px 8px', flexShrink:0,
+            display:'flex', flexDirection:'column', alignItems:'center', gap:'8px', textAlign:'center' }}>
+
             {total > 1 && (
-              <div style={{ display:'flex', gap:'4px', alignItems:'center', marginBottom:'2px' }}>
+              <div style={{ display:'flex', gap:'4px', alignItems:'center' }}>
                 {seriesItems.map((_, i) => (
                   <div key={i} onClick={() => setActiveIdx(i)} style={{
-                    width: i === activeIdx ? '18px' : '4px', height:'2px',
+                    width: i === activeIdx ? '20px' : '4px', height:'2px',
                     borderRadius:'1px', cursor:'pointer',
-                    background: i === activeIdx ? 'rgba(255,255,255,0.60)' : 'rgba(255,255,255,0.18)',
+                    background: i === activeIdx ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.14)',
                     transition:'all 0.35s ease',
                   }} />
                 ))}
               </div>
             )}
-            <span style={{ fontSize:'10px', letterSpacing:'2px', color:'rgba(255,255,255,0.25)' }}>
+
+            <span style={{ fontSize:'10px', letterSpacing:'2px', color:'rgba(255,255,255,0.20)' }}>
               {String(activeIdx+1).padStart(2,'0')} / {String(total).padStart(2,'0')}
             </span>
-            {/* Status badge */}
-            <span style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase',
-              padding:'2px 8px', opacity:0.85,
-              color: isAvail ? 'var(--ocean)' : 'rgba(255,255,255,0.3)',
-              border: `1px solid ${isAvail ? 'var(--ocean)' : 'rgba(255,255,255,0.2)'}` }}>
-              {isAvail ? t('available',lang) : t('taken',lang)}
-            </span>
-            <p style={{ fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
-              fontSize:'18px', color:'rgba(255,255,255,0.88)', letterSpacing:'0.5px', margin:0 }}>
-              {activeItem.title}
-            </p>
+
             <button
               onClick={() => navigate(`/flash/${encodeURIComponent(decoded)}/${activeItem.id}`)}
-              style={{ background:'none', border:'1px solid rgba(255,255,255,0.25)',
-                color:'rgba(255,255,255,0.60)', fontSize:'11px', letterSpacing:'2px',
-                textTransform:'uppercase', padding:'8px 22px', cursor:'pointer' }}>
+              style={{ background:'none', border:'1px solid rgba(255,255,255,0.18)',
+                color:'rgba(255,255,255,0.48)', fontSize:'11px', letterSpacing:'3px',
+                textTransform:'uppercase', padding:'9px 28px', cursor:'pointer',
+                transition:'border-color 0.25s, color 0.25s' }}>
               {t('viewDesign',lang)} →
             </button>
           </div>

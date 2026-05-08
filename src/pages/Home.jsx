@@ -357,7 +357,7 @@ function HomeMobile() {
         <div style={{ background:'#111', position:'relative',
           minHeight:'fit-content',
           paddingTop:'1vh', paddingLeft:'40px', paddingRight:'40px',
-          paddingBottom:'calc(env(safe-area-inset-bottom, 0px) + 80px)',
+          paddingBottom:'calc(env(safe-area-inset-bottom, 0px) + 140px)',
           display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'flex-start', textAlign:'center',
         }}>
           {/* 底部質感背景 */}
