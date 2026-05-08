@@ -298,14 +298,24 @@ export default function WorksTheme() {
             {/* Background image */}
             <div style={{
               position:'absolute', inset:0, zIndex:0,
-              backgroundImage:`url(https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/%E8%A1%8C%E5%8B%95%E7%89%88%E8%83%8C%E6%99%AF.jpg)`,
+              backgroundImage:`url("https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/%E8%A1%8C%E5%8B%95%E7%89%88%E8%83%8C%E6%99%AF.jpg")`,
               backgroundSize:'cover', backgroundPosition:'center 30%',
-              opacity:0.28,
+              opacity:0.50,
             }}/>
-            {/* Gradient overlay */}
+            {/* Overlay: dim slightly for readability */}
             <div style={{
               position:'absolute', inset:0, zIndex:1, pointerEvents:'none',
-              background:'linear-gradient(to bottom, rgba(17,17,17,0.72) 0%, rgba(17,17,17,0.38) 50%, rgba(17,17,17,0.68) 100%)',
+              background:'rgba(17,17,17,0.28)',
+            }}/>
+            {/* Top fade: smooth transition from card area above */}
+            <div style={{
+              position:'absolute', top:0, left:0, right:0, height:'44px', zIndex:2, pointerEvents:'none',
+              background:'linear-gradient(to bottom, #111 0%, transparent 100%)',
+            }}/>
+            {/* Bottom fade */}
+            <div style={{
+              position:'absolute', bottom:0, left:0, right:0, height:'32px', zIndex:2, pointerEvents:'none',
+              background:'linear-gradient(to top, rgba(17,17,17,0.70) 0%, transparent 100%)',
             }}/>
 
             {/* Content */}
