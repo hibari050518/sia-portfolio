@@ -390,17 +390,15 @@ function HomeMobile() {
             ))}
           </div>
 
-          {/* LOGO 再次出現，帶出文字序列 */}
-          <img src={LOGO_URL} alt="SIA TATTOOIST"
-            style={{
-              width:'54vw', maxWidth:'220px', marginBottom:'5vh',
-              opacity: r0 ? 0.88 : 0,
-              transform: r0 ? 'translateY(0)' : 'translateY(22px)',
-              transition:'opacity 1.3s ease, transform 1.3s ease',
-              filter:'drop-shadow(0 2px 20px rgba(0,0,0,0.45))',
-            }}
-            onError={e => { e.currentTarget.style.display='none' }}
-          />
+          {/* Opening animation — 取代靜態 logo */}
+          <div style={{
+            width:'88vw', maxWidth:'420px', marginBottom:'3vh',
+            opacity: r0 ? 1 : 0,
+            transform: r0 ? 'translateY(0)' : 'translateY(22px)',
+            transition:'opacity 1.3s ease, transform 1.3s ease',
+          }}>
+            <OpeningAnimation />
+          </div>
 
           {/* 標語 */}
           <p style={{
@@ -640,7 +638,7 @@ export default function Home() {
           alignItems:'center', justifyContent:'center', textAlign:'center',
           padding:'0 28%',
         }}>
-          <OpeningAnimation style={{ width:'min(580px,44vw)', marginBottom:'16px' }} />
+          <OpeningAnimation style={{ width:'min(580px,44vw)', marginBottom:'40px' }} />
 
           <FadeUp delay={1100}>
             <p style={{
