@@ -181,7 +181,7 @@ export default function FlashHome() {
       {/* Logo watermark — left portion visible at bottom-right */}
       <div style={{
         position:'absolute', left:'30px',
-        bottom:'calc(62px + env(safe-area-inset-bottom, 0px) - 230px)',
+        bottom:'-50px',
         zIndex:8, pointerEvents:'none', opacity:0.09,
       }}>
         <img src={LOGO_URL} alt="" style={{ height:'150px', width:'auto', maxWidth:'none', display:'block' }} />
