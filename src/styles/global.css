@@ -40,7 +40,7 @@ html {
 
 body {
   font-family: var(--serif);
-  background: var(--bg);
+  background: #111;
   color: var(--text-primary);
   min-height: 100vh;
 }
@@ -68,10 +68,10 @@ body::after {
 
 /* 通用頁面淡入 */
 .page-fade {
-  animation: fadeUp 0.45s ease forwards;
+  animation: fadeUp 0.22s ease forwards;
 }
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(12px); }
+  from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
