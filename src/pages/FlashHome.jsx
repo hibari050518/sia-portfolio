@@ -211,7 +211,7 @@ export default function FlashHome() {
           bottom:'calc(62px + env(safe-area-inset-bottom, 0px))',
           left:0, right:0,
           display:'flex', flexDirection:'column', alignItems:'center',
-          gap:'7px', padding:'12px 48px 16px', textAlign:'center',
+          gap:'6px', padding:'12px 48px 12px', textAlign:'center',
         }}>
           <span style={{ fontSize:'10px', letterSpacing:'2px', color:'rgba(255,255,255,0.30)' }}>
             {String(activeIdx+1).padStart(2,'0') + ' / ' + String(total).padStart(2,'0')}
@@ -238,7 +238,7 @@ export default function FlashHome() {
           <button onClick={() => setShowRules(true)}
             style={{ background:'none', border:'none', cursor:'pointer',
               fontSize:'10px', letterSpacing:'2px', textTransform:'uppercase',
-              color:'var(--ocean)', padding:'4px 0', marginTop:'16px',
+              color:'var(--ocean)', padding:'4px 0', marginTop:'6px',
               textDecoration:'underline', textUnderlineOffset:'3px',
               opacity: 0.75, transition:'opacity 0.2s' }}
             onMouseEnter={e => e.currentTarget.style.opacity = '1'}
