@@ -211,13 +211,14 @@ export default function FlashHome() {
           bottom:'calc(62px + env(safe-area-inset-bottom, 0px))',
           left:0, right:0,
           display:'flex', flexDirection:'column', alignItems:'center',
-          gap:'6px', padding:'12px 48px 12px', textAlign:'center',
+          padding:'14px 48px 14px', textAlign:'center',
         }}>
+          {/* 標題群：計數器 + 系列名 + 件數 */}
           <span style={{ fontSize:'10px', letterSpacing:'2px', color:'rgba(255,255,255,0.30)' }}>
             {String(activeIdx+1).padStart(2,'0') + ' / ' + String(total).padStart(2,'0')}
           </span>
           <h2 style={{ fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
-            fontSize:'28px', color:'rgba(255,255,255,0.92)', lineHeight:1.2, margin:'2px 0 0' }}>
+            fontSize:'28px', color:'rgba(255,255,255,0.92)', lineHeight:1.2, margin:'4px 0 5px' }}>
             {getSeriesName(flash, series.name, lang)}
           </h2>
           <p style={{ fontSize:'11px', letterSpacing:'3px', textTransform:'uppercase',
@@ -229,16 +230,17 @@ export default function FlashHome() {
               </span>
             )}
           </p>
+          {/* 動作群：按鈕 + 認領規則，與標題群有明確間距 */}
           <button onClick={() => navigate('/flash/' + encodeURIComponent(series.name))}
             style={{ background:'none', border:'1px solid rgba(255,255,255,0.28)',
               color:'rgba(255,255,255,0.65)', fontSize:'11px', letterSpacing:'3px',
-              textTransform:'uppercase', padding:'8px 22px', cursor:'pointer', marginTop:'4px' }}>
+              textTransform:'uppercase', padding:'8px 22px', cursor:'pointer', marginTop:'16px' }}>
             {t('exploreFlash',lang) + ' →'}
           </button>
           <button onClick={() => setShowRules(true)}
             style={{ background:'none', border:'none', cursor:'pointer',
               fontSize:'10px', letterSpacing:'2px', textTransform:'uppercase',
-              color:'var(--ocean)', padding:'4px 0', marginTop:'6px',
+              color:'var(--ocean)', padding:'2px 0', marginTop:'10px',
               textDecoration:'underline', textUnderlineOffset:'3px',
               opacity: 0.75, transition:'opacity 0.2s' }}
             onMouseEnter={e => e.currentTarget.style.opacity = '1'}
