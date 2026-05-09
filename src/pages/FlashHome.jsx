@@ -238,11 +238,11 @@ export default function FlashHome() {
           <button onClick={() => setShowRules(true)}
             style={{ background:'none', border:'none', cursor:'pointer',
               fontSize:'10px', letterSpacing:'2px', textTransform:'uppercase',
-              color:'rgba(255,255,255,0.42)', padding:'4px 0', marginTop:'4px',
+              color:'var(--ocean)', padding:'4px 0', marginTop:'16px',
               textDecoration:'underline', textUnderlineOffset:'3px',
-              transition:'color 0.2s' }}
-            onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.70)'}
-            onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.42)'}>
+              opacity: 0.75, transition:'opacity 0.2s' }}
+            onMouseEnter={e => e.currentTarget.style.opacity = '1'}
+            onMouseLeave={e => e.currentTarget.style.opacity = '0.75'}>
             {'認領規則'}
           </button>
         </div>
