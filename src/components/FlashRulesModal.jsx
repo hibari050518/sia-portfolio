@@ -4,7 +4,7 @@ const SECTION_STYLE = {
   fontSize: '10px',
   letterSpacing: '3px',
   textTransform: 'uppercase',
-  color: 'rgba(255,255,255,0.28)',
+  color: 'rgba(255,255,255,0.50)',
   marginTop: '32px',
   marginBottom: '14px',
 }

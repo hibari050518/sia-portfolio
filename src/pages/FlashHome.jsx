@@ -236,13 +236,12 @@ export default function FlashHome() {
             {t('exploreFlash',lang) + ' →'}
           </button>
           <button onClick={() => setShowRules(true)}
-            style={{ background:'none', border:'none', cursor:'pointer',
-              fontSize:'10px', letterSpacing:'2px',
-              color:'rgba(255,255,255,0.40)', padding:'4px 0', marginTop:'2px',
-              textDecoration:'underline', textUnderlineOffset:'3px',
-              transition:'color 0.2s' }}
-            onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.65)'}
-            onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.40)'}>
+            style={{ background:'none', border:'1px solid rgba(255,255,255,0.22)', cursor:'pointer',
+              fontSize:'10px', letterSpacing:'2px', textTransform:'uppercase',
+              color:'rgba(255,255,255,0.55)', padding:'6px 16px', marginTop:'6px',
+              textDecoration:'none', transition:'border-color 0.2s, color 0.2s' }}
+            onMouseEnter={e => { e.currentTarget.style.color='rgba(255,255,255,0.85)'; e.currentTarget.style.borderColor='rgba(255,255,255,0.45)' }}
+            onMouseLeave={e => { e.currentTarget.style.color='rgba(255,255,255,0.55)'; e.currentTarget.style.borderColor='rgba(255,255,255,0.22)' }}>
             {'認領規則'}
           </button>
         </div>
@@ -374,13 +373,12 @@ export default function FlashHome() {
             © SIA TATTOOIST
           </span>
           <button onClick={() => setShowRules(true)}
-            style={{ background:'none', border:'none', cursor:'pointer',
-              fontSize:'10px', letterSpacing:'2px',
-              color:'rgba(255,255,255,0.40)', padding:0,
-              textDecoration:'underline', textUnderlineOffset:'3px',
-              transition:'color 0.2s' }}
-            onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.65)'}
-            onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.40)'}>
+            style={{ background:'none', border:'1px solid rgba(255,255,255,0.22)', cursor:'pointer',
+              fontSize:'10px', letterSpacing:'2px', textTransform:'uppercase',
+              color:'rgba(255,255,255,0.55)', padding:'5px 14px',
+              textDecoration:'none', transition:'border-color 0.2s, color 0.2s' }}
+            onMouseEnter={e => { e.currentTarget.style.color='rgba(255,255,255,0.85)'; e.currentTarget.style.borderColor='rgba(255,255,255,0.45)' }}
+            onMouseLeave={e => { e.currentTarget.style.color='rgba(255,255,255,0.55)'; e.currentTarget.style.borderColor='rgba(255,255,255,0.22)' }}>
             {'認領規則'}
           </button>
         </div>

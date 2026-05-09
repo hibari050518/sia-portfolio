@@ -245,13 +245,13 @@ export default function FlashDetail() {
             ))}
           </div>
           <button onClick={() => setShowRules(true)}
-            style={{ background:'none', border:'none', cursor:'pointer',
-              fontSize:'10px', letterSpacing:'2px',
-              color:'rgba(255,255,255,0.40)', padding:'0 0 32px',
-              textDecoration:'underline', textUnderlineOffset:'3px',
-              display:'block', transition:'color 0.2s' }}
-            onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.65)'}
-            onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.40)'}>
+            style={{ background:'none', border:'1px solid rgba(255,255,255,0.22)', cursor:'pointer',
+              fontSize:'10px', letterSpacing:'2px', textTransform:'uppercase',
+              color:'rgba(255,255,255,0.55)', padding:'6px 16px', marginBottom:'28px',
+              textDecoration:'none', display:'inline-block',
+              transition:'border-color 0.2s, color 0.2s' }}
+            onMouseEnter={e => { e.currentTarget.style.color='rgba(255,255,255,0.85)'; e.currentTarget.style.borderColor='rgba(255,255,255,0.45)' }}
+            onMouseLeave={e => { e.currentTarget.style.color='rgba(255,255,255,0.55)'; e.currentTarget.style.borderColor='rgba(255,255,255,0.22)' }}>
             {'認領規則'}
           </button>
           {isAvail ? (
@@ -442,13 +442,13 @@ export default function FlashDetail() {
             ))}
           </div>
           <button onClick={() => setShowRules(true)}
-            style={{ background:'none', border:'none', cursor:'pointer',
-              fontSize:'10px', letterSpacing:'2px',
-              color:'rgba(255,255,255,0.40)', padding:'0 0 36px',
-              textDecoration:'underline', textUnderlineOffset:'3px',
-              display:'block', transition:'color 0.2s' }}
-            onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.65)'}
-            onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.40)'}>
+            style={{ background:'none', border:'1px solid rgba(255,255,255,0.22)', cursor:'pointer',
+              fontSize:'10px', letterSpacing:'2px', textTransform:'uppercase',
+              color:'rgba(255,255,255,0.55)', padding:'6px 16px', marginBottom:'32px',
+              textDecoration:'none', display:'inline-block',
+              transition:'border-color 0.2s, color 0.2s' }}
+            onMouseEnter={e => { e.currentTarget.style.color='rgba(255,255,255,0.85)'; e.currentTarget.style.borderColor='rgba(255,255,255,0.45)' }}
+            onMouseLeave={e => { e.currentTarget.style.color='rgba(255,255,255,0.55)'; e.currentTarget.style.borderColor='rgba(255,255,255,0.22)' }}>
             {'認領規則'}
           </button>
           {isAvail ? (
