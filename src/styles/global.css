@@ -81,18 +81,15 @@ body::after {
   .page-pad { padding: 32px 20px !important; }
 }
 
-/* ── Mobile global resets ── */
+
+/* -- Mobile global resets -- */
 @media (max-width: 768px) {
   html {
-    /* 支援 dynamic viewport height（iOS Safari 捲動時工具列收合） */
     height: -webkit-fill-available;
   }
   body {
-    /* 防止過度捲動彈跳影響固定佈局 */
     overscroll-behavior: none;
-    /* 取消 iOS 點擊藍色高亮 */
     -webkit-tap-highlight-color: transparent;
   }
-  /* 讓所有按鈕點擊區域更友善 */
   button { min-height: 44px; min-width: 44px; }
 }

@@ -6,6 +6,7 @@ import { useLang, t, formatSize } from '../context/LangContext'
 import { useIsMobile } from '../hooks/useIsMobile'
 import { useTouchSwipe } from '../hooks/useTouchSwipe'
 import { MobileTopBar, MobileTabBar } from '../components/MobileNav'
+import FlashRulesModal from '../components/FlashRulesModal'
 
 const BG    = '#111'
 const PANEL = '#161616'
@@ -76,6 +77,7 @@ export default function FlashDetail() {
   const [imgLoaded,    setImgLoaded]    = useState(false)
   const [copied,       setCopied]       = useState(false)
   const [activeImgIdx, setActiveImgIdx] = useState(0)
+  const [showRules,    setShowRules]    = useState(false)
 
   useEffect(() => {
     const timer = setTimeout(() => setNavIn(true), 300)
@@ -109,7 +111,7 @@ export default function FlashDetail() {
 
   useEffect(() => {
     const handler = (e) => {
-      if (e.key === 'Escape') navigate(`/flash/${encodeURIComponent(decoded)}`)
+      if (e.key === 'Escape') navigate('/flash/' + encodeURIComponent(decoded))
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
@@ -124,8 +126,8 @@ export default function FlashDetail() {
   if (!item) return (
     <div style={{ position:'fixed', inset:0, background:BG, display:'flex',
       alignItems:'center', justifyContent:'center' }}>
-      <Link to={`/flash/${encodeURIComponent(decoded)}`}
-        style={{ color:'rgba(255,255,255,0.4)', fontSize:'12px', letterSpacing:'3px' }}>← Back</Link>
+      <Link to={'/flash/' + encodeURIComponent(decoded)}
+        style={{ color:'rgba(255,255,255,0.4)', fontSize:'12px', letterSpacing:'3px' }}>back</Link>
     </div>
   )
 
@@ -134,9 +136,9 @@ export default function FlashDetail() {
 
   const buildInquiryText = () => {
     const lines = {
-      zh: `嗨！我想詢問「${item.title}」的預約時間 🌿\n設計尺寸：${item.size_suggestion || '待確認'}\n預計部位：${item.body_part || '待確認'}\n請問目前可以預約什麼時候呢？`,
-      en: `Hi! I'd like to inquire about booking "${item.title}" 🌿\nSize: ${item.size_suggestion || 'TBD'}\nPlacement: ${item.body_part || 'TBD'}\nWhen would be available to book?`,
-      ko: `안녕하세요! "${item.title}" 예약 문의드립니다 🌿\n사이즈: ${item.size_suggestion || '미정'}\n부위: ${item.body_part || '미정'}\n예약 가능한 날짜가 언제인가요?`,
+      zh: '嗨！我想詢問「' + item.title + '」的預約時間 🌿\n設計尺寸：' + (item.size_suggestion || '待確認') + '\n預計部位：' + (item.body_part || '待確認') + '\n請問目前可以預約什麼時候呢？',
+      en: 'Hi! I\'d like to inquire about booking "' + item.title + '" 🌿\nSize: ' + (item.size_suggestion || 'TBD') + '\nPlacement: ' + (item.body_part || 'TBD') + '\nWhen would be available to book?',
+      ko: '안녕하세요! "' + item.title + '" 예약 문의드립니다 🌿\n사이즈: ' + (item.size_suggestion || '미정') + '\n부위: ' + (item.body_part || '미정') + '\n예약 가능한 날짜가 언제인가요?',
     }
     return item.line_prefill || lines[lang] || lines.zh
   }
@@ -158,45 +160,30 @@ export default function FlashDetail() {
     })
   }
 
-  const lineUrl = `https://line.me/R/ti/p/${encodeURIComponent(LINE_ID)}`
+  const lineUrl = 'https://line.me/R/ti/p/' + encodeURIComponent(LINE_ID)
 
-  /* ── Mobile layout: image top, content below, scrollable ── */
   if (isMobile) return (
     <div style={{ position:'fixed', inset:0, background:BG, overflow:'hidden' }}>
       <MobileTopBar />
-
-      {/* Scrollable content area */}
       <div style={{
-        position:'absolute',
-        top:'52px',
+        position:'absolute', top:'52px',
         bottom:'calc(62px + env(safe-area-inset-bottom, 0px))',
-        left:0, right:0,
-        overflowY:'auto',
-        WebkitOverflowScrolling:'touch',
+        left:0, right:0, overflowY:'auto', WebkitOverflowScrolling:'touch',
       }}>
-        {/* Image section — 52vh */}
         <div style={{ position:'relative', height:'52vh', overflow:'hidden', flexShrink:0 }}
           onTouchStart={imgSwipe.onTouchStart} onTouchEnd={imgSwipe.onTouchEnd}>
           {activeImg && (
-            <img
-              key={`${item.id}-${activeImgIdx}`}
-              src={activeImg}
-              alt={item.title}
+            <img key={item.id + '-' + activeImgIdx} src={activeImg} alt={item.title}
               onLoad={() => setImgLoaded(true)}
               style={{
                 position:'absolute', inset:0, width:'100%', height:'100%',
                 objectFit:'cover', objectPosition:'center center',
-                filter:`brightness(${isAvail ? 0.75 : 0.45})`,
-                opacity: imgLoaded ? 1 : 0,
-                transition:'opacity 0.65s ease',
-              }}
-            />
+                filter:'brightness(' + (isAvail ? 0.75 : 0.45) + ')',
+                opacity: imgLoaded ? 1 : 0, transition:'opacity 0.65s ease',
+              }} />
           )}
-          {/* Bottom fade */}
           <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'35%',
-            background:`linear-gradient(to top, ${BG}, transparent)`, pointerEvents:'none', zIndex:2 }} />
-
-          {/* Image dots */}
+            background:'linear-gradient(to top, ' + BG + ', transparent)', pointerEvents:'none', zIndex:2 }} />
           {images.length > 1 && (
             <div style={{ position:'absolute', bottom:'16px', left:'50%', transform:'translateX(-50%)',
               display:'flex', gap:'5px', zIndex:5 }}>
@@ -209,43 +196,30 @@ export default function FlashDetail() {
               ))}
             </div>
           )}
-
-          {/* Back link */}
           <div style={{ position:'absolute', top:'14px', left:'18px', zIndex:10 }}>
-            <Link to={`/flash/${encodeURIComponent(decoded)}`}
+            <Link to={'/flash/' + encodeURIComponent(decoded)}
               style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase',
                 color:'rgba(255,255,255,0.55)', textDecoration:'none' }}>
-              ← {decoded}
+              {'← ' + decoded}
             </Link>
           </div>
         </div>
 
-        {/* Content section */}
         <div style={{ padding:'36px 28px 56px', background:BG }}>
-
-          {/* Series + status row */}
           <div style={{ display:'flex', alignItems:'center', marginBottom:'24px', gap:'12px' }}>
             <span style={{ fontSize:'11px', letterSpacing:'3px', textTransform:'uppercase',
-              color:'var(--ocean)', opacity:0.85, flexShrink:0 }}>
-              {decoded}
-            </span>
+              color:'var(--ocean)', opacity:0.85, flexShrink:0 }}>{decoded}</span>
             <div style={{ flex:1, height:'1px', background:'rgba(255,255,255,0.10)' }} />
             <span style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase',
               padding:'3px 10px', flexShrink:0,
               color: isAvail ? 'var(--ocean)' : 'rgba(255,255,255,0.3)',
-              border: `1px solid ${isAvail ? 'rgba(74,143,160,0.6)' : 'rgba(255,255,255,0.15)'}` }}>
+              border: '1px solid ' + (isAvail ? 'rgba(74,143,160,0.6)' : 'rgba(255,255,255,0.15)') }}>
               {isAvail ? t('available',lang) : t('taken',lang)}
             </span>
           </div>
-
-          {/* Title */}
           <h1 style={{ fontFamily:'var(--serif)', fontWeight:300, fontStyle:'italic',
             fontSize:'clamp(24px, 7vw, 40px)', color:'rgba(255,255,255,0.92)',
-            lineHeight:1.3, marginBottom:'32px' }}>
-            {item.title}
-          </h1>
-
-          {/* Description */}
+            lineHeight:1.3, marginBottom:'32px' }}>{item.title}</h1>
           {item.description && (
             <p style={{ fontSize:'14px', lineHeight:2.2, color:'rgba(255,255,255,0.50)',
               fontStyle:'italic', marginBottom:'40px',
@@ -253,9 +227,7 @@ export default function FlashDetail() {
               {item.description}
             </p>
           )}
-
-          {/* Details */}
-          <div style={{ display:'flex', flexDirection:'column', marginBottom:'40px' }}>
+          <div style={{ display:'flex', flexDirection:'column', marginBottom:'16px' }}>
             {[
               { label:'BODY',  value: item.body_part },
               { label:'SIZE',  value: formatSize(item.size_suggestion, lang) },
@@ -272,32 +244,36 @@ export default function FlashDetail() {
               </div>
             ))}
           </div>
-
-          {/* CTA */}
+          <button onClick={() => setShowRules(true)}
+            style={{ background:'none', border:'none', cursor:'pointer',
+              fontSize:'10px', letterSpacing:'2px',
+              color:'rgba(255,255,255,0.22)', padding:'0 0 32px',
+              textDecoration:'underline', textUnderlineOffset:'3px',
+              display:'block' }}>
+            {'認領規則'}
+          </button>
           {isAvail ? (
             <div style={{ display:'flex', flexDirection:'column', gap:'12px', marginBottom:'32px' }}>
-              <button
-                onClick={handleCopyAndLine}
+              <button onClick={handleCopyAndLine}
                 style={{
                   background: copied ? 'rgba(74,143,160,0.15)' : 'none',
-                  border: `1px solid ${copied ? 'var(--ocean)' : 'rgba(255,255,255,0.28)'}`,
+                  border: '1px solid ' + (copied ? 'var(--ocean)' : 'rgba(255,255,255,0.28)'),
                   color: copied ? 'var(--ocean)' : 'rgba(255,255,255,0.75)',
                   fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
                   padding:'15px 20px', cursor:'pointer',
                   transition:'all 0.25s', textAlign:'center',
                 }}>
-                {copied ? t('copied',lang) : `${t('copyInquiry',lang)} ↗`}
+                {copied ? t('copied',lang) : t('copyInquiry',lang) + ' ↗'}
               </button>
               <a href={lineUrl} target="_blank" rel="noreferrer"
                 style={{
                   display:'block', textAlign:'center',
-                  background:'rgba(0,185,0,0.12)',
-                  border:'1px solid rgba(0,185,0,0.4)',
+                  background:'rgba(0,185,0,0.12)', border:'1px solid rgba(0,185,0,0.4)',
                   color:'rgba(100,255,100,0.85)',
                   fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
                   padding:'15px 20px', textDecoration:'none',
                 }}>
-                {t('goLine',lang)} →
+                {t('goLine',lang) + ' →'}
               </a>
             </div>
           ) : (
@@ -306,13 +282,11 @@ export default function FlashDetail() {
               {t('takenNote',lang)}
             </p>
           )}
-
-          {/* Prev / Next */}
           {(prev || next) && (
             <div style={{ display:'flex', justifyContent:'space-between',
               paddingTop:'28px', borderTop:'1px solid rgba(255,255,255,0.07)' }}>
               {prev
-                ? <Link to={`/flash/${encodeURIComponent(decoded)}/${prev.id}`}
+                ? <Link to={'/flash/' + encodeURIComponent(decoded) + '/' + prev.id}
                     style={{ fontSize:'12px', letterSpacing:'2px',
                       color:'rgba(255,255,255,0.35)', textDecoration:'none' }}>
                     {t('prev',lang)}
@@ -320,7 +294,7 @@ export default function FlashDetail() {
                 : <span />
               }
               {next
-                ? <Link to={`/flash/${encodeURIComponent(decoded)}/${next.id}`}
+                ? <Link to={'/flash/' + encodeURIComponent(decoded) + '/' + next.id}
                     style={{ fontSize:'12px', letterSpacing:'2px',
                       color:'rgba(255,255,255,0.35)', textDecoration:'none' }}>
                     {t('next',lang)}
@@ -331,35 +305,27 @@ export default function FlashDetail() {
           )}
         </div>
       </div>
-
       <MobileTabBar />
+      {showRules && <FlashRulesModal onClose={() => setShowRules(false)} />}
     </div>
   )
 
-  /* ── Desktop layout ── */
   return (
     <div style={{ position:'fixed', inset:0, background:BG, overflow:'hidden' }}>
-
-      {/* ── Left image panel ── */}
       <div style={{
         position:'absolute', top:0, left:0, bottom:0, right:'38%',
         overflow:'hidden',
         opacity: navIn ? 1 : 0, transition:'opacity 0.8s ease 0.2s',
       }}>
         {activeImg && (
-          <img
-            key={`${item.id}-${activeImgIdx}`}
-            src={activeImg}
-            alt={item.title}
+          <img key={item.id + '-' + activeImgIdx} src={activeImg} alt={item.title}
             onLoad={() => setImgLoaded(true)}
             style={{
               position:'absolute', inset:0, width:'100%', height:'100%',
               objectFit:'cover', objectPosition:'center center',
-              filter:`brightness(${isAvail ? 0.72 : 0.45})`,
-              opacity: imgLoaded ? 1 : 0,
-              transition:'opacity 0.65s ease',
-            }}
-          />
+              filter:'brightness(' + (isAvail ? 0.72 : 0.45) + ')',
+              opacity: imgLoaded ? 1 : 0, transition:'opacity 0.65s ease',
+            }} />
         )}
         <div style={{
           position:'absolute', inset:0, pointerEvents:'none', zIndex:2,
@@ -367,18 +333,14 @@ export default function FlashDetail() {
         }} />
         <div style={{
           position:'absolute', top:0, right:0, bottom:0, width:'12%', zIndex:2,
-          background:`linear-gradient(to right, transparent, ${PANEL})`, pointerEvents:'none',
+          background:'linear-gradient(to right, transparent, ' + PANEL + ')', pointerEvents:'none',
         }} />
-
-        {/* 多圖切換箭頭 */}
         {images.length > 1 && (
           <>
             <ImgArrow dir="left"  onClick={() => goImg(-1)} disabled={activeImgIdx === 0} />
             <ImgArrow dir="right" onClick={() => goImg(1)}  disabled={activeImgIdx === images.length - 1} />
           </>
         )}
-
-        {/* 圓點指示器 */}
         {images.length > 1 && (
           <div style={{
             position:'absolute', bottom:'28px', left:'50%', transform:'translateX(-50%)',
@@ -397,21 +359,19 @@ export default function FlashDetail() {
         )}
       </div>
 
-      {/* ── Back link ── */}
       <div style={{
         position:'absolute', top:'82px', left:'44px', zIndex:30,
         opacity: navIn ? 1 : 0, transition:'opacity 0.6s ease 0.12s',
       }}>
-        <Link to={`/flash/${encodeURIComponent(decoded)}`}
+        <Link to={'/flash/' + encodeURIComponent(decoded)}
           style={{ fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
             color:'rgba(255,255,255,0.38)', textDecoration:'none', transition:'color 0.2s' }}
           onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.8)'}
           onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.38)'}>
-          ← {decoded}
+          {'← ' + decoded}
         </Link>
       </div>
 
-      {/* ── Top nav ── */}
       <nav style={{
         position:'absolute', top:0, left:0, right:0, zIndex:30,
         display:'flex', justifyContent:'space-between', alignItems:'center',
@@ -433,51 +393,29 @@ export default function FlashDetail() {
         </div>
       </nav>
 
-      {/* ── Right story panel ── */}
       <div style={{
         position:'absolute', top:0, right:0, bottom:0, width:'38%',
-        background: PANEL,
-        borderLeft:'1px solid rgba(255,255,255,0.07)',
+        background: PANEL, borderLeft:'1px solid rgba(255,255,255,0.07)',
         overflowY:'auto', zIndex:20,
         opacity: navIn ? 1 : 0, transition:'opacity 0.8s ease 0.3s',
       }}>
         <div style={{ padding:'108px 48px 64px', display:'flex', flexDirection:'column', minHeight:'100%' }}>
-
-          {/* Series tag ─────── Status — 同一行，中間連線 */}
-          <div style={{
-            display:'flex', alignItems:'center',
-            marginBottom:'40px',
-          }}>
-            <span style={{
-              fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
-              color:'var(--ocean)', opacity:0.85, flexShrink:0,
-              padding:'4px 0',
-            }}>
+          <div style={{ display:'flex', alignItems:'center', marginBottom:'40px' }}>
+            <span style={{ fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
+              color:'var(--ocean)', opacity:0.85, flexShrink:0, padding:'4px 0' }}>
               {decoded}
             </span>
-            <div style={{
-              flex:1, height:'1px',
-              background:'rgba(255,255,255,0.12)',
-              margin:'0 16px',
-            }} />
-            <span style={{
-              fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
+            <div style={{ flex:1, height:'1px', background:'rgba(255,255,255,0.12)', margin:'0 16px' }} />
+            <span style={{ fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
               padding:'4px 12px', flexShrink:0,
               color: isAvail ? 'var(--ocean)' : 'rgba(255,255,255,0.3)',
-              border: `1px solid ${isAvail ? 'rgba(74,143,160,0.6)' : 'rgba(255,255,255,0.15)'}`,
-            }}>
+              border: '1px solid ' + (isAvail ? 'rgba(74,143,160,0.6)' : 'rgba(255,255,255,0.15)') }}>
               {isAvail ? t('available',lang) : t('taken',lang)}
             </span>
           </div>
-
-          {/* Title */}
           <h1 style={{ fontFamily:'var(--serif)', fontWeight:300, fontStyle:'italic',
             fontSize:'clamp(24px, 2.4vw, 42px)', color:'rgba(255,255,255,0.92)',
-            lineHeight:1.2, marginBottom:'36px' }}>
-            {item.title}
-          </h1>
-
-          {/* Description */}
+            lineHeight:1.2, marginBottom:'36px' }}>{item.title}</h1>
           {item.description && (
             <p style={{ fontSize:'14px', lineHeight:2.1, color:'rgba(255,255,255,0.52)',
               fontStyle:'italic', marginBottom:'48px',
@@ -485,9 +423,7 @@ export default function FlashDetail() {
               {item.description}
             </p>
           )}
-
-          {/* Details */}
-          <div style={{ display:'flex', flexDirection:'column', marginBottom:'52px' }}>
+          <div style={{ display:'flex', flexDirection:'column', marginBottom:'16px' }}>
             {[
               { label:'BODY',  value: item.body_part },
               { label:'SIZE',  value: formatSize(item.size_suggestion, lang) },
@@ -497,62 +433,59 @@ export default function FlashDetail() {
                 borderBottom:'1px solid rgba(255,255,255,0.06)', padding:'16px 0' }}>
                 <span style={{ fontSize:'12px', letterSpacing:'1.5px',
                   color:'rgba(255,255,255,0.22)', width:'60px', flexShrink:0 }}>{d.label}</span>
-                <span style={{ fontSize:'13px', color: d.label === 'PRICE' ? 'var(--gold)' : 'rgba(255,255,255,0.62)',
+                <span style={{ fontSize:'13px',
+                  color: d.label === 'PRICE' ? 'var(--gold)' : 'rgba(255,255,255,0.62)',
                   letterSpacing:'0.5px', fontStyle: d.label === 'PRICE' ? 'italic' : 'normal' }}>{d.value}</span>
               </div>
             ))}
           </div>
-
-          {/* CTA */}
+          <button onClick={() => setShowRules(true)}
+            style={{ background:'none', border:'none', cursor:'pointer',
+              fontSize:'10px', letterSpacing:'2px',
+              color:'rgba(255,255,255,0.22)', padding:'0 0 36px',
+              textDecoration:'underline', textUnderlineOffset:'3px',
+              display:'block', transition:'color 0.2s' }}
+            onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.50)'}
+            onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.22)'}>
+            {'認領規則'}
+          </button>
           {isAvail ? (
             <div style={{ display:'flex', flexDirection:'column', gap:'14px' }}>
-              <button
-                onClick={handleCopyAndLine}
+              <button onClick={handleCopyAndLine}
                 style={{
                   background: copied ? 'rgba(74,143,160,0.15)' : 'none',
-                  border: `1px solid ${copied ? 'var(--ocean)' : 'rgba(255,255,255,0.28)'}`,
+                  border: '1px solid ' + (copied ? 'var(--ocean)' : 'rgba(255,255,255,0.28)'),
                   color: copied ? 'var(--ocean)' : 'rgba(255,255,255,0.75)',
                   fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
                   padding:'15px 20px', cursor:'pointer',
                   transition:'all 0.25s', textAlign:'center',
                 }}>
-                {copied ? t('copied',lang) : `${t('copyInquiry',lang)} ↗`}
+                {copied ? t('copied',lang) : t('copyInquiry',lang) + ' ↗'}
               </button>
               <a href={lineUrl} target="_blank" rel="noreferrer"
                 style={{
                   display:'block', textAlign:'center',
-                  background:'rgba(0,185,0,0.12)',
-                  border:'1px solid rgba(0,185,0,0.4)',
+                  background:'rgba(0,185,0,0.12)', border:'1px solid rgba(0,185,0,0.4)',
                   color:'rgba(100,255,100,0.85)',
                   fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase',
-                  padding:'15px 20px', textDecoration:'none',
-                  transition:'all 0.25s',
+                  padding:'15px 20px', textDecoration:'none', transition:'all 0.25s',
                 }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.background = 'rgba(0,185,0,0.22)'
-                  e.currentTarget.style.borderColor = 'rgba(0,185,0,0.7)'
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.background = 'rgba(0,185,0,0.12)'
-                  e.currentTarget.style.borderColor = 'rgba(0,185,0,0.4)'
-                }}>
-                {t('goLine',lang)} →
+                onMouseEnter={e => { e.currentTarget.style.background='rgba(0,185,0,0.22)'; e.currentTarget.style.borderColor='rgba(0,185,0,0.7)' }}
+                onMouseLeave={e => { e.currentTarget.style.background='rgba(0,185,0,0.12)'; e.currentTarget.style.borderColor='rgba(0,185,0,0.4)' }}>
+                {t('goLine',lang) + ' →'}
               </a>
             </div>
           ) : (
-            <p style={{ fontSize:'13px', lineHeight:2.0, color:'rgba(255,255,255,0.35)',
-              fontStyle:'italic' }}>
+            <p style={{ fontSize:'13px', lineHeight:2.0, color:'rgba(255,255,255,0.35)', fontStyle:'italic' }}>
               {t('takenNote',lang)}
             </p>
           )}
-
-          {/* Prev / Next */}
           {(prev || next) && (
             <div style={{ display:'flex', justifyContent:'space-between',
               marginTop:'auto', paddingTop:'44px',
               borderTop:'1px solid rgba(255,255,255,0.07)' }}>
               {prev
-                ? <Link to={`/flash/${encodeURIComponent(decoded)}/${prev.id}`}
+                ? <Link to={'/flash/' + encodeURIComponent(decoded) + '/' + prev.id}
                     style={{ fontSize:'12px', letterSpacing:'2px',
                       color:'rgba(255,255,255,0.28)', textDecoration:'none', transition:'color 0.2s' }}
                     onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.7)'}
@@ -562,7 +495,7 @@ export default function FlashDetail() {
                 : <span />
               }
               {next
-                ? <Link to={`/flash/${encodeURIComponent(decoded)}/${next.id}`}
+                ? <Link to={'/flash/' + encodeURIComponent(decoded) + '/' + next.id}
                     style={{ fontSize:'12px', letterSpacing:'2px',
                       color:'rgba(255,255,255,0.28)', textDecoration:'none', transition:'color 0.2s' }}
                     onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.7)'}
@@ -575,6 +508,7 @@ export default function FlashDetail() {
           )}
         </div>
       </div>
+      {showRules && <FlashRulesModal onClose={() => setShowRules(false)} />}
     </div>
   )
 }

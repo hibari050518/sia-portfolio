@@ -19,28 +19,24 @@ export function useLang() {
   return useContext(LangContext)
 }
 
-/** 取得多語欄位，空白時 fallback 到中文 */
 export function gl(item, field, lang) {
   if (!item) return ''
   if (lang === 'zh') return item[field] || ''
   return item[`${field}_${lang}`] || item[field] || ''
 }
 
-/** 取得主題名稱（從該主題第一筆 work 取） */
 export function getThemeName(works, themeName, lang) {
   if (lang === 'zh') return themeName
   const first = works.find(w => w.theme === themeName)
   return (first && first[`theme_${lang}`]) || themeName
 }
 
-/** 取得系列名稱（從該系列第一筆 flash 取） */
 export function getSeriesName(flash, seriesName, lang) {
   if (lang === 'zh') return seriesName
   const first = flash.find(f => f.series === seriesName)
   return (first && first[`series_${lang}`]) || seriesName
 }
 
-/** 靜態 UI 字串翻譯表 */
 const UI = {
   works:        { zh:'作品',    en:'Works',       ko:'작품'     },
   flash:        { zh:'認領圖',  en:'Flash',        ko:'플래시'   },
@@ -54,7 +50,6 @@ const UI = {
   tagline:      { zh:'以刺青為你譜下靈魂深處的聲音', en:'', ko:'타투로 영혼 깊은 곳의 목소리를 담아드립니다' },
   prev:         { zh:'← Prev',  en:'← Prev',      ko:'← 이전'   },
   next:         { zh:'Next →',  en:'Next →',      ko:'다음 →'   },
-  // Flash
   backFlash:    { zh:'認領圖',  en:'Flash',        ko:'플래시'   },
   viewDesign:   { zh:'查看設計', en:'View Design', ko:'디자인 보기' },
   available:    { zh:'可認領',  en:'Available',    ko:'가능'     },
@@ -69,14 +64,12 @@ const UI = {
   exploreFlash: { zh:'探索系列', en:'Explore Series', ko:'시리즈 탐색' },
 }
 
-/** 尺寸字串格式化：把「約」在非中文時換成「~」 */
 export function formatSize(value, lang) {
   if (!value) return value
   if (lang === 'zh') return value
   return value.replace(/約\s*/g, '~ ')
 }
 
-/** 取得靜態 UI 翻譯字串 */
 export function t(key, lang) {
   const entry = UI[key]
   if (!entry) return key
