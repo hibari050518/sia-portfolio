@@ -247,9 +247,11 @@ export default function FlashDetail() {
           <button onClick={() => setShowRules(true)}
             style={{ background:'none', border:'none', cursor:'pointer',
               fontSize:'10px', letterSpacing:'2px',
-              color:'rgba(255,255,255,0.22)', padding:'0 0 32px',
+              color:'rgba(255,255,255,0.40)', padding:'0 0 32px',
               textDecoration:'underline', textUnderlineOffset:'3px',
-              display:'block' }}>
+              display:'block', transition:'color 0.2s' }}
+            onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.65)'}
+            onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.40)'}>
             {'認領規則'}
           </button>
           {isAvail ? (
@@ -442,11 +444,11 @@ export default function FlashDetail() {
           <button onClick={() => setShowRules(true)}
             style={{ background:'none', border:'none', cursor:'pointer',
               fontSize:'10px', letterSpacing:'2px',
-              color:'rgba(255,255,255,0.22)', padding:'0 0 36px',
+              color:'rgba(255,255,255,0.40)', padding:'0 0 36px',
               textDecoration:'underline', textUnderlineOffset:'3px',
               display:'block', transition:'color 0.2s' }}
-            onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.50)'}
-            onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.22)'}>
+            onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.65)'}
+            onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.40)'}>
             {'認領規則'}
           </button>
           {isAvail ? (
