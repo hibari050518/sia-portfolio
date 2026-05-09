@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import OpeningAnimation from '../components/OpeningAnimation'
 
-const DURATION = 5200   // ms — lets full TATTOOIST comet animation finish (~4.9s)
+const DURATION = 4400   // ms — slightly faster, TATTOOIST still completes before navigation
 const HOLD_MS  = 300    // pause at 100% before fading
 const FADE_MS  = 480    // fade-out duration
 
