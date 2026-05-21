@@ -374,4 +374,25 @@ export default function WorkDetail() {
                     style={{ fontSize:'12px', letterSpacing:'2px',
                       color:'rgba(255,255,255,0.28)', textDecoration:'none', transition:'color 0.2s' }}
                     onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.7)'}
-                    onMouseLeave={e => e.currentTarget.style.col
+                    onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.28)'}>
+                    {t('prev',lang)}
+                  </Link>
+                : <span />
+              }
+              {next
+                ? <Link to={'/works/' + encodeURIComponent(decoded) + '/' + next.id}
+                    style={{ fontSize:'12px', letterSpacing:'2px',
+                      color:'rgba(255,255,255,0.28)', textDecoration:'none', transition:'color 0.2s' }}
+                    onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.7)'}
+                    onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.28)'}>
+                    {t('next',lang)}
+                  </Link>
+                : <span />
+              }
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
