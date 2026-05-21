@@ -518,7 +518,7 @@ export default function Home() {
       setLeftKey(k  => k + 1)
     }, SWAP_INTERVAL)
     return () => clearInterval(t)
-  }, [])
+  }, [LEFT_IMGS.length])
 
   useEffect(() => {
     if (RIGHT_IMGS.length < 2) return
@@ -531,7 +531,7 @@ export default function Home() {
       return () => clearInterval(t)
     }, SWAP_INTERVAL / 2)
     return () => clearTimeout(delay)
-  }, [])
+  }, [RIGHT_IMGS.length])
 
   return (
     <div style={{ position:'fixed', inset:0, background:BG, overflow:'hidden' }}
