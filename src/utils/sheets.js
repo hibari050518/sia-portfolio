@@ -18,10 +18,8 @@ async function fetchSheet(sheetName) {
     transformHeader: h => {
       const t = h.trim()
       // gviz CSV doubles headers: "visible visible" → "visible"
-      const mid = Math.floor(t.length / 2)
-      if (t.length % 2 === 0 && t[mid] === ' ' && t.slice(0, mid) === t.slice(mid + 1)) {
-        return t.slice(0, mid)
-      }
+      const i = t.indexOf(' ')
+      if (i !== -1 && t.slice(0, i) === t.slice(i + 1)) return t.slice(0, i)
       return t
     },
     transform: v => (typeof v === 'string' ? v.trim() : v),
