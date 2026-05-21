@@ -91,6 +91,7 @@ export default function WorkDetail() {
   const images = work
     ? [work.image_url, work.image_url_2, work.image_url_3].filter(Boolean)
     : []
+  const isVideoOnly = images.length === 0 && !!work?.video_url
 
   useEffect(() => {
     setImgLoaded(false)
@@ -139,16 +140,24 @@ export default function WorkDetail() {
       }}>
         <div style={{ position:'relative', height:'52vh', overflow:'hidden', flexShrink:0 }}
           onTouchStart={imgSwipe.onTouchStart} onTouchEnd={imgSwipe.onTouchEnd}>
-          {activeImg && (
-            <img key={work.id + '-' + activeImgIdx} src={activeImg} alt={work.title}
-              onLoad={() => setImgLoaded(true)}
-              style={{
-                position:'absolute', inset:0, width:'100%', height:'100%',
-                objectFit:'cover', objectPosition:'center center',
-                filter:'brightness(0.72)',
-                opacity: imgLoaded ? 1 : 0, transition:'opacity 0.65s ease',
-              }} />
-          )}
+          {isVideoOnly
+            ? <video src={work.video_url} autoPlay muted loop playsInline
+                style={{
+                  position:'absolute', inset:0, width:'100%', height:'100%',
+                  objectFit:'cover', objectPosition:'center center',
+                  filter:'brightness(0.72)',
+                }} />
+            : activeImg && (
+              <img key={work.id + '-' + activeImgIdx} src={activeImg} alt={work.title}
+                onLoad={() => setImgLoaded(true)}
+                style={{
+                  position:'absolute', inset:0, width:'100%', height:'100%',
+                  objectFit:'cover', objectPosition:'center center',
+                  filter:'brightness(0.72)',
+                  opacity: imgLoaded ? 1 : 0, transition:'opacity 0.65s ease',
+                }} />
+            )
+          }
           <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'35%',
             background:'linear-gradient(to top, ' + BG + ', transparent)', pointerEvents:'none', zIndex:2 }} />
           {images.length > 1 && (
@@ -237,16 +246,24 @@ export default function WorkDetail() {
         overflow:'hidden',
         opacity: navIn ? 1 : 0, transition:'opacity 0.8s ease 0.2s',
       }}>
-        {activeImg && (
-          <img key={work.id + '-' + activeImgIdx} src={activeImg} alt={work.title}
-            onLoad={() => setImgLoaded(true)}
-            style={{
-              position:'absolute', inset:0, width:'100%', height:'100%',
-              objectFit:'cover', objectPosition:'center center',
-              filter:'brightness(0.68)',
-              opacity: imgLoaded ? 1 : 0, transition:'opacity 0.65s ease',
-            }} />
-        )}
+        {isVideoOnly
+          ? <video src={work.video_url} autoPlay muted loop playsInline
+              style={{
+                position:'absolute', inset:0, width:'100%', height:'100%',
+                objectFit:'cover', objectPosition:'center center',
+                filter:'brightness(0.68)',
+              }} />
+          : activeImg && (
+            <img key={work.id + '-' + activeImgIdx} src={activeImg} alt={work.title}
+              onLoad={() => setImgLoaded(true)}
+              style={{
+                position:'absolute', inset:0, width:'100%', height:'100%',
+                objectFit:'cover', objectPosition:'center center',
+                filter:'brightness(0.68)',
+                opacity: imgLoaded ? 1 : 0, transition:'opacity 0.65s ease',
+              }} />
+          )
+        }
         <div style={{
           position:'absolute', inset:0, pointerEvents:'none', zIndex:2,
           background:'linear-gradient(to bottom, rgba(17,17,17,0.55) 0%, rgba(17,17,17,0) 18%, rgba(17,17,17,0) 75%, rgba(17,17,17,0.75) 100%)',
@@ -357,25 +374,4 @@ export default function WorkDetail() {
                     style={{ fontSize:'12px', letterSpacing:'2px',
                       color:'rgba(255,255,255,0.28)', textDecoration:'none', transition:'color 0.2s' }}
                     onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.7)'}
-                    onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.28)'}>
-                    {t('prev',lang)}
-                  </Link>
-                : <span />
-              }
-              {next
-                ? <Link to={'/works/' + encodeURIComponent(decoded) + '/' + next.id}
-                    style={{ fontSize:'12px', letterSpacing:'2px',
-                      color:'rgba(255,255,255,0.28)', textDecoration:'none', transition:'color 0.2s' }}
-                    onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.7)'}
-                    onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.28)'}>
-                    {t('next',lang)}
-                  </Link>
-                : <span />
-              }
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  )
-}
+                    onMouseLeave={e => e.currentTarget.style.col
