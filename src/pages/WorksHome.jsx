@@ -88,7 +88,9 @@ export default function WorksHome() {
   const themeNames  = getThemes(works)
   const themeData   = themeNames.map(name => {
     const tw = works.filter(w => w.theme === name)
-    const images = tw.flatMap(w =>
+    const featured = tw.filter(w => w.featured === 'TRUE')
+    const pool = featured.length > 0 ? featured : tw
+    const images = pool.flatMap(w =>
       [w.image_url, w.image_url_2, w.image_url_3].filter(Boolean)
     )
     return { name, count: tw.length, image: images[0] || '', images }
