@@ -462,7 +462,8 @@ export default function WorksTheme() {
               {work.image_url
                 ? <img src={work.image_url} alt={work.title}
                     style={{ position:'relative', zIndex:1, width:'100%', height:'100%',
-                      objectFit:'cover', objectPosition:'center center',
+                      objectFit: isCenter ? 'contain' : 'cover',
+                      objectPosition:'center center',
                       filter:`brightness(${brightness})`, transition:'filter 0.45s ease' }}
                   />
                 : <div style={{ position:'relative', zIndex:1, width:'100%', height:'100%',

@@ -27,21 +27,7 @@ function LangSwitcher() {
 
 const LOGO_URL = 'https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/Sia_logo_%E6%96%87%E5%AD%97%EF%BC%88%E7%99%BD%EF%BC%89.png'
 
-const ALL_IMGS = [
-  'https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/IMG_0138.jpg',
-  'https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/IMG_0316.jpg',
-  'https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/IMG_0784.jpg',
-  'https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/IMG_0884.jpg',
-  'https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/IMG_1252.jpg',
-  'https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/IMG_1433.jpg',
-  'https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/IMG_1478.jpg',
-  'https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/IMG_1699.JPG',
-  'https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/IMG_1727.JPG',
-  'https://pub-3710d2f605bf433c8902b146670ddf3d.r2.dev/f23051264.jpg',
-]
-
-const LEFT_IMGS  = ALL_IMGS.filter((_, i) => i % 2 === 0)
-const RIGHT_IMGS = ALL_IMGS.filter((_, i) => i % 2 === 1)
+// Images loaded dynamically from works sheet — see HomeMobile & Home components
 
 const BG = '#111'
 const BREATH_CYCLE  = 4400
@@ -194,6 +180,8 @@ const S1_PARTICLES = [
 
 function HomeMobile() {
   const { lang, setLang } = useLang()
+  const { works } = useWorks()
+  const imgs = (works || []).filter(w => w.image_url).map(w => w.image_url)
   const [bgIdx,    setBgIdx]    = useState(0)
   const [imgLoaded, setImgLoaded] = useState(false)
   const [scrollY,  setScrollY]  = useState(0)
@@ -201,16 +189,16 @@ function HomeMobile() {
   const scrollRef   = useRef(null)
 
   useEffect(() => {
-    if (ALL_IMGS.length < 2) return
+    if (imgs.length < 2) return
     const timer = setInterval(() => {
       setBgIdx(prev => {
-        prevImgRef.current = ALL_IMGS[prev]
-        return (prev + 1) % ALL_IMGS.length
+        prevImgRef.current = imgs[prev]
+        return (prev + 1) % imgs.length
       })
       setImgLoaded(false)
     }, SWAP_INTERVAL)
     return () => clearInterval(timer)
-  }, [])
+  }, [imgs.length])
 
   useEffect(() => {
     const el = scrollRef.current
@@ -296,7 +284,7 @@ function HomeMobile() {
               style={{ position:'absolute', inset:0, width:'100%', height:'100%',
                 objectFit:'cover', objectPosition:'center 42%', filter:'brightness(0.48)' }} />
           )}
-          <img key={bgIdx} src={ALL_IMGS[bgIdx]} alt=""
+          <img key={bgIdx} src={imgs[bgIdx]} alt=""
             onLoad={() => setImgLoaded(true)}
             style={{ position:'absolute', inset:0, width:'100%', height:'100%',
               objectFit:'cover', objectPosition:'center 42%', filter:'brightness(0.48)',
@@ -462,6 +450,10 @@ export default function Home() {
 
   // ── 行動版直接渲染 ──
   if (isMobile) return <HomeMobile />
+
+  const allImgs   = (works || []).filter(w => w.image_url).map(w => w.image_url)
+  const LEFT_IMGS  = allImgs.filter((_, i) => i % 2 === 0)
+  const RIGHT_IMGS = allImgs.filter((_, i) => i % 2 === 1)
 
   const [leftIdx,  setLeftIdx]  = useState(0)
   const [rightIdx, setRightIdx] = useState(0)
