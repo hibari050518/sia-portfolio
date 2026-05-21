@@ -145,13 +145,13 @@ export default function WorksHome() {
       {prevImgRef.current && (
         <img src={prevImgRef.current} alt=""
           style={{ position:'absolute', inset:0, width:'100%', height:'100%',
-            objectFit:'contain', objectPosition:'center', filter:'brightness(0.65)' }} />
+            objectFit:'cover', objectPosition:'center', filter:'brightness(0.55)' }} />
       )}
       {theme && theme.images[bgImgIdx] && (
         <img key={activeIdx + '-' + bgImgIdx} src={theme.images[bgImgIdx]} alt={theme.name}
           onLoad={() => setImgLoaded(true)}
           style={{ position:'absolute', inset:0, width:'100%', height:'100%',
-            objectFit:'contain', objectPosition:'center', filter:'brightness(0.65)',
+            objectFit:'cover', objectPosition:'center', filter:'brightness(0.55)',
             opacity: imgLoaded ? 1 : 0, transition:'opacity 1s ease',
             animation: imgLoaded ? 'kenBurns ' + BG_CYCLE_MS + 'ms ease-out forwards' : 'none' }} />
       )}
@@ -241,15 +241,15 @@ export default function WorksHome() {
       {prevImgRef.current && (
         <img src={prevImgRef.current} alt=""
           style={{ position:'absolute', inset:0, width:'100%', height:'100%',
-            objectFit:'contain', objectPosition:'center center', filter:'brightness(0.68)' }} />
+            objectFit:'cover', objectPosition:'center center', filter:'brightness(0.58)' }} />
       )}
       {theme && theme.images[bgImgIdx] && (
         <img key={activeIdx + '-' + bgImgIdx} src={theme.images[bgImgIdx]} alt={theme.name}
           onLoad={() => setImgLoaded(true)}
           style={{
             position:'absolute', inset:0, width:'100%', height:'100%',
-            objectFit:'contain', objectPosition:'center center',
-            filter:'brightness(0.68)',
+            objectFit:'cover', objectPosition:'center center',
+            filter:'brightness(0.58)',
             opacity: imgLoaded ? 1 : 0, transition:'opacity 1s ease',
             animation: imgLoaded ? 'kenBurns ' + BG_CYCLE_MS + 'ms ease-out forwards' : 'none',
           }} />
