@@ -15,7 +15,15 @@ async function fetchSheet(sheetName) {
     header: true,
     skipEmptyLines: true,
     dynamicTyping: false,
-    transformHeader: h => h.trim(),
+    transformHeader: h => {
+      const t = h.trim()
+      // gviz CSV doubles headers: "visible visible" → "visible"
+      const mid = Math.floor(t.length / 2)
+      if (t.length % 2 === 0 && t[mid] === ' ' && t.slice(0, mid) === t.slice(mid + 1)) {
+        return t.slice(0, mid)
+      }
+      return t
+    },
     transform: v => (typeof v === 'string' ? v.trim() : v),
   })
   if (errors.length) console.warn('CSV parse warnings:', errors)
