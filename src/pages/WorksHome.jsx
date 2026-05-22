@@ -88,12 +88,17 @@ export default function WorksHome() {
   const themeNames  = getThemes(works)
   const themeData   = themeNames.map(name => {
     const tw = works.filter(w => w.theme === name)
-    const featured = tw.filter(w => w.featured === 'TRUE')
+    const featured = tw.filter(w => ['TRUE','TURE'].includes((w.featured || '').trim().toUpperCase()))
     const pool = featured.length > 0 ? featured : tw
     const images = pool.flatMap(w =>
       [w.image_url, w.image_url_2, w.image_url_3].filter(Boolean)
     )
-    return { name, count: tw.length, image: images[0] || '', images }
+    const desc = tw[0]
+      ? (lang === 'zh'
+          ? tw[0].theme_description || ''
+          : tw[0][`theme_description_${lang}`] || tw[0].theme_description || '')
+      : ''
+    return { name, count: tw.length, image: images[0] || '', images, desc }
   })
   const total  = themeData.length
   const theme  = themeData[activeIdx]
@@ -216,13 +221,21 @@ export default function WorksHome() {
             {String(activeIdx+1).padStart(2,'0') + ' / ' + String(total).padStart(2,'0')}
           </span>
           <h2 style={{ fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
-            fontSize:'28px', color:'rgba(255,255,255,0.92)', lineHeight:1.2, margin:'2px 0 0' }}>
+            fontSize:'clamp(22px, 6vw, 28px)', color:'rgba(255,255,255,0.92)', lineHeight:1.25,
+            margin:'2px 0 0', wordBreak:'keep-all' }}>
             {getThemeName(works, theme.name, lang)}
           </h2>
           <p style={{ fontSize:'11px', letterSpacing:'3px', textTransform:'uppercase',
             color:'rgba(255,255,255,0.35)', margin:0 }}>
             {theme.count + ' ' + t('pieces',lang)}
           </p>
+          {theme.desc && (
+            <p style={{ fontSize:'12px', lineHeight:1.9, color:'rgba(255,255,255,0.55)',
+              fontStyle:'italic', margin:'2px 0 0', letterSpacing:'0.3px',
+              padding:'0 8px', textAlign:'center' }}>
+              {theme.desc}
+            </p>
+          )}
           <button onClick={() => navigate('/works/' + encodeURIComponent(theme.name))}
             style={{ background:'none', border:'1px solid rgba(255,255,255,0.28)',
               color:'rgba(255,255,255,0.65)', fontSize:'11px', letterSpacing:'3px',
@@ -290,10 +303,19 @@ export default function WorksHome() {
             {theme.count + ' ' + t('pieces',lang)}
           </p>
           <h1 style={{ fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:300,
-            fontSize:'clamp(30px, 4.5vw, 70px)', color:'rgba(255,255,255,0.92)',
-            lineHeight:1.1, marginBottom:'32px' }}>
+            fontSize:'clamp(26px, 3.2vw, 54px)', color:'rgba(255,255,255,0.92)',
+            lineHeight:1.2, marginBottom:'20px', wordBreak:'keep-all',
+            maxWidth:'700px', padding:'0 20px' }}>
             {getThemeName(works, theme.name, lang)}
           </h1>
+          {theme.desc && (
+            <p style={{ fontSize:'15px', lineHeight:2, color:'rgba(255,255,255,0.58)',
+              fontStyle:'italic', maxWidth:'540px', letterSpacing:'0.4px',
+              marginBottom:'28px', padding:'0 20px', textAlign:'center',
+              pointerEvents:'none' }}>
+              {theme.desc}
+            </p>
+          )}
           <button
             onClick={() => navigate('/works/' + encodeURIComponent(theme.name))}
             style={{

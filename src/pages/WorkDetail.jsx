@@ -152,8 +152,8 @@ export default function WorkDetail() {
                 onLoad={() => setImgLoaded(true)}
                 style={{
                   position:'absolute', inset:0, width:'100%', height:'100%',
-                  objectFit:'cover', objectPosition:'center center',
-                  filter:'brightness(0.72)',
+                  objectFit:'contain', objectPosition:'center center',
+                  filter:'brightness(0.92)',
                   opacity: imgLoaded ? 1 : 0, transition:'opacity 0.65s ease',
                 }} />
             )
@@ -191,9 +191,9 @@ export default function WorkDetail() {
             {gl(work, 'title', lang)}
           </h1>
           {gl(work, 'story', lang) && (
-            <p style={{ fontSize:'14px', lineHeight:2.2, color:'rgba(255,255,255,0.50)',
+            <p style={{ fontSize:'16px', lineHeight:2.1, color:'rgba(255,255,255,0.68)',
               fontStyle:'italic', marginBottom:'40px',
-              borderLeft:'1px solid rgba(255,255,255,0.10)', paddingLeft:'18px' }}>
+              borderLeft:'1px solid rgba(255,255,255,0.15)', paddingLeft:'18px' }}>
               {gl(work, 'story', lang)}
             </p>
           )}
@@ -258,8 +258,8 @@ export default function WorkDetail() {
               onLoad={() => setImgLoaded(true)}
               style={{
                 position:'absolute', inset:0, width:'100%', height:'100%',
-                objectFit:'cover', objectPosition:'center center',
-                filter:'brightness(0.68)',
+                objectFit:'contain', objectPosition:'center center',
+                filter:'brightness(0.92)',
                 opacity: imgLoaded ? 1 : 0, transition:'opacity 0.65s ease',
               }} />
           )
@@ -344,9 +344,9 @@ export default function WorkDetail() {
             {gl(work, 'title', lang)}
           </h1>
           {gl(work, 'story', lang) && (
-            <p style={{ fontSize:'14px', lineHeight:2.1, color:'rgba(255,255,255,0.52)',
+            <p style={{ fontSize:'16px', lineHeight:2.1, color:'rgba(255,255,255,0.70)',
               fontStyle:'italic', marginBottom:'48px',
-              borderLeft:'1px solid rgba(255,255,255,0.10)', paddingLeft:'20px' }}>
+              borderLeft:'1px solid rgba(255,255,255,0.15)', paddingLeft:'20px' }}>
               {gl(work, 'story', lang)}
             </p>
           )}

@@ -182,7 +182,7 @@ export default function WorksTheme() {
         </div>
 
         {/* Breadcrumb */}
-        <div style={{ padding:'10px 18px 6px', flexShrink:0,
+        <div style={{ padding:'10px 18px 4px', flexShrink:0,
           display:'flex', alignItems:'center', gap:'8px' }}>
           <Link to="/works"
             style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase',
@@ -195,6 +195,16 @@ export default function WorksTheme() {
             {getThemeName(works, decoded, lang)}
           </span>
         </div>
+
+        {/* Theme description — mobile */}
+        {themeDescription && (
+          <div style={{ padding:'2px 18px 8px', flexShrink:0 }}>
+            <p style={{ fontSize:'12px', lineHeight:1.8, color:'rgba(255,255,255,0.52)',
+              fontStyle:'italic', margin:0, letterSpacing:'0.3px' }}>
+              {themeDescription}
+            </p>
+          </div>
+        )}
 
         {/* Card spread */}
         <div style={{ flex:1, position:'relative', paddingTop:'4px' }}
@@ -407,8 +417,8 @@ export default function WorksTheme() {
           padding:'0 44px 16px', flexShrink:0, zIndex:10,
           opacity: navIn ? 1 : 0, transition:'opacity 0.6s ease 0.18s',
         }}>
-          <p style={{ fontSize:'12px', lineHeight:1.8, color:'rgba(255,255,255,0.36)',
-            fontStyle:'italic', maxWidth:'480px', letterSpacing:'0.3px' }}>
+          <p style={{ fontSize:'15px', lineHeight:1.9, color:'rgba(255,255,255,0.65)',
+            fontStyle:'italic', maxWidth:'560px', letterSpacing:'0.4px' }}>
             {themeDescription}
           </p>
         </div>
