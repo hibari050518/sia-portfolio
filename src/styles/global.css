@@ -1,0 +1,95 @@
+:root {
+  /* ── 背景 ── */
+  --bg:          #0e1a1e;
+  --bg-card:     #172430;
+  --bg-hover:    #1f3040;
+  --border:      #2c4a52;
+  --border-light:#1e333a;
+
+  /* ── 文字 ── */
+  --text-primary:   #F2E8DC;
+  --text-secondary: #8aA8A8;
+  --text-dim:       #486070;
+
+  /* ── 點綴色 ── */
+  --ocean:      #5aaabf;
+  --gold:       #cdb48e;
+  --olive:      #4A4D38;
+  --warm:       #c8916e;
+  --warm-hover: #da9f79;
+
+  /* ── 狀態 ── */
+  --avail-bg:     #102832;
+  --avail-text:   #5aaabf;
+  --avail-border: #2c4a52;
+
+  /* ── 字型 ── */
+  --serif: 'Cormorant Garamond', Georgia, serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: var(--serif);
+  background: #111;
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; border: none; background: none; font: inherit; color: inherit; }
+img { display: block; max-width: 100%; }
+
+/* Grain texture overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.07;
+  pointer-events: none;
+  z-index: 9998;
+  mix-blend-mode: overlay;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* 通用頁面淡入 */
+.page-fade {
+  animation: fadeUp 0.22s ease forwards;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* RWD — 手機版 detail 頁兩欄改單欄 */
+@media (max-width: 700px) {
+  .detail-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
+  .page-pad { padding: 32px 20px !important; }
+}
+
+
+/* -- Mobile global resets -- */
+@media (max-width: 768px) {
+  html {
+    height: -webkit-fill-available;
+  }
+  body {
+    overscroll-behavior: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  button { min-height: 44px; min-width: 44px; }
+}

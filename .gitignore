@@ -1,0 +1,7 @@
+node_modules
+dist
+.env
+.DS_Store
+*.local
+package-lock.json
+vite.config.js.timestamp-*.mjs
