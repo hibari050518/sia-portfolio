@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { renderText } from '../utils/renderText'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useWorks } from '../hooks/useSheets'
 import { WIX_URL } from '../config'
@@ -198,10 +199,13 @@ export default function WorksTheme() {
 
         {/* Theme description — mobile */}
         {themeDescription && (
-          <div style={{ padding:'2px 18px 8px', flexShrink:0 }}>
-            <p style={{ fontSize:'12px', lineHeight:1.8, color:'rgba(255,255,255,0.52)',
-              fontStyle:'italic', margin:0, letterSpacing:'0.3px' }}>
-              {themeDescription}
+          <div style={{ padding:'2px 18px 6px', flexShrink:0,
+            maxHeight:'56px', overflow:'hidden' }}>
+            <p style={{ fontSize:'11px', lineHeight:1.75, color:'rgba(255,255,255,0.48)',
+              fontStyle:'italic', margin:0, letterSpacing:'0.3px',
+              display:'-webkit-box', WebkitLineClamp:3, WebkitBoxOrient:'vertical',
+              overflow:'hidden' }}>
+              {renderText(themeDescription)}
             </p>
           </div>
         )}
@@ -417,9 +421,9 @@ export default function WorksTheme() {
           padding:'0 44px 16px', flexShrink:0, zIndex:10,
           opacity: navIn ? 1 : 0, transition:'opacity 0.6s ease 0.18s',
         }}>
-          <p style={{ fontSize:'15px', lineHeight:1.9, color:'rgba(255,255,255,0.65)',
-            fontStyle:'italic', maxWidth:'560px', letterSpacing:'0.4px' }}>
-            {themeDescription}
+          <p style={{ fontSize:'13px', lineHeight:1.9, color:'rgba(255,255,255,0.62)',
+            fontStyle:'italic', maxWidth:'520px', letterSpacing:'0.4px' }}>
+            {renderText(themeDescription)}
           </p>
         </div>
       )}

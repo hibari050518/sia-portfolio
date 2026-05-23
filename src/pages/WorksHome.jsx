@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { renderText } from '../utils/renderText'
 import { Link, useNavigate } from 'react-router-dom'
 import { useWorks } from '../hooks/useSheets'
 import { getThemes } from '../utils/sheets'
@@ -309,11 +310,11 @@ export default function WorksHome() {
             {getThemeName(works, theme.name, lang)}
           </h1>
           {theme.desc && (
-            <p style={{ fontSize:'15px', lineHeight:2, color:'rgba(255,255,255,0.58)',
-              fontStyle:'italic', maxWidth:'540px', letterSpacing:'0.4px',
+            <p style={{ fontSize:'13px', lineHeight:2, color:'rgba(255,255,255,0.58)',
+              fontStyle:'italic', maxWidth:'520px', letterSpacing:'0.4px',
               marginBottom:'28px', padding:'0 20px', textAlign:'center',
               pointerEvents:'none' }}>
-              {theme.desc}
+              {renderText(theme.desc)}
             </p>
           )}
           <button

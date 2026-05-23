@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { renderText } from '../utils/renderText'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useWorks } from '../hooks/useSheets'
 import { WIX_URL } from '../config'
@@ -191,10 +192,10 @@ export default function WorkDetail() {
             {gl(work, 'title', lang)}
           </h1>
           {gl(work, 'story', lang) && (
-            <p style={{ fontSize:'16px', lineHeight:2.1, color:'rgba(255,255,255,0.68)',
+            <p style={{ fontSize:'14px', lineHeight:2.1, color:'rgba(255,255,255,0.68)',
               fontStyle:'italic', marginBottom:'40px',
               borderLeft:'1px solid rgba(255,255,255,0.15)', paddingLeft:'18px' }}>
-              {gl(work, 'story', lang)}
+              {renderText(gl(work, 'story', lang))}
             </p>
           )}
           <div style={{ display:'flex', flexDirection:'column', marginBottom:'40px' }}>
@@ -344,10 +345,10 @@ export default function WorkDetail() {
             {gl(work, 'title', lang)}
           </h1>
           {gl(work, 'story', lang) && (
-            <p style={{ fontSize:'16px', lineHeight:2.1, color:'rgba(255,255,255,0.70)',
+            <p style={{ fontSize:'14px', lineHeight:2.1, color:'rgba(255,255,255,0.70)',
               fontStyle:'italic', marginBottom:'48px',
               borderLeft:'1px solid rgba(255,255,255,0.15)', paddingLeft:'20px' }}>
-              {gl(work, 'story', lang)}
+              {renderText(gl(work, 'story', lang))}
             </p>
           )}
           <div style={{ display:'flex', flexDirection:'column' }}>
