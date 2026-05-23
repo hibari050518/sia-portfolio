@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { renderText } from '../utils/renderText'
+import { renderText } from '../utils/renderText.jsx'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useWorks } from '../hooks/useSheets'
 import { WIX_URL } from '../config'

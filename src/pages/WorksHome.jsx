@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { renderText } from '../utils/renderText'
+import { renderText } from '../utils/renderText.jsx'
 import { Link, useNavigate } from 'react-router-dom'
 import { useWorks } from '../hooks/useSheets'
 import { getThemes } from '../utils/sheets'
