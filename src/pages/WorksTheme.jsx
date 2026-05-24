@@ -197,15 +197,13 @@ export default function WorksTheme() {
           </span>
         </div>
 
-        {/* Theme description — mobile */}
+        {/* Theme description — mobile, single line */}
         {themeDescription && (
-          <div style={{ padding:'2px 18px 6px', flexShrink:0,
-            maxHeight:'56px', overflow:'hidden' }}>
-            <p style={{ fontSize:'11px', lineHeight:1.75, color:'rgba(255,255,255,0.48)',
+          <div style={{ padding:'0 18px 6px', flexShrink:0 }}>
+            <p style={{ fontSize:'11px', lineHeight:1.5, color:'rgba(255,255,255,0.40)',
               fontStyle:'italic', margin:0, letterSpacing:'0.3px',
-              display:'-webkit-box', WebkitLineClamp:3, WebkitBoxOrient:'vertical',
-              overflow:'hidden' }}>
-              {renderText(themeDescription)}
+              whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>
+              {themeDescription.replace('/br', ' ')}
             </p>
           </div>
         )}
