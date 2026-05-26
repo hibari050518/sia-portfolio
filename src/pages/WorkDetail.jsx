@@ -345,7 +345,7 @@ export default function WorkDetail() {
             {gl(work, 'title', lang)}
           </h1>
           {gl(work, 'story', lang) && (
-            <p style={{ fontSize:'12px', lineHeight:2.1, color:'rgba(255,255,255,0.70)',
+            <p style={{ fontSize:'13.5px', lineHeight:2.1, color:'rgba(255,255,255,0.70)',
               fontStyle:'italic', marginBottom:'48px',
               borderLeft:'1px solid rgba(255,255,255,0.15)', paddingLeft:'20px' }}>
               {renderText(gl(work, 'story', lang))}

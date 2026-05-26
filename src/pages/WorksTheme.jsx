@@ -197,16 +197,7 @@ export default function WorksTheme() {
           </span>
         </div>
 
-        {/* Theme description — mobile, single line */}
-        {themeDescription && (
-          <div style={{ padding:'0 18px 6px', flexShrink:0 }}>
-            <p style={{ fontSize:'11px', lineHeight:1.5, color:'rgba(255,255,255,0.40)',
-              fontStyle:'italic', margin:0, letterSpacing:'0.3px',
-              whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>
-              {themeDescription.replace('/br', ' ')}
-            </p>
-          </div>
-        )}
+        {/* Theme description — hidden on mobile */}
 
         {/* Card spread */}
         <div style={{ flex:1, position:'relative', paddingTop:'4px' }}
