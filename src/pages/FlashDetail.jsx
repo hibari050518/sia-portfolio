@@ -527,34 +527,53 @@ export default function FlashDetail() {
               {t('takenNote',lang)}
             </p>
           )}
-          {(prev || next) && (
-            <div style={{ display:'flex', justifyContent:'space-between',
-              marginTop:'auto', paddingTop:'44px',
-              borderTop:'1px solid rgba(255,255,255,0.07)' }}>
-              {prev
-                ? <Link to={'/flash/' + encodeURIComponent(decoded) + '/' + prev.id}
-                    style={{ fontSize:'12px', letterSpacing:'2px',
-                      color:'rgba(255,255,255,0.28)', textDecoration:'none', transition:'color 0.2s' }}
-                    onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.7)'}
-                    onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.28)'}>
-                    {t('prev',lang)}
-                  </Link>
-                : <span />
-              }
-              {next
-                ? <Link to={'/flash/' + encodeURIComponent(decoded) + '/' + next.id}
-                    style={{ fontSize:'12px', letterSpacing:'2px',
-                      color:'rgba(255,255,255,0.28)', textDecoration:'none', transition:'color 0.2s' }}
-                    onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.7)'}
-                    onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.28)'}>
-                    {t('next',lang)}
-                  </Link>
-                : <span />
-              }
-            </div>
-          )}
+          {/* prev/next moved to image sides */}
         </div>
       </div>
+      {/* Prev arrow — left edge of image area */}
+      {prev && (
+        <Link to={'/flash/' + encodeURIComponent(decoded) + '/' + prev.id}
+          style={{
+            position:'absolute', left:0, top:0, bottom:0, width:'72px',
+            zIndex:25, display:'flex', alignItems:'center', justifyContent:'flex-start',
+            paddingLeft:'18px', textDecoration:'none',
+            background:'linear-gradient(to right, rgba(0,0,0,0.32) 0%, transparent 100%)',
+            opacity: navIn ? 1 : 0, transition:'opacity 0.6s ease 0.4s',
+          }}>
+          <div style={{
+            display:'flex', flexDirection:'column', alignItems:'center', gap:'8px',
+          }}>
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+              <path d="M18 4 L8 14 L18 24" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <span style={{ fontSize:'9px', letterSpacing:'2px', color:'rgba(255,255,255,0.55)',
+              writingMode:'vertical-rl', textTransform:'uppercase' }}>prev</span>
+          </div>
+        </Link>
+      )}
+
+      {/* Next arrow — right edge of image area */}
+      {next && (
+        <Link to={'/flash/' + encodeURIComponent(decoded) + '/' + next.id}
+          style={{
+            position:'absolute', left:'calc(62% - 72px)', top:0, bottom:0, width:'72px',
+            zIndex:25, display:'flex', alignItems:'center', justifyContent:'flex-end',
+            paddingRight:'18px', textDecoration:'none',
+            background:'linear-gradient(to left, rgba(0,0,0,0.32) 0%, transparent 100%)',
+            opacity: navIn ? 1 : 0, transition:'opacity 0.6s ease 0.4s',
+          }}>
+          <div style={{
+            display:'flex', flexDirection:'column', alignItems:'center', gap:'8px',
+          }}>
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+              <path d="M10 4 L20 14 L10 24" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <span style={{ fontSize:'9px', letterSpacing:'2px', color:'rgba(255,255,255,0.55)',
+              writingMode:'vertical-rl', textTransform:'uppercase' }}>next</span>
+          </div>
+        </Link>
+      )}
+
       {showRules && <FlashRulesModal onClose={() => setShowRules(false)} />}
     </div>
   )
