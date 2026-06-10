@@ -80,6 +80,7 @@ export default function FlashDetail() {
   const [showRules,    setShowRules]    = useState(false)
   const [isZoomed,     setIsZoomed]     = useState(false)
   const [zoomOrigin,   setZoomOrigin]   = useState({ x: 50, y: 50 })
+  const [showZoomModal,setShowZoomModal]= useState(false)
 
   useEffect(() => {
     const timer = setTimeout(() => setNavIn(true), 300)
@@ -102,6 +103,7 @@ export default function FlashDetail() {
     setCopied(false)
     setActiveImgIdx(0)
     setIsZoomed(false)
+    setShowZoomModal(false)
   }, [id])
 
   const goImg = (delta) => {
@@ -168,6 +170,59 @@ export default function FlashDetail() {
   if (isMobile) return (
     <div style={{ position:'fixed', inset:0, background:BG, overflow:'hidden' }}>
       <MobileTopBar />
+
+      {/* Prev arrow — fixed over image, left side */}
+      {prev && (
+        <Link to={'/flash/' + encodeURIComponent(decoded) + '/' + prev.id}
+          style={{
+            position:'absolute', left:0, top:'52px', height:'52vh',
+            width:'52px', zIndex:30,
+            display:'flex', alignItems:'center', justifyContent:'center',
+            textDecoration:'none',
+            background:'linear-gradient(to right, rgba(0,0,0,0.28), transparent)',
+          }}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M15 4 L7 12 L15 20" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </Link>
+      )}
+
+      {/* Next arrow — fixed over image, right side */}
+      {next && (
+        <Link to={'/flash/' + encodeURIComponent(decoded) + '/' + next.id}
+          style={{
+            position:'absolute', right:0, top:'52px', height:'52vh',
+            width:'52px', zIndex:30,
+            display:'flex', alignItems:'center', justifyContent:'center',
+            textDecoration:'none',
+            background:'linear-gradient(to left, rgba(0,0,0,0.28), transparent)',
+          }}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M9 4 L17 12 L9 20" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </Link>
+      )}
+
+      {/* Zoom modal */}
+      {showZoomModal && (
+        <div style={{
+          position:'fixed', inset:0, background:'rgba(0,0,0,0.96)', zIndex:100,
+          display:'flex', alignItems:'center', justifyContent:'center',
+          touchAction:'pinch-zoom', overflow:'auto',
+        }}
+          onClick={() => setShowZoomModal(false)}>
+          <img src={activeImg} alt={item.title}
+            style={{ maxWidth:'100%', maxHeight:'100%', objectFit:'contain',
+              userSelect:'none', pointerEvents:'none' }} />
+          <button style={{
+            position:'fixed', top:'16px', right:'16px',
+            background:'rgba(255,255,255,0.15)', border:'none',
+            color:'white', fontSize:'18px', width:'36px', height:'36px',
+            borderRadius:'50%', cursor:'pointer', zIndex:101,
+          }}>✕</button>
+        </div>
+      )}
+
       <div style={{
         position:'absolute', top:'52px',
         bottom:'calc(62px + env(safe-area-inset-bottom, 0px))',
@@ -198,6 +253,24 @@ export default function FlashDetail() {
                     transition:'all 0.35s ease' }}/>
               ))}
             </div>
+          )}
+          {/* Zoom button */}
+          {imgLoaded && (
+            <button onClick={() => setShowZoomModal(true)}
+              style={{
+                position:'absolute', bottom:'14px', right:'14px', zIndex:10,
+                background:'rgba(0,0,0,0.5)', border:'1px solid rgba(255,255,255,0.2)',
+                borderRadius:'50%', width:'34px', height:'34px',
+                display:'flex', alignItems:'center', justifyContent:'center',
+                cursor:'pointer', padding:0,
+              }}>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <circle cx="7" cy="7" r="5" stroke="white" strokeWidth="1.2"/>
+                <line x1="11" y1="11" x2="14" y2="14" stroke="white" strokeWidth="1.2" strokeLinecap="round"/>
+                <line x1="5" y1="7" x2="9" y2="7" stroke="white" strokeWidth="1.2" strokeLinecap="round"/>
+                <line x1="7" y1="5" x2="7" y2="9" stroke="white" strokeWidth="1.2" strokeLinecap="round"/>
+              </svg>
+            </button>
           )}
           <div style={{ position:'absolute', top:'14px', left:'18px', zIndex:10 }}>
             <Link to={'/flash/' + encodeURIComponent(decoded)}
@@ -287,27 +360,7 @@ export default function FlashDetail() {
               {t('takenNote',lang)}
             </p>
           )}
-          {(prev || next) && (
-            <div style={{ display:'flex', justifyContent:'space-between',
-              paddingTop:'28px', borderTop:'1px solid rgba(255,255,255,0.07)' }}>
-              {prev
-                ? <Link to={'/flash/' + encodeURIComponent(decoded) + '/' + prev.id}
-                    style={{ fontSize:'12px', letterSpacing:'2px',
-                      color:'rgba(255,255,255,0.35)', textDecoration:'none' }}>
-                    {t('prev',lang)}
-                  </Link>
-                : <span />
-              }
-              {next
-                ? <Link to={'/flash/' + encodeURIComponent(decoded) + '/' + next.id}
-                    style={{ fontSize:'12px', letterSpacing:'2px',
-                      color:'rgba(255,255,255,0.35)', textDecoration:'none' }}>
-                    {t('next',lang)}
-                  </Link>
-                : <span />
-              }
-            </div>
-          )}
+          {/* prev/next moved to image sides */}
         </div>
       </div>
       <MobileTabBar />
