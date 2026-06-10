@@ -243,7 +243,7 @@ export default function FlashDetail() {
           <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'35%',
             background:'linear-gradient(to top, ' + BG + ', transparent)', pointerEvents:'none', zIndex:2 }} />
           {images.length > 1 && (
-            <div style={{ position:'absolute', bottom:'16px', left:'50%', transform:'translateX(-50%)',
+            <div style={{ position:'absolute', bottom:'56px', left:'50%', transform:'translateX(-50%)',
               display:'flex', gap:'5px', zIndex:5 }}>
               {images.map((_, i) => (
                 <button key={i} onClick={() => { setImgLoaded(false); setActiveImgIdx(i) }}
@@ -258,7 +258,7 @@ export default function FlashDetail() {
           {imgLoaded && (
             <button onClick={() => setShowZoomModal(true)}
               style={{
-                position:'absolute', bottom:'14px', right:'14px', zIndex:10,
+                position:'absolute', bottom:'14px', left:'50%', transform:'translateX(-50%)', zIndex:10,
                 background:'rgba(0,0,0,0.5)', border:'1px solid rgba(255,255,255,0.2)',
                 borderRadius:'50%', width:'34px', height:'34px',
                 display:'flex', alignItems:'center', justifyContent:'center',
