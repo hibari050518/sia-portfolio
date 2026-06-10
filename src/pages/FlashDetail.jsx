@@ -78,6 +78,8 @@ export default function FlashDetail() {
   const [copied,       setCopied]       = useState(false)
   const [activeImgIdx, setActiveImgIdx] = useState(0)
   const [showRules,    setShowRules]    = useState(false)
+  const [isZoomed,     setIsZoomed]     = useState(false)
+  const [zoomOrigin,   setZoomOrigin]   = useState({ x: 50, y: 50 })
 
   useEffect(() => {
     const timer = setTimeout(() => setNavIn(true), 300)
@@ -99,6 +101,7 @@ export default function FlashDetail() {
     setImgLoaded(false)
     setCopied(false)
     setActiveImgIdx(0)
+    setIsZoomed(false)
   }, [id])
 
   const goImg = (delta) => {
@@ -318,7 +321,26 @@ export default function FlashDetail() {
         position:'absolute', top:0, left:0, bottom:0, right:'38%',
         overflow:'hidden',
         opacity: navIn ? 1 : 0, transition:'opacity 0.8s ease 0.2s',
-      }}>
+        cursor: isZoomed ? 'zoom-out' : 'zoom-in',
+      }}
+        onClick={(e) => {
+          const rect = e.currentTarget.getBoundingClientRect()
+          setZoomOrigin({
+            x: ((e.clientX - rect.left) / rect.width) * 100,
+            y: ((e.clientY - rect.top) / rect.height) * 100,
+          })
+          setIsZoomed(z => !z)
+        }}
+        onMouseMove={(e) => {
+          if (!isZoomed) return
+          const rect = e.currentTarget.getBoundingClientRect()
+          setZoomOrigin({
+            x: ((e.clientX - rect.left) / rect.width) * 100,
+            y: ((e.clientY - rect.top) / rect.height) * 100,
+          })
+        }}
+        onMouseLeave={() => { if (isZoomed) setIsZoomed(false) }}
+      >
         {activeImg && (
           <img key={item.id + '-' + activeImgIdx} src={activeImg} alt={item.title}
             onLoad={() => setImgLoaded(true)}
@@ -326,8 +348,31 @@ export default function FlashDetail() {
               position:'absolute', inset:0, width:'100%', height:'100%',
               objectFit:'contain', objectPosition:'center center',
               filter:'brightness(' + (isAvail ? 0.95 : 0.78) + ')',
-              opacity: imgLoaded ? 1 : 0, transition:'opacity 0.65s ease',
+              opacity: imgLoaded ? 1 : 0,
+              transform: isZoomed ? 'scale(2.5)' : 'scale(1)',
+              transformOrigin: `${zoomOrigin.x}% ${zoomOrigin.y}%`,
+              transition: isZoomed
+                ? 'transform-origin 0s, opacity 0.65s ease'
+                : 'transform 0.4s cubic-bezier(0.25,0.1,0.25,1), opacity 0.65s ease',
+              pointerEvents:'none',
             }} />
+        )}
+        {/* Zoom hint */}
+        {imgLoaded && !isZoomed && (
+          <div style={{
+            position:'absolute', bottom:'20px', right:'20px', zIndex:10,
+            background:'rgba(0,0,0,0.45)', borderRadius:'50%',
+            width:'32px', height:'32px',
+            display:'flex', alignItems:'center', justifyContent:'center',
+            pointerEvents:'none', opacity:0.7,
+          }}>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <circle cx="7" cy="7" r="5" stroke="white" strokeWidth="1.2"/>
+              <line x1="11" y1="11" x2="14" y2="14" stroke="white" strokeWidth="1.2" strokeLinecap="round"/>
+              <line x1="5" y1="7" x2="9" y2="7" stroke="white" strokeWidth="1.2" strokeLinecap="round"/>
+              <line x1="7" y1="5" x2="7" y2="9" stroke="white" strokeWidth="1.2" strokeLinecap="round"/>
+            </svg>
+          </div>
         )}
         <div style={{
           position:'absolute', inset:0, pointerEvents:'none', zIndex:2,
