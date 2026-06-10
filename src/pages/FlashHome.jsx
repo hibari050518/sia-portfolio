@@ -146,13 +146,13 @@ export default function FlashHome() {
       {prevImgRef.current && (
         <img src={prevImgRef.current} alt=""
           style={{ position:'absolute', inset:0, width:'100%', height:'100%',
-            objectFit:'cover', objectPosition:'center', filter:'brightness(0.52)' }} />
+            objectFit:'cover', objectPosition:'center', filter:'brightness(0.88)' }} />
       )}
       {series && series.images[bgImgIdx] && (
         <img key={activeIdx + '-' + bgImgIdx} src={series.images[bgImgIdx]} alt={series.name}
           onLoad={() => setImgLoaded(true)}
           style={{ position:'absolute', inset:0, width:'100%', height:'100%',
-            objectFit:'cover', objectPosition:'center', filter:'brightness(0.52)',
+            objectFit:'cover', objectPosition:'center', filter:'brightness(0.88)',
             opacity: imgLoaded ? 1 : 0, transition:'opacity 1s ease',
             animation: imgLoaded ? 'kenBurns ' + BG_CYCLE_MS + 'ms ease-out forwards' : 'none' }} />
       )}
@@ -260,7 +260,7 @@ export default function FlashHome() {
       {prevImgRef.current && (
         <img src={prevImgRef.current} alt=""
           style={{ position:'absolute', inset:0, width:'100%', height:'100%',
-            objectFit:'cover', objectPosition:'center center', filter:'brightness(0.52)' }} />
+            objectFit:'cover', objectPosition:'center center', filter:'brightness(0.88)' }} />
       )}
       {series && series.images[bgImgIdx] && (
         <img key={activeIdx + '-' + bgImgIdx} src={series.images[bgImgIdx]} alt={series.name}
@@ -268,7 +268,7 @@ export default function FlashHome() {
           style={{
             position:'absolute', inset:0, width:'100%', height:'100%',
             objectFit:'cover', objectPosition:'center center',
-            filter:'brightness(0.52)',
+            filter:'brightness(0.88)',
             opacity: imgLoaded ? 1 : 0, transition:'opacity 1s ease',
             animation: imgLoaded ? 'kenBurns ' + BG_CYCLE_MS + 'ms ease-out forwards' : 'none',
           }} />

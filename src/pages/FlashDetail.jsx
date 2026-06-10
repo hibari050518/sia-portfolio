@@ -177,8 +177,8 @@ export default function FlashDetail() {
               onLoad={() => setImgLoaded(true)}
               style={{
                 position:'absolute', inset:0, width:'100%', height:'100%',
-                objectFit:'cover', objectPosition:'center center',
-                filter:'brightness(' + (isAvail ? 0.75 : 0.45) + ')',
+                objectFit:'contain', objectPosition:'center center',
+                filter:'brightness(' + (isAvail ? 0.95 : 0.78) + ')',
                 opacity: imgLoaded ? 1 : 0, transition:'opacity 0.65s ease',
               }} />
           )}
@@ -324,8 +324,8 @@ export default function FlashDetail() {
             onLoad={() => setImgLoaded(true)}
             style={{
               position:'absolute', inset:0, width:'100%', height:'100%',
-              objectFit:'cover', objectPosition:'center center',
-              filter:'brightness(' + (isAvail ? 0.72 : 0.45) + ')',
+              objectFit:'contain', objectPosition:'center center',
+              filter:'brightness(' + (isAvail ? 0.95 : 0.78) + ')',
               opacity: imgLoaded ? 1 : 0, transition:'opacity 0.65s ease',
             }} />
         )}
